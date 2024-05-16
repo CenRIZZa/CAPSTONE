@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'userauth',
     'librarian',
     'student',
+    'adminside',
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'

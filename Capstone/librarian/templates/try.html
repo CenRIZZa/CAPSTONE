@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="post" enctype="multipart/form-data" action="{% url 'try_upload_view' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_Category">Category:</label>
+        {% if categories %}
+        Categories Found: {{ categories|length }}
+        {% else %}
+            No Categories Found
+        {% endif %}
+        <select class="form-control" id="id_Category" name="Category" required>
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        </div>
+    </form>
+</body>
+</html>

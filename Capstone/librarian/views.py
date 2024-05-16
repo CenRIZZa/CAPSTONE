@@ -12,22 +12,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 
 
-@login_required
-def librarian(request):
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('librarian')  # Redirect to the librarian page after successful upload
-    else:
-        form = BookForm()
-    
-    # Retrieve all books and categories from the database
-    books = Books.objects.all()
-    categories = Category.objects.all()
-    
-    return render(request, 'main.html', {'form': form, 'books': books, 'categories': categories})
-
 
 @login_required
 def upload_view(request):
@@ -43,6 +27,22 @@ def upload_view(request):
     categories = Category.objects.all()
     
     return render(request, 'main.html', {'form': form, 'categories': categories})
+
+@login_required
+def try_upload_view(request):
+    form = BookForm()
+    
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('product')  # Redirect to a page showing the list of products
+    
+    # Retrieve all categories from the database
+    categories = Category.objects.all()
+    
+    return render(request, 'try.html', {'form': form, 'categories': categories})
+
 
 
 def review_request(request):
