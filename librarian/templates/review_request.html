@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Requests</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
+        <h1 class="mt-4">Borrow Requests</h1>
+        <hr>
+        {% if borrow_requests %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Requested By</th>
+                    <th>Requested At</th>
+                    <th>Expires At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in borrow_requests %}
+                <tr>
+                    <td>{{ request.book }}</td>
+                    <td>{{ request.requested_by }}</td>
+                    <td>{{ request.requested_at }}</td>
+                    <td>{{ request.expires_at }}</td>
+                    <td>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#approveModal{{ request.id }}">Approve</button>
+                        <!-- Approve Modal -->
+                        <div class="modal fade" id="approveModal{{ request.id }}" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel{{ request.id }}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="approveModalLabel{{ request.id }}">Approve Request</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to approve this request?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <form method="post" action="{% url 'approve_request' request.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success">Approve</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Approve Modal -->
+                        
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal{{ request.id }}">Decline</button>
+                        <!-- Decline Modal -->
+                        <div class="modal fade" id="declineModal{{ request.id }}" tabindex="-1" role="dialog" aria-labelledby="declineModalLabel{{ request.id }}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="declineModalLabel{{ request.id }}">Decline Request</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to decline this request?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <form method="post" action="{% url 'decline_request' request.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Decline</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Decline Modal -->
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No borrow requests at the moment.</p>
+        {% endif %}
+    </div>
+    <!-- Bootstrap JS (jQuery must be included before this) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

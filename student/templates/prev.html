@@ -1,0 +1,198 @@
+{% load custom_tags %}
+
+{% if user.is_authenticated and user|is_student %}
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book.BookTitle }} - Preview</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa; /* Light gray background */
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        #pdf-container {
+            width: 80vw; /* 80% of the viewport width */
+            height: 80vh; /* 80% of the viewport height */
+            overflow: hidden;
+            white-space: nowrap;
+            background-color: #fff; /* White background for PDF pages */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for container */
+            border-radius: 8px; /* Rounded corners */
+            cursor: grab; /* Change cursor to indicate grabbable element */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        canvas {
+            display: inline-block;
+            margin: 0;
+            vertical-align: top;
+        }
+        #zoom-controls {
+            margin-top: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #page-input {
+            margin-top: 10px;
+            padding: 5px;
+            width: 50px;
+            text-align: center;
+        }
+        #back-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #back-button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+    <a href="#" id="back-button" onclick="history.go(-1); return false;">Back</a>
+    <div id="pdf-container" onmousedown="startDragging(event)" onmousemove="drag(event)" onmouseup="stopDragging(event)" oncontextmenu="return false;">
+    </div>
+    <div id="zoom-controls">
+        <button onclick="zoomOut()">-</button>
+        <button onclick="zoomIn()">+</button>
+    </div>
+    <div>
+        <button onclick="prevPage()">Previous</button>
+        <span id="page-counter"></span>
+        <button onclick="nextPage()">Next</button>
+    </div>
+    <input type="text" id="page-input" placeholder="Page" onkeydown="jumpToPage(event)">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script>
+        let pdfDoc = null;
+        let pageNum = 1;
+        let scale = 1.0;
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const pdfContainer = document.getElementById("pdf-container");
+        const pageCounter = document.getElementById("page-counter");
+        const pageInput = document.getElementById("page-input");
+
+        function renderPage(pageNum, scale) {
+            pdfDoc.getPage(pageNum).then(function(page) {
+                const viewport = page.getViewport({ scale: scale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                page.render(renderContext).promise.then(() => {
+                    pdfContainer.appendChild(canvas);
+                });
+            });
+            pageCounter.textContent = pageNum + ' / ' + pdfDoc.numPages;
+            pageInput.value = pageNum;
+        }
+
+        function zoomOut() {
+            if (scale > 0.25) {
+                scale -= 0.25;
+                renderPage(pageNum, scale);
+            }
+        }
+
+        function zoomIn() {
+            if (scale < 4.0) {
+                scale += 0.25;
+                renderPage(pageNum, scale);
+            }
+        }
+
+        function prevPage() {
+            if (pageNum > 1) {
+                pageNum--;
+                renderPage(pageNum, scale);
+            }
+        }
+
+        function nextPage() {
+            if (pageNum < pdfDoc.numPages) {
+                pageNum++;
+                renderPage(pageNum, scale);
+            }
+        }
+
+        function startDragging(e) {
+            isDragging = true;
+            startX = e.clientX - pdfContainer.offsetLeft;
+            startY = e.clientY - pdfContainer.offsetTop;
+            scrollLeft = pdfContainer.scrollLeft;
+            scrollTop = pdfContainer.scrollTop;
+        }
+
+        function stopDragging() {
+            isDragging = false;
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.clientX - pdfContainer.offsetLeft;
+            const y = e.clientY - pdfContainer.offsetTop;
+            const walkX = x - startX;
+            const walkY = y - startY;
+            pdfContainer.scrollLeft = scrollLeft - walkX;
+            pdfContainer.scrollTop = scrollTop - walkY;
+        }
+
+        function jumpToPage(e) {
+            if (e.key === 'Enter') {
+                const page = parseInt(pageInput.value);
+                if (page > 0 && page <= pdfDoc.numPages) {
+                    pageNum = page;
+                    renderPage(pageNum, scale);
+                }
+            }
+        }
+
+        pdfjsLib.getDocument("{{ book.BookFile.url }}").promise.then(function(pdf) {
+            pdfDoc = pdf;
+            renderPage(pageNum, scale);
+        });
+    </script>
+</body>
+</html>
+{%endif%}

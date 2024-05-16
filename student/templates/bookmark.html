@@ -1,0 +1,290 @@
+{% load custom_tags %}
+
+{% if user.is_authenticated and user|is_student %}
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+
+    <!--search-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!--help-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!--Bookmark-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .main-container{
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        grid-template-rows: 100px 1fr;
+        grid-template-areas:
+        "sidebar content"
+        "sidebar content"
+        ;
+        height: 100vh;
+    }
+    .content{
+        grid-area: content;
+    }
+    .side-bar{
+        grid-area: sidebar;
+        background-color: rgb(74, 128, 210);
+    }
+    .sidebar-nav{
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        flex-direction: column;
+        list-style: none;
+        margin: none;
+        padding: 25px 0;
+    }
+    .sidebar-nav li{
+        width: 100%;
+        padding: 10px 40px;
+        color: white;
+    }
+    .bookmark{
+        color:white;
+    }
+    {% comment %} navbar css {% endcomment %}
+    .navbar-left, .navbar-right{
+        width: 10%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .navbar-right{
+        transform: translateX(-20%);
+        gap: 5%;
+    }
+    .navbar-title{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80%;
+    }
+    .navbar-title span{
+        font-size: 1.8rem;
+        color: white;
+    }
+    .navbar-text{
+        font-weight: bold;
+    }
+    .navbar-text, .navbar-icon{
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .navbar-text:hover, .bookmark:hover, .navbar-icon:hover{
+        color: lightgray;
+        cursor: pointer;
+    }
+    {% comment %} bago {% endcomment %}
+    .container {
+        padding: 20px;
+        animation: fadeIn 1s ease-in-out; /* Animation applied to the container */
+        grid-area: content
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+        overflow: hidden; /* To ensure that overflowed content doesn't affect the layout */
+        width: 300px; /* Adjust the width as needed */
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .card-img-top {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        transition: transform 0.3s;
+        width: 300px;
+        height: 350px;
+    }
+    
+    .card:hover .card-img-top {
+        transform: scale(1.1); /* Example animation for hovering over the card image */
+    }
+    
+    .card-title {
+        font-size: 1rem; /* Decrease the font size */
+        margin-top: 10px;
+    }
+    
+    .card-text {
+        color: #555;
+    }
+    
+    .btn-primary {
+        background-color: rgb(74, 128, 210);
+        border: none;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2c5aa8;
+    }
+    
+    /* Back button */
+    .hBack {
+        margin-bottom: 20px;
+    }
+    
+    /* Responsiveness */
+    @media (max-width: 768px) {
+        .navbar-left img {
+            height: 40px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .navbar-right {
+            gap: 10px;
+        }
+    }
+
+    aside
+    {
+        position: fixed;
+        width: 200px;
+        height: 100vh;
+        top: 0;
+        left: 0;
+    }
+    .logo{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 15px;
+    }
+    .logout{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        margin-top: 275%;
+        padding: 10px 0;
+    }
+    .logout:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+        
+    }
+    .navbar-text, .navbar-icon{
+        text-decoration: none;
+        transition: color 0.3s;
+        vertical-align: middle;
+        padding: 10px 0;
+    }
+    .navbar-text:hover, .bookmark:hover, .navbar-icon:hover{
+        color: lightgray;
+        cursor: pointer;
+    }
+    .navbar-desc{
+        color: white;
+        font-weight: bold;
+        text-decoration:none;
+    }
+    .sidebar-nav li:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+
+
+    /* Define fade-in animation for sidebar */
+    @keyframes fadeInSidebar {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Apply fade-in animation to sidebar */
+    .side-bar {
+        animation: fadeInSidebar 1s ease forwards;
+    }
+
+</style>
+<body>
+    <div class="main-container">
+        <div class="side-bar">
+            <aside>
+                <div class="logo">
+                    <img src="{% static 'playground/school_Logo.png'%}" alt="Logo" height="80px" id="logo">
+                </div>
+                <ul class="sidebar-nav">
+                    <li><span class="material-symbols-outlined navbar-icon" alt="search" id="search">search</span><a href="#" class="navbar-desc">Search</a></li>
+                    <li><a href="{% url 'bookmark' %}" class="material-symbols-outlined bookmark navbar-icon" alt="bookmark">bookmark</a><a href="{% url 'bookmark' %}" class="navbar-desc">Bookmark</a></li>
+                    <li><span class="material-symbols-outlined navbar-icon" alt="help">help</span><a href="#" class="navbar-desc">Help</a></li>
+                </ul>
+                <div class="logout">
+                    <a href="{% url 'logout_user' %}" class="navbar-text">LOG OUT</a>
+                </div>
+            </aside>     
+        </div>
+        <div class="container mt-5">
+            <h1>Bookmarks</h1>
+            <button class="btn btn-primary hBack" type="button">Back</button>
+            <div class="row">
+                {% for book in all_books %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ book.BookImage.url }}" class="card-img-top" alt="{{ book.BookTitle }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.BookTitle }}</h5>
+                            <p class="card-text">{{ book.Description }}</p>
+                            <a href="{% url 'book_detail' book.id %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!--back button-->
+<script>
+    $(".hBack").on("click", function(e){
+        e.preventDefault();
+        window.history.back();
+    });
+</script>
+
+</body>
+</html>
+{% endif %}
