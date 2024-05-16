@@ -18,7 +18,6 @@ urlpatterns = [
     path('approve_request/<int:request_id>/', views.approve_request, name='approve_request'),
     path('decline_request/<int:request_id>/', views.decline_request, name='decline_request'),
     #path('librarian/restore_book/<int:book_id>/', views.restore_book, name='restore_book'),
-    path('tryupload/', views.try_upload_view, name='try_upload_view'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -361,22 +361,14 @@
             <label for="id_Date">Date:</label>
             <input type="date" class="form-control" id="id_Date" name="Date" required>
         </div>
-        <form method="post" enctype="multipart/form-data" action="{% url 'upload_view' %}">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="id_Category">Category:</label>
-            {% if categories %}
-            Categories Found: {{ categories|length }}
-            {% else %}
-                No Categories Found
-            {% endif %}
+        <div class="form-group">
+            <label for="id_Category">Category:</label>
             <select class="form-control" id="id_Category" name="Category" required>
                 {% for category in categories %}
                     <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
-            </div>
-        </form>
+        </div>
         <div class="form-group">
             <label for="id_Language">Language:</label>
             <select class="form-control" id="id_Language" name="Language" required>
@@ -397,68 +389,68 @@
     </form>
 </div>
 
-                <!--Books Section-->
-                <div id="books" class="content" style="display: none;">
-                    <h1 class="mt-4">Books</h1>
-                    <hr>
-                    <div class="col text-right">
-                        <form method="post" action="{% url 'delete_all_books' %}">
-                            {% csrf_token %}
-                            <!-- Button to trigger the modal -->
-                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAllModal">
-                                Delete All
-                            </button>
-                        </form>
-                    </div>
+<!--Books Section-->
+<div id="books" class="content" style="display: none;">
+    <h1 class="mt-4">Books</h1>
+    <hr>
+    <div class="col text-right">
+        <form method="post" action="{% url 'delete_all_books' %}">
+            {% csrf_token %}
+            <!-- Button to trigger the modal -->
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAllModal">
+                Delete All
+            </button>
+        </form>
+    </div>
 
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Description</th>
-                                    <th>Date</th>
-                                    <th>Category</th>
-                                    <th>Language</th>
-                                    <th>Book Image</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for book in books %}
-                                <tr>
-                                    <td>{{ book.BookTitle }}</td>
-                                    <td>{{ book.Author }}</td>
-                                    <td>{{ book.Description }}</td>
-                                    <td>{{ book.Date }}</td>
-                                    <td>{{ book.Category }}</td>
-                                    <td>{{book.Language}}</td>
-                                    <td>
-                                        {% if book.BookImage %}
-                                            <img src="{{ book.BookImage.url }}" alt="{{ book.BookTitle }} Image" style="max-width: 100px;">
-                                        {% else %}
-                                            No Image
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <form id="toggleForm-{{ book.id }}" method="post" action="{% url 'toggle_availability' book.id %}" style="display: inline;">
-                                            {% csrf_token %}
-                                            <button id="availabilityBtn-{{ book.id }}" class="btn {% if book.available %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleAvailability({{ book.id }})">
-                                                {% if book.available %}Available{% else %}Not Available{% endif %}
-                                            </button>
-                                        </form>
-                                    </td>   
-                                    <td>
-                                        <form id="deleteForm-{{ book.id }}" method="post" action="{% url 'delete_book' book.id %}" style="display: inline;">
-                                            {% csrf_token %}
-                                            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+                <th>Author</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Language</th>
+                <th>Book Image</th>
+                <th>Actions</th>
+            </tr>
+    </thead>
+    <tbody>
+    {% for book in books %}
+    <tr>
+    <td>{{ book.BookTitle }}</td>
+    <td>{{ book.Author }}</td>
+    <td>{{ book.Description }}</td>
+    <td>{{ book.Date }}</td>
+    <td>{{ book.Category }}</td>
+    <td>{{book.Language}}</td>
+    <td>
+        {% if book.BookImage %}
+        <img src="{{ book.BookImage.url }}" alt="{{ book.BookTitle }} Image" style="max-width: 100px;">
+        {% else %}
+        No Image
+        {% endif %}
+    </td>
+    <td>
+    <form id="toggleForm-{{ book.id }}" method="post" action="{% url 'toggle_availability' book.id %}" style="display: inline;">
+        {% csrf_token %}
+        <button id="availabilityBtn-{{ book.id }}" class="btn {% if book.available %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleAvailability({{ book.id }})">
+        {% if book.available %}Available{% else %}Not Available{% endif %}
+        </button>
+        </form>
+    </td>   
+    <td>
+    <form id="deleteForm-{{ book.id }}" method="post" action="{% url 'delete_book' book.id %}" style="display: inline;">
+     {% csrf_token %}
+    <button type="button" class="btn btn-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
+    </form>
+    </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    </div>
                 
 </main>
 

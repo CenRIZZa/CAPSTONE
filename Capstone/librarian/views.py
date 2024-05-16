@@ -28,22 +28,6 @@ def upload_view(request):
     
     return render(request, 'main.html', {'form': form, 'categories': categories})
 
-@login_required
-def try_upload_view(request):
-    form = BookForm()
-    
-    if request.method == 'POST':
-        form = BookForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('product')  # Redirect to a page showing the list of products
-    
-    # Retrieve all categories from the database
-    categories = Category.objects.all()
-    
-    return render(request, 'try.html', {'form': form, 'categories': categories})
-
-
 
 def review_request(request):
     borrow_requests = BorrowRequest.objects.filter(expires_at__gt=timezone.now())
@@ -87,8 +71,9 @@ def main(request):
             book.deleted_at = timezone.now()
             book.save()
             return redirect('main')
-
-    return render(request, 'main.html', {'books': books, 'recently_deleted_books': recently_deleted_books, 'language_choices': language_choices})
+        
+    categories = Category.objects.all()
+    return render(request, 'main.html', {'books': books, 'recently_deleted_books': recently_deleted_books, 'language_choices': language_choices, 'categories': categories})
 
 
 @login_required
