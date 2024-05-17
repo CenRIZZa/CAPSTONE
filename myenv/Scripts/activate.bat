@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=F:\CAPSTONE\capstonerepository\CapstoneV10\proj\storefront\myenv
+set VIRTUAL_ENV=D:\CAPSTONE NEW\CAPSTONE\myenv
 
 if not defined PROMPT set PROMPT=$P$G
 
