@@ -10,7 +10,8 @@ from .forms import BookForm
 from .models import Books, Category, LANGUAGE_CHOICES, BorrowRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
-
+from django.contrib.auth import logout
+from django.contrib import messages
 
 
 @login_required
@@ -132,6 +133,15 @@ def toggle_availability(request, book_id):
     book.available = not book.available  # Toggle the availability status
     book.save()
     return redirect('librarian')  # Redirect back to the books page
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, "You were Logged Out!")
+    url = reverse('login_user')
+    return redirect(url)
+
+
+
 '''
 def restore_book(request, book_id):
     book = Books.objects.get(pk=book_id)
