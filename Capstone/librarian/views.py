@@ -22,7 +22,7 @@ def upload_view(request):
         form = BookForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('product')  # Redirect to a page showing the list of products
+            return redirect('librarian')  # Redirect to a page showing the list of products
     
     # Retrieve all categories from the database
     categories = Category.objects.all()
@@ -87,7 +87,8 @@ def delete_book(request, book_id):
 @login_required
 def recently_deleted_books(request):
     recently_deleted_books = Books.objects.filter(deleted_at__isnull=False)
-    return render(request, 'recently_deleted_books.html', {'recently_deleted_books': recently_deleted_books})
+    categories = Category.objects.all()
+    return render(request, 'recently_deleted_books.html', {'recently_deleted_books': recently_deleted_books, 'categories': categories})
 
 
 #marjks the book deleted
