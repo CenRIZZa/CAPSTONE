@@ -32,6 +32,7 @@ def create_user_and_assign_to_group(sender, instance, created, **kwargs):
         student_group, _ = Group.objects.get_or_create(name='Student')
         user.groups.add(student_group)
 
+
 class Librarian(models.Model):
     Username = models.CharField(max_length=50)
     position = models.CharField(max_length=50)

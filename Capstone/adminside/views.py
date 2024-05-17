@@ -1,21 +1,56 @@
 from django.shortcuts import render
 from librarian.models import Books
+from userauth.models import Account
 # Create your views here.
 def adminPage(request):
 
    return render(request,'admin.html', {})
 
+def your_view(request):
+    # Fetch all UserActivity instances
+    user_activities = UserActivity.objects.all()
+
+    # Print the contents of user_activities in the console
+    for activity in user_activities:
+        print(activity.user.username, activity.login_time, activity.logout_time, activity.active)
+    else:
+        print("nothing")
+    # Pass user_activities to template context
+    context = {
+        'user_activities': user_activities
+    }
+    return render(request, 'book_page_views.html', context)
+
+
+
+from django.db.models import Max
 
 def book_page_views(request):
     # Retrieve all books and sort them by page views in descending order
     books = Books.objects.all().order_by('-PageViews')[:7]
+    
+    # Get the most recent user activity for each user
+    latest_user_activities = UserActivity.objects.filter(
+        active=True
+    ).values('user').annotate(
+        latest_activity=Max('login_time')
+    )
+
+    # Retrieve the user activities corresponding to the most recent login time
+    user_activities = UserActivity.objects.filter(
+        active=True,
+        login_time__in=[activity['latest_activity'] for activity in latest_user_activities]
+    )
 
     # Extract book titles and page views
     book_titles = [book.BookTitle for book in books]
     page_views = [book.PageViews for book in books]
 
     # Render the template with the necessary data
-    return render(request, 'book_page_views.html', {'book_titles': book_titles, 'page_views': page_views})
+    return render(request, 'book_page_views.html', {'book_titles': book_titles, 'page_views': page_views, 'user_activities': user_activities})
+
+
+
 
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
@@ -64,3 +99,5 @@ def user_logged_out_handler(sender, request, user, **kwargs):
     # Set UserActivity instances as inactive upon logout
     UserActivity.objects.filter(user=user, active=True).update(active=False)
     print("NOT ACTIVE")
+
+

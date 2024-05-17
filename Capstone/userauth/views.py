@@ -47,3 +47,5 @@ def login_user(request):
             return redirect('login_user')
     else:
         return render(request, 'authenticate/login.html', {})
+
+

@@ -36,7 +36,7 @@
         <div class="sidebar-heading">Dashboard</div>
         <div class="list-group list-group-flush">
             <a href="#" class="list-group-item list-group-item-action bg-light">Overview</a>
-            <a href="#" class="list-group-item list-group-item-action bg-light">Reports</a>
+            <a href="#" class="list-group-item list-group-item-action bg-light">Active</a>
             <a href="#" class="list-group-item list-group-item-action bg-light">Analytics</a>
         </div>
     </div>
@@ -66,7 +66,38 @@
                 </div>
             </div>
         </div>
+        <div class="mt-4">
+            <h3>ACTIVE USERS</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Login Time</th>
+                        <th>Logout Time</th>
+                        <th>Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in user_activities %}
+                    <tr>
+                        <td>{{ activity.user.username }}</td>
+                        <td>{{ activity.login_time }}</td>
+                        <td>{{ activity.logout_time }}</td>
+                        <td>{{ activity.active }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No user activities</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
     </div>
+
+    
+
     <!-- /Page Content -->
 
     <!-- Script to create Chart.js pie chart -->
