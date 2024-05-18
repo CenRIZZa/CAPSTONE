@@ -9,95 +9,163 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Style for the sidebar */
+        body {
+            display: flex;
+        }
         #sidebar-wrapper {
             position: fixed;
             top: 0;
             bottom: 0;
             left: 0;
-            width: 250px; /* Adjust the width as needed */
+            width: 250px;
             z-index: 1000;
-            background-color: #f8f9fa; /* Light gray background color */
-            border-right: 1px solid #dee2e6; /* Right border */
+            background-color: #343a40;
+            color: #fff;
+            padding-top: 20px;
         }
-        /* Ensure content doesn't go under the sidebar */
+        .sidebar-heading {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .list-group-item {
+            color: #fff;
+            background-color: #343a40;
+        }
+        .list-group-item:hover {
+            background-color: #495057;
+        }
         #page-content-wrapper {
-            margin-left: 250px; /* Adjust margin to match sidebar width */
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
         }
-        /* Style for sidebar links */
-        .list-group-item-action:hover {
-            background-color: #e9ecef !important; /* Light gray background color on hover */
+        .navbar {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
         }
     </style>
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
+    <div id="sidebar-wrapper">
         <div class="sidebar-heading">Dashboard</div>
         <div class="list-group list-group-flush">
-            <a href="#" class="list-group-item list-group-item-action bg-light">Overview</a>
-            <a href="#" class="list-group-item list-group-item-action bg-light">Active</a>
-            <a href="#" class="list-group-item list-group-item-action bg-light">Analytics</a>
+            <a href="#" class="list-group-item list-group-item-action">Overview</a>
+            <a href="#" class="list-group-item list-group-item-action">Active</a>
+            <a href="#" class="list-group-item list-group-item-action">Analytics</a>
         </div>
     </div>
     <!-- /Sidebar -->
 
     <!-- Page Content -->
-    <div class="container-fluid mt-3" id="page-content-wrapper">
+    <div id="page-content-wrapper">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Dashboard</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Metrics Cards -->
         <div class="row">
-            <div class="col-md-9">
-                <div class="container">
-                    <h2 class="mt-4">Book Page Views</h2>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <canvas id="pageViewsChart" width="400" height="400"></canvas>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="list-group">
-                                {% for book_title, page_view in book_data %}
-                                <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                    {{ book_title }}
-                                    <span class="badge bg-primary rounded-pill">{{ page_view }}</span>
-                                </a>
-                                {% endfor %}
-                            </div>
-                        </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Page Views</h5>
+                        <p class="card-text">34578</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Users Today</h5>
+                        <p class="card-text">895</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Users This Month</h5>
+                        <p class="card-text">52410</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger">
+                    <div class="card-body">
+                        <h5 class="card-title">New Downloads</h5>
+                        <p class="card-text">78541</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="mt-4">
-            <h3>ACTIVE USERS</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Login Time</th>
-                        
-                        <th>Active</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for activity in user_activities %}
-                    <tr>
-                        <td>{{ activity.user.username }}</td>
-                        <td>{{ activity.login_time }}</td>
-                        
-                        <td>{{ activity.active }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4">No user activities</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+        <!-- Charts and Tables -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Book Page Views</h5>
+                        <div class="chart-container">
+                            <canvas id="pageViewsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Active Users</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Login Time</th>
+                                    <th>Active</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activity in user_activities %}
+                                <tr>
+                                    <td>{{ activity.user.username }}</td>
+                                    <td>{{ activity.login_time }}</td>
+                                    <td>{{ activity.active }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3">No user activities</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-        
     </div>
-
-    
-
     <!-- /Page Content -->
 
     <!-- Script to create Chart.js pie chart -->
@@ -132,5 +200,7 @@
             }
         });
     </script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
