@@ -90,14 +90,6 @@
         <!-- Metrics Cards -->
         <div class="row">
             <div class="col-md-3">
-                <div class="card text-white bg-primary">
-                    <div class="card-body">
-                        <h5 class="card-title">Page Views</h5>
-                        <p class="card-text">34578</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
                 <div class="card text-white bg-success">
                     <div class="card-body">
                         <h5 class="card-title">Users Today</h5>
@@ -109,19 +101,12 @@
                 <div class="card text-white bg-warning">
                     <div class="card-body">
                         <h5 class="card-title">Users This Month</h5>
-                        <p class="card-text">52410</p>
+                        <!-- Display the count of distinct user activities -->
+                        <p class="card-text">{{distinct_users_count_this_month }}</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-danger">
-                    <div class="card-body">
-                        <h5 class="card-title">New Downloads</h5>
-                        <p class="card-text">78541</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            
 
         <!-- Charts and Tables -->
         <div class="row">
@@ -144,7 +129,6 @@
                                 <tr>
                                     <th>User</th>
                                     <th>Login Time</th>
-                                    <th>Active</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -152,7 +136,6 @@
                                 <tr>
                                     <td>{{ activity.user.username }}</td>
                                     <td>{{ activity.login_time }}</td>
-                                    <td>{{ activity.active }}</td>
                                 </tr>
                                 {% empty %}
                                 <tr>
