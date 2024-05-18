@@ -15,8 +15,9 @@ urlpatterns = [
     path('toggle_availability/<int:book_id>/', views.toggle_availability, name='toggle_availability'),
     path('upload/', views.upload_view, name='upload_view'),
     path('review-request/', views.review_request, name='review_request'),
-    path('approve_request/<int:request_id>/', views.approve_request, name='approve_request'),
-    path('decline_request/<int:request_id>/', views.decline_request, name='decline_request'),
+    path('borrow-requests/approve/<int:request_id>/', views.approve_request, name='approve_request'),
+    path('borrow-requests/decline/<int:request_id>/', views.decline_request, name='decline_request'),
+
     #path('librarian/restore_book/<int:book_id>/', views.restore_book, name='restore_book'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 #from .forms import RestoreBookForm
 from .forms import BookForm
-from .models import Books, Category, LANGUAGE_CHOICES, BorrowRequest
+from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRequest, DeclinedRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import logout
@@ -30,29 +30,45 @@ def upload_view(request):
     return render(request, 'main.html', {'form': form, 'categories': categories})
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from .models import BorrowRequest, ApprovedRequest, DeclinedRequest
+
 def review_request(request):
     borrow_requests = BorrowRequest.objects.filter(expires_at__gt=timezone.now())
-    context = {'borrow_requests': borrow_requests}
+    approved_requests = ApprovedRequest.objects.all()
+    declined_requests = DeclinedRequest.objects.all()
+    context = {
+        'borrow_requests': borrow_requests,
+        'approved_requests': approved_requests,
+        'declined_requests': declined_requests,
+    }
     return render(request, 'review_request.html', context)
 
 def approve_request(request, request_id):
-    # Get the BorrowRequest object
     borrow_request = get_object_or_404(BorrowRequest, id=request_id)
 
-    # Update the Books model to mark the book as borrowed
-    book = borrow_request.book
-    book.borrowed.add(borrow_request.requested_by)
-    book.save()
+    ApprovedRequest.objects.create(
+        book=borrow_request.book,
+        requested_by=borrow_request.requested_by,
+        requested_at=borrow_request.requested_at,
+    )
 
-    # Delete the BorrowRequest object
     borrow_request.delete()
 
     return redirect('review_request')
 
 def decline_request(request, request_id):
-    borrow_request = BorrowRequest.objects.get(pk=request_id)
-    # Logic for declining the request (e.g., delete the request)
+    borrow_request = get_object_or_404(BorrowRequest, id=request_id)
+
+    DeclinedRequest.objects.create(
+        book=borrow_request.book,
+        requested_by=borrow_request.requested_by,
+        requested_at=borrow_request.requested_at,
+    )
+
     borrow_request.delete()
+
     return redirect('review_request')
 
 def delete_expired_requests():
@@ -141,6 +157,37 @@ def logout_user(request):
     messages.success(request, "You were Logged Out!")
     url = reverse('login_user')
     return redirect(url)
+
+@login_required
+def borrow_requests_view(request):
+    borrow_requests = BorrowRequest.objects.all()
+    return render(request, 'borrow_requests.html', {'borrow_requests': borrow_requests})
+
+@login_required
+def approve_request_view(request, request_id):
+    borrow_request = get_object_or_404(BorrowRequest, id=request_id)
+    if request.method == 'POST':
+        ApprovedRequest.objects.create(
+            book=borrow_request.book,
+            requested_by=borrow_request.requested_by,
+            requested_at=borrow_request.requested_at
+        )
+        borrow_request.delete()
+        return redirect('borrow_requests')
+    return redirect('borrow_requests')
+
+@login_required
+def decline_request_view(request, request_id):
+    borrow_request = get_object_or_404(BorrowRequest, id=request_id)
+    if request.method == 'POST':
+        DeclinedRequest.objects.create(
+            book=borrow_request.book,
+            requested_by=borrow_request.requested_by,
+            requested_at=borrow_request.requested_at
+        )
+        borrow_request.delete()
+        return redirect('borrow_requests')
+    return redirect('borrow_requests')
 
 '''
 def restore_book(request, book_id):
