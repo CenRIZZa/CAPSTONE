@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from librarian.models import Books
-from userauth.models import Account
+from userauth.models import Account,Librarian
 # Create your views here.
 def adminPage(request):
 
@@ -55,12 +55,18 @@ def book_page_views(request):
     book_titles = [book.BookTitle for book in books]
     page_views = [book.PageViews for book in books]
 
+    Student_total = Account.objects.distinct().count()
+    lib_total = Librarian.objects.distinct().count()
+
+    user_total = Student_total + lib_total
+
     # Render the template with the necessary data
     return render(request, 'book_page_views.html', {
         'book_titles': book_titles, 
         'page_views': page_views, 
         'user_activities': user_activities, 
-        'distinct_users_count_this_month': distinct_users_count_this_month
+        'distinct_users_count_this_month': distinct_users_count_this_month,
+        'user_total':user_total
     })
 
 
