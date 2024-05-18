@@ -27,7 +27,7 @@ from django.db.models import Max
 
 def book_page_views(request):
     # Retrieve all books and sort them by page views in descending order
-    books = Books.objects.all().order_by('-PageViews')[:7]
+    books = Books.objects.all().order_by('-PageViews')[:10]
     
     # Get the most recent user activity for each user
     latest_user_activities = UserActivity.objects.filter(
