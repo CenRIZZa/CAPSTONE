@@ -16,17 +16,15 @@ from django.contrib import messages
 
 @login_required
 def upload_view(request):
-    form = BookForm()
-    
     if request.method == 'POST':
-        form = BookForm(request.POST)
+        form = BookForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('librarian')  # Redirect to a page showing the list of products
-    
-    # Retrieve all categories from the database
+            return redirect('librarian')
+    else:
+        form = BookForm()
+
     categories = Category.objects.all()
-    
     return render(request, 'main.html', {'form': form, 'categories': categories})
 
 
