@@ -12,6 +12,9 @@
         <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
         <h1 class="mt-4">Borrow Requests</h1>
         <hr>
+        
+        <!-- Pending Borrow Requests -->
+        <h2>Pending Requests</h2>
         {% if borrow_requests %}
         <table class="table">
             <thead>
@@ -89,6 +92,60 @@
         </table>
         {% else %}
         <p>No borrow requests at the moment.</p>
+        {% endif %}
+        
+        <!-- Approved Requests -->
+        <h2>Approved Requests</h2>
+        {% if approved_requests %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Requested By</th>
+                    <th>Requested At</th>
+                    <th>Approved At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in approved_requests %}
+                <tr>
+                    <td>{{ request.book }}</td>
+                    <td>{{ request.requested_by }}</td>
+                    <td>{{ request.requested_at }}</td>
+                    <td>{{ request.approved_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No approved requests at the moment.</p>
+        {% endif %}
+        
+        <!-- Declined Requests -->
+        <h2>Declined Requests</h2>
+        {% if declined_requests %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Requested By</th>
+                    <th>Requested At</th>
+                    <th>Declined At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in declined_requests %}
+                <tr>
+                    <td>{{ request.book }}</td>
+                    <td>{{ request.requested_by }}</td>
+                    <td>{{ request.requested_at }}</td>
+                    <td>{{ request.declined_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No declined requests at the moment.</p>
         {% endif %}
     </div>
     <!-- Bootstrap JS (jQuery must be included before this) -->

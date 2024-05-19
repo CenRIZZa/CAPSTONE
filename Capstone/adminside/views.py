@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from librarian.models import Books
-from userauth.models import Account
+from userauth.models import Account,Librarian
 # Create your views here.
 def adminPage(request):
 
@@ -23,11 +23,12 @@ def your_view(request):
 
 
 
-from django.db.models import Max
+from django.db.models import Max, Count
+from django.utils import timezone
 
 def book_page_views(request):
     # Retrieve all books and sort them by page views in descending order
-    books = Books.objects.all().order_by('-PageViews')[:7]
+    books = Books.objects.all().order_by('-PageViews')[:10]
     
     # Get the most recent user activity for each user
     latest_user_activities = UserActivity.objects.filter(
@@ -35,19 +36,41 @@ def book_page_views(request):
     ).values('user').annotate(
         latest_activity=Max('login_time')
     )
-
+    
     # Retrieve the user activities corresponding to the most recent login time
     user_activities = UserActivity.objects.filter(
         active=True,
         login_time__in=[activity['latest_activity'] for activity in latest_user_activities]
     )
+    
+    # Calculate the count of distinct users who logged in this month
+    current_month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    next_month_start = (current_month_start + timezone.timedelta(days=31)).replace(day=1)
+    distinct_users_count_this_month = UserActivity.objects.filter(
+        login_time__gte=current_month_start,
+        login_time__lt=next_month_start
+    ).values('user').distinct().count()
 
     # Extract book titles and page views
     book_titles = [book.BookTitle for book in books]
     page_views = [book.PageViews for book in books]
 
+    Student_total = Account.objects.distinct().count()
+    lib_total = Librarian.objects.distinct().count()
+
+    user_total = Student_total + lib_total
+
     # Render the template with the necessary data
-    return render(request, 'book_page_views.html', {'book_titles': book_titles, 'page_views': page_views, 'user_activities': user_activities})
+    return render(request, 'book_page_views.html', {
+        'book_titles': book_titles, 
+        'page_views': page_views, 
+        'user_activities': user_activities, 
+        'distinct_users_count_this_month': distinct_users_count_this_month,
+        'user_total':user_total
+    })
+
+
+
 
 
 
