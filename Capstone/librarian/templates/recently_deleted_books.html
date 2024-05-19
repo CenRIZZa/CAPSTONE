@@ -241,7 +241,11 @@
                     <td>{{ book.Author }}</td>
                     <td>{{ book.Description }}</td>
                     <td>{{ book.Date }}</td>
-                    <td>{{ book.Category }}</td>
+                    <td>
+                        {% for category in book.Category.all %}
+                            {{ category.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
                     <td>
                         {% if book.BookImage.url %}
                             <img src="{{ book.BookImage.url }}" alt="{{ book.BookTitle }}">
