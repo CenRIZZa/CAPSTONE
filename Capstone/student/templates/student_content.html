@@ -1,0 +1,229 @@
+{% extends 'student.html '%}
+
+{% block title %} Home {% endblock %}
+
+{% block nav %}
+
+<li class="active"><span class="material-symbols-outlined navbar-icon" alt="home">home</span><a href="{% url 'view' %}" class="navbar-desc">Home</a></li>
+<li><a href="{% url 'bookmark' %}" class="material-symbols-outlined bookmark navbar-icon" alt="bookmark">bookmark</a><a href="{% url 'bookmark' %}" class="navbar-desc">Bookmark</a></li>
+<li><span class="material-symbols-outlined navbar-icon" alt="help">help</span><a href="#" class="navbar-desc">Help</a></li>
+
+{% endblock %}
+
+
+{% block body %}
+
+{% load static %}
+<!--pop up-->
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Inside the form element -->
+        <form class="d-flex" action="{% url 'search_books' %}" method="GET">
+            <select class="form-select me-2" name="filter" aria-label="Search Filter">
+                <option value="title">Title</option>
+                <option value="author">Author</option>
+                <option value="category">Category</option>
+            </select>
+            <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
+            <!-- Removed the search icon button -->
+        </form>
+        <!-- Suggestions -->
+        <div id="suggestions" class="list-group position-absolute w-100 mt-1" style="display: none;">
+            <!-- Suggestions will be dynamically populated here -->
+            {% for suggestion in suggestions %}
+                <a href="{% url 'book_detail' suggestion.id %}" class="list-group-item list-group-item-action suggestion-link">{{ suggestion.title }}</a>
+            {% endfor %}
+        </div>
+        <br>
+        <br>
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFormats">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFormats" aria-expanded="true" aria-controls="collapseFormats">
+                        Formats
+                    </button>
+                </h2>
+                <div id="collapseFormats" class="accordion-collapse collapse show" aria-labelledby="headingFormats" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <ul class="list-group">
+                            <li class="list-group-item"><span class="material-symbols-outlined">
+                                menu_book</span>Ebook</li>
+                            <li class="list-group-item"><span class="material-symbols-outlined">
+                                article</span>Article</li>
+                            <li class="list-group-item"><span class="material-symbols-outlined">
+                                feed</span>Research Paper</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Author -->
+    <div class="accordion" id="accordionAuthor">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingAuthor">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAuthor" aria-expanded="true" aria-controls="collapseAuthor">
+                    Author
+                </button>
+            </h2>
+            <div id="collapseAuthor" class="accordion-collapse collapse show" aria-labelledby="headingAuthor" data-bs-parent="#accordionAuthor">
+                <div class="accordion-body">
+                    <ul class="list-group">
+                        {% for author in authors|slice:":3" %}
+                            <li class="list-group-item">
+                                <a href="{% url 'author_detail' author %}" class="d-flex align-items-center">
+                                    <span class="material-symbols-outlined me-2">face</span>{{ author }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                        <li class="list-group-item view-more">
+                            <a href="{% url 'author_list' %}">View More</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Date -->
+    <div class="accordion" id="accordionDate">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingDate">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDate" aria-expanded="true" aria-controls="collapseDate">
+                    Date
+                </button>
+            </h2>
+            <div id="collapseDate" class="accordion-collapse collapse show" aria-labelledby="headingDate" data-bs-parent="#accordionDate">
+                <div class="accordion-body">
+                    <ul class="list-group">
+                        {% for year in years|slice:":3" %}
+                            <li class="list-group-item">
+                                <a href="{% url 'date_detail' publication_date=year %}" class="d-flex align-items-center">
+                                    {{ year }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                        <li class="list-group-item view-more">
+                            <a href="{% url 'date_list' %}" class="d-flex align-items-center">View More</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>           
+</div>
+</div>
+
+    
+<!-- Carousel -->
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="{% static 'playground/sampleheader.webp'%}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'playground/sampleheader.webp'%}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'playground/sampleheader.webp'%}" class="d-block w-100" alt="...">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<!-- BODY -->
+
+
+<div class="search-bar-container">
+    <label for="search-bar"></label>
+    <input type="search" id="search-bar" name="search-bar" placeholder="Search..." class="search-content">
+    <span class="material-symbols-outlined search-icon" alt="search" id="search">search</span>
+</div>
+
+
+<!--first row-->
+{% for category, books in books_per_category.items %}
+    <div class="container-xl">
+        <div class="top-bar">
+            <h4 class="booklabels"><b>{{ category }}</b></h4>
+            <a href="#" class="books_view-more">View More</a>
+        </div>
+        <div class="owl-carousel owl-theme" id="book-carousel-{{ forloop.counter }}">
+            {% for item in books %}
+            <span class="special" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <div class="item">
+                    {% comment %} <a href="{% url 'book_detail' item.id %}" class="card-link"> {% endcomment %}
+                    <a class="card-link">
+                        <div class="card">
+                            <img src="{{ item.BookImage.url }}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.BookTitle }}</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+
+
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function() {
+        $('.owl-carousel').each(function() {
+            // Find the tallest item in the carousel
+            var maxHeight = 0;
+            $(this).find('.owl-item').each(function() {
+                var itemHeight = $(this).height();
+                if (itemHeight > maxHeight) {
+                    maxHeight = itemHeight;
+                }
+            });
+    
+            // Set all items to the tallest height
+            $(this).find('.owl-item').css('height', maxHeight + 'px');
+    
+            // Initialize the Owl Carousel
+            $(this).owlCarousel({
+                loop: false,
+                margin: 10,
+                nav: true,
+                responsive:{
+                    0:{
+                        items:1
+                    },
+                    600:{
+                        items:3
+                    },
+                    1000:{
+                        items:6
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

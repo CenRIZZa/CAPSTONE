@@ -181,6 +181,20 @@
             z-index: 1;
         }
         
+        @keyframes slideInSidebar {
+            from {
+                transform: translateX(-100%);
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                transform: translateY(100px);
+                opacity: 1;
+            }
+        }
+    
+        
     </style>
 </head>
 <body>
@@ -190,19 +204,12 @@
             <img src="{% static 'playground/school_Logo.png'%}" alt="Logo" height="80px" id="logo">
         </div>
         <div class="navbar-right">
-            <a href="{% url 'logout_user' %}" class="navbar-text">LOG OUT</a>
+            <span class="navbar-text">LOG OUT</span>
             <a href="{% url 'bookmark' %}" class="material-symbols-outlined navbar-icon" alt="bookmark">bookmark</a>
             <span class="material-symbols-outlined navbar-icon" alt="help">help</span>
             <span class="material-symbols-outlined navbar-icon" alt="search" id="search">search</span>
         </div>
     </header>
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p id="modalMessage">{{ borrow_message }}</p>
-        </div>
-    </div>
-    
     <!-- Your landing page content goes here -->
     <div class="container">
         <br>
@@ -243,8 +250,10 @@
                             <button id="openModalBtn" class="btn btn-secondary">Not Available for Borrow</button>
                         {% endif %}
                     </div>
-                    
-            </div>       
+                    <p><strong><b>Views:</strong> </b>{{ book.PageViews }}</p>
+                </div>
+            </div>
+            
             <!-- Additional content sections can be added here -->
         </section>
     </div>
@@ -342,7 +351,6 @@
     showModal();
     sessionStorage.setItem('modalShown', 'true');
 </script>
-
 </body>
 </html>
 {%endif%}

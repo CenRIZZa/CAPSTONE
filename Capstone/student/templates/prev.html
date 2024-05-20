@@ -1,6 +1,7 @@
-{% load custom_tags %}
+{% load custom_tags%}
 
 {% if user.is_authenticated and user|is_student %}
+    {% if user.is_authenticated and user|can_view_book:book %}
 {% load static %}
 
 
@@ -195,4 +196,5 @@
     </script>
 </body>
 </html>
+{%endif%}
 {%endif%}

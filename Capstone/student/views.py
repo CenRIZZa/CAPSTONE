@@ -17,55 +17,45 @@ def student(request):
                 books_per_category[category] = []
             books_per_category[category].append(book)
 
+    # Fetch all unique authors
     authors = Books.objects.values_list('Author', flat=True).distinct()
 
+    # Fetch distinct years
     years = Books.objects.values_list('Date__year', flat=True).distinct()
 
-    return render(request, 'student.html', {'books_per_category': books_per_category, 'authors': authors, 'years': years})
+    return render(request, 'student_content.html', {'books_per_category': books_per_category, 'authors': authors, 'years': years})
 
-def book_info(request, book_id):
-    book = Books.objects.get(pk=book_id)
-    return render(request, 'info.html', {'book': book})
 
 def author_list(request):
     authors = Books.objects.values_list('Author', flat=True).distinct()
     return render(request, 'author_list.html', {'authors': authors})
 
 def author_detail(request, author_name):
+    # Filter books by the author's name
     author_books = Books.objects.filter(Author=author_name)
-    return render(request, 'author.html', {'author_books': author_books, 'author_name': author_name})
+    return render(request, 'author_content.html', {'author_books': author_books, 'author_name': author_name})
 
 def date_list(request):
     years = Books.objects.dates('Date', 'year').order_by('-Date')
-    return render(request, 'date_list.html', {'years': years})
+    return render(request, 'date_detail.html', {'years': years})
 
 def date_detail(request, publication_date):
+    # Filter books by the publication date
     date_books = Books.objects.filter(Date__year=publication_date)
-    return render(request, 'date_detail.html', {'year_books': date_books, 'year': publication_date})
+    return render(request, 'book_year_content.html', {'year_books': date_books, 'year': publication_date})
 
 def list(request):
     years = Books.objects.dates('Date', 'year').order_by('-Date')
-    return render(request, 'list.html', {'years': years})
+    return render(request, 'book_year_content.html', {'years': years})
 
-from django.urls import reverse
+def author_detail(request, author_name):
+    # Filter books by the author's name
+    author_books = Books.objects.filter(Author=author_name)
+    return render(request, 'author_content.html', {'author_books': author_books, 'author': author_name})
 
-def borrow_request(request, book_id):
-    book = get_object_or_404(Books, pk=book_id)
-    user = request.user
-
-    borrow_requested = BorrowRequest.objects.filter(book=book, requested_by=user).exists()
-
-    if book.available and not borrow_requested:
-        BorrowRequest.objects.create(book=book, requested_by=user)
-        borrow_message = "Your request to borrow this book has been submitted."
-    elif borrow_requested:
-        borrow_message = "You have already requested to borrow this book."
-    else:
-        borrow_message = "This book is not available for borrowing."
-
-    # Pass borrow_message as a query parameter in the redirect
-    return redirect(reverse('book_detail', kwargs={'book_id': book_id}) + f"?borrow_message={borrow_message}")
-
+def book_info(request, book_id):
+    book = Books.objects.get(pk=book_id)
+    return render(request, 'info.html', {'book': book})
 
 def book_detail(request, book_id):
     book = get_object_or_404(Books, pk=book_id)
@@ -84,11 +74,10 @@ def book_detail(request, book_id):
 
     return render(request, 'info.html', context)
 
-
-
 def prev_file(request, book_id):
     book = get_object_or_404(Books, id=book_id)
-
+    
+    # Check if the file exists
     if not book.BookFile:
         return HttpResponseNotFound('File not found')
 
@@ -117,8 +106,9 @@ def search_suggestions(request):
 
 @login_required
 def bookmark(request):
+    # Filter books that are bookmarked by the current user
     bookmarked_books = Books.objects.filter(bookmarked_by=request.user)
-    return render(request, 'bookmark.html', {'all_books': bookmarked_books})
+    return render(request, 'bookmark_content.html', {'all_books': bookmarked_books})
 
 @login_required
 def bookmark_toggle(request):
@@ -127,6 +117,7 @@ def bookmark_toggle(request):
         book = Books.objects.get(pk=book_id)
         user = request.user
 
+        # Toggle the bookmarked status
         if user in book.bookmarked_by.all():
             book.bookmarked_by.remove(user)
             bookmarked = False
@@ -138,8 +129,26 @@ def bookmark_toggle(request):
     return JsonResponse({'error': 'Invalid request'})
 
 
+@login_required
+def borrow_request(request, book_id):
+    book = get_object_or_404(Books, pk=book_id)
+    user = request.user
+
+    borrow_requested = BorrowRequest.objects.filter(book=book, requested_by=user).exists()
+
+    if book.available and not borrow_requested:
+        BorrowRequest.objects.create(book=book, requested_by=user)
+        borrow_message = "Your request to borrow this book has been submitted."
+    elif borrow_requested:
+        borrow_message = "You have already requested to borrow this book."
+    else:
+        borrow_message = "This book is not available for borrowing."
+
+    # Pass borrow_message as a query parameter in the redirect
+    return redirect(reverse('book_detail', kwargs={'book_id': book_id}) + f"?borrow_message={borrow_message}")
+
 def logout_user(request):
     logout(request)
-    messages.success(request, "You were Logged Out!")
+    messages.success(request, ("You were Logged Out!"))
     url = reverse('login_user')
-    return redirect(url)
+    return redirect (url)
