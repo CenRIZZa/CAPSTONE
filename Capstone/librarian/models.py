@@ -53,7 +53,8 @@ class BorrowRequest(models.Model):
     requested_by = models.ForeignKey(User, on_delete=models.CASCADE)
     requested_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(default=timezone.now() + timedelta(days=3))
-
+    status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'), ('Expired', 'Expired')], default='Pending')
+    
     def is_expired(self):
         return timezone.now() > self.expires_at
 

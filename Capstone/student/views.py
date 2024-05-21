@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from librarian.models import Books, BorrowRequest
+from librarian.models import Books, BorrowRequest, ApprovedRequest, DeclinedRequest
 from django.urls import reverse
 from django.db.models import Count, F
 
@@ -144,15 +144,32 @@ def borrow_request(request, book_id):
 
     if book.available and not borrow_requested:
         BorrowRequest.objects.create(book=book, requested_by=user)
-        borrow_message = "Your request to borrow this book has been submitted."
+        messages.success(request, "Your request to borrow this book has been submitted.")
     elif borrow_requested:
-        borrow_message = "You have already requested to borrow this book."
+        messages.info(request, "You have already requested to borrow this book.")
     else:
-        borrow_message = "This book is not available for borrowing."
+        messages.error(request, "This book is not available for borrowing.")
 
-    # Pass borrow_message as a query parameter in the redirect
-    return redirect(reverse('book_detail', kwargs={'book_id': book_id}) + f"?borrow_message={borrow_message}")
+    return redirect(reverse('view'))
 
+@login_required
+def request_history_view(request):
+    pending_requests = BorrowRequest.objects.filter(requested_by=request.user)
+    for request_obj in pending_requests:
+        if request_obj.is_expired() and request_obj.status != 'Expired':
+            request_obj.status = 'Expired'
+            request_obj.save()
+
+    approved_requests = ApprovedRequest.objects.filter(requested_by=request.user)
+    declined_requests = DeclinedRequest.objects.filter(requested_by=request.user)
+
+    context = {
+        'pending_requests': pending_requests,
+        'approved_requests': approved_requests,
+        'declined_requests': declined_requests,
+    }
+
+    return render(request, 'requesthistory.html', context)
 def logout_user(request):
     logout(request)
     messages.success(request, ("You were Logged Out!"))

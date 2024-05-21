@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 #from .forms import RestoreBookForm
 from .forms import BookForm
@@ -68,6 +68,18 @@ def decline_request(request, request_id):
     borrow_request.delete()
 
     return redirect('review_request')
+
+@login_required
+def delete_approved_request(request, request_id):
+    approved_request = get_object_or_404(ApprovedRequest, id=request_id)
+    approved_request.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('review_request')))
+
+@login_required
+def delete_declined_request(request, request_id):
+    declined_request = get_object_or_404(DeclinedRequest, id=request_id)
+    declined_request.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('review_request')))
 
 def delete_expired_requests():
     expired_requests = BorrowRequest.objects.filter(expires_at__lt=timezone.now())

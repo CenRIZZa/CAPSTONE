@@ -89,9 +89,10 @@
 
 {% block nav %}
 
-<li><span class="material-symbols-outlined navbar-icon" alt="home">home</span><a href="{% url 'view' %}" class="navbar-desc">Home</a></li>
-<li class="active"><a href="{% url 'bookmark' %}" class="material-symbols-outlined bookmark navbar-icon" alt="bookmark">bookmark</a><a href="{% url 'bookmark' %}" class="navbar-desc">Bookmark</a></li>
+<li class="active"><span class="material-symbols-outlined navbar-icon" alt="home">home</span><a href="{% url 'view' %}" class="navbar-desc">Home</a></li>
+<li><a href="{% url 'bookmark' %}" class="material-symbols-outlined bookmark navbar-icon" alt="bookmark">bookmark</a><a href="{% url 'bookmark' %}" class="navbar-desc">Bookmark</a></li>
 <li><span class="material-symbols-outlined navbar-icon" alt="help">help</span><a href="#" class="navbar-desc">Help</a></li>
+<li><span class="material-symbols-outlined navbar-icon" alt="request">request_page</span><a href="{% url 'request_history' %}" class="navbar-desc">Request History</a></li>
 
 {% endblock %}
 

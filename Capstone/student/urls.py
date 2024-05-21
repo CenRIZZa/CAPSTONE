@@ -20,6 +20,7 @@ urlpatterns = [
     path('date/', views.date_list, name='date_list'),
     path('borrow-request/<int:book_id>/', views.borrow_request, name='borrow_request'),
     path('student/book-detail/<int:book_id>/', views.book_detail, name='book_detail'),
+    path('request-history/', views.request_history_view, name='request_history'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

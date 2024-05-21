@@ -17,6 +17,8 @@ urlpatterns = [
     path('review-request/', views.review_request, name='review_request'),
     path('borrow-requests/approve/<int:request_id>/', views.approve_request, name='approve_request'),
     path('borrow-requests/decline/<int:request_id>/', views.decline_request, name='decline_request'),
+    path('delete-approved-request/<int:request_id>/', views.delete_approved_request, name='delete_approved_request'),
+    path('delete-declined-request/<int:request_id>/', views.delete_declined_request, name='delete_declined_request'),
 
     #path('librarian/restore_book/<int:book_id>/', views.restore_book, name='restore_book'),
 

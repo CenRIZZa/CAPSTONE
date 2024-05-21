@@ -7,6 +7,7 @@
 <li class="active"><span class="material-symbols-outlined navbar-icon" alt="home">home</span><a href="{% url 'view' %}" class="navbar-desc">Home</a></li>
 <li><a href="{% url 'bookmark' %}" class="material-symbols-outlined bookmark navbar-icon" alt="bookmark">bookmark</a><a href="{% url 'bookmark' %}" class="navbar-desc">Bookmark</a></li>
 <li><span class="material-symbols-outlined navbar-icon" alt="help">help</span><a href="#" class="navbar-desc">Help</a></li>
+<li><span class="material-symbols-outlined navbar-icon" alt="request">request_page</span><a href="{% url 'request_history' %}" class="navbar-desc">Request History</a></li>
 
 {% endblock %}
 
@@ -67,26 +68,26 @@
               data-image="{{ item.BookImage.url }}"
               data-views="{{ item.PageViews }}"
               data-id="{{ item.id }}"
-              data-available="{{ item.available }}">
+              data-available="{{ item.available|yesno:"true,false" }}">
             <div class="item">
-                <div class="card">
-                    <img src="{{ item.BookImage.url }}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ item.BookTitle }}</h5>
+                <a class="card-link">
+                    <div class="card">
+                        <img src="{{ item.BookImage.url }}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.BookTitle }}</h5>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         </span>
         {% endfor %}
     </div>
 </div>
 
-
 {% for category, books in books_per_category.items %}
     <div class="container-xl">
         <div class="top-bar">
             <h4 class="booklabels"><b>{{ category }}</b></h4>
-            <a href="{% url 'book_detail' book_id=0 %}" class="books_view-more">View More</a>
         </div>
         <div class="owl-carousel owl-theme" id="book-carousel-{{ forloop.counter }}">
             {% for item in books %}
@@ -100,7 +101,7 @@
                   data-image="{{ item.BookImage.url }}"
                   data-views="{{ item.PageViews }}"
                   data-id="{{ item.id }}"
-                  data-available="{{ item.available }}">
+                  data-available="{{ item.available|yesno:"true,false" }}">
                 <div class="item">
                     <a class="card-link">
                         <div class="card">
@@ -131,13 +132,15 @@
                     <div class="book-details">
                         <h1 id="modal-book-title"></h1>
                         <a href="#" id="modal-book-author"></a>
-                        <p id="modal-book-description"></p>
                         <p><strong>Date:</strong> <span id="modal-book-date"></span></p>
                         <p><strong>Category:</strong> <span id="modal-book-category"></span></p>
                         <p><strong>Language:</strong> <span id="modal-book-language"></span></p>
                         <p><strong>Views:</strong> <span id="modal-book-views"></span></p>
                         <div class="buttons">
                             <a href="#" id="modal-view-more-link" class="btn btn-primary">View More</a>
+                            <a href="#" id="modal-borrow-link" class="btn btn-success">Borrow</a>
+                            <a href="#" id="modal-preview-link" class="btn btn-info">Preview</a>
+                            <a href="#" id="modal-bookmark-link" class="btn btn-warning">Bookmark</a>
                         </div>
                     </div>
                 </div>
@@ -145,6 +148,34 @@
         </div>
     </div>
 </div>
+
+<!-- Borrow Message Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    {% if messages %}
+    <div id="borrowMessageToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Request Sent</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastEl = document.getElementById('borrowMessageToast');
+        if (toastEl) {
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    });
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var bookDetailModal = document.getElementById('bookDetailModal');
@@ -153,40 +184,43 @@
             var button = event.relatedTarget;
             var title = button.getAttribute('data-title');
             var author = button.getAttribute('data-author');
-            var description = button.getAttribute('data-description');
             var date = button.getAttribute('data-date');
             var category = button.getAttribute('data-category');
             var language = button.getAttribute('data-language');
             var image = button.getAttribute('data-image');
             var views = button.getAttribute('data-views');
             var bookId = button.getAttribute('data-id');
-            var available = button.getAttribute('data-available');
+            var available = button.getAttribute('data-available') === 'true';
 
             var modalTitle = bookDetailModal.querySelector('.modal-title');
             var modalImage = bookDetailModal.querySelector('#modal-book-image');
             var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
             var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
-            var modalBookDescription = bookDetailModal.querySelector('#modal-book-description');
             var modalBookDate = bookDetailModal.querySelector('#modal-book-date');
             var modalBookCategory = bookDetailModal.querySelector('#modal-book-category');
             var modalBookLanguage = bookDetailModal.querySelector('#modal-book-language');
             var modalBookViews = bookDetailModal.querySelector('#modal-book-views');
             var modalViewMoreLink = bookDetailModal.querySelector('#modal-view-more-link');
+            var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
+            var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
+            var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
 
             modalTitle.textContent = title;
             modalImage.src = image;
             modalBookTitle.textContent = title;
             modalBookAuthor.textContent = author;
-            modalBookDescription.textContent = description;
             modalBookDate.textContent = date;
             modalBookCategory.textContent = category;
             modalBookLanguage.textContent = language;
             modalBookViews.textContent = views;
             modalViewMoreLink.href = `/student/book-detail/${bookId}/`;
+            modalPreviewLink.href = `/student/preview/${bookId}/`;
+            modalBookmarkLink.href = "{% url 'bookmark' %}";
+            modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
+            modalBorrowLink.classList.toggle('disabled', !available);
         });
     });
 </script>
-
 
 {% endblock %}
 
