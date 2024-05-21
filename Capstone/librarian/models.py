@@ -57,6 +57,9 @@ class BorrowRequest(models.Model):
     def is_expired(self):
         return timezone.now() > self.expires_at
 
+
+
+
 class ApprovedRequest(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
     requested_by = models.ForeignKey(User, on_delete=models.CASCADE)
