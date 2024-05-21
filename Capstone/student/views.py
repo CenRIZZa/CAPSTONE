@@ -9,6 +9,7 @@ from django.db.models import Count, F
 
 def student(request):
     all_books = Books.objects.all()
+    top_viewed_books = Books.objects.all().order_by('-PageViews')[:7]
 
     books_per_category = {}
     for book in all_books:
@@ -23,8 +24,12 @@ def student(request):
     # Fetch distinct years
     years = Books.objects.values_list('Date__year', flat=True).distinct()
 
-    return render(request, 'student_content.html', {'books_per_category': books_per_category, 'authors': authors, 'years': years})
-
+    return render(request, 'student_content.html', {
+        'books_per_category': books_per_category,
+        'authors': authors,
+        'years': years,
+        'top_viewed_books': top_viewed_books,
+    })
 
 def author_list(request):
     authors = Books.objects.values_list('Author', flat=True).distinct()
@@ -85,6 +90,7 @@ def prev_file(request, book_id):
         'book': book,
     }
     return render(request, 'prev.html', context)
+
 
 def search_suggestions(request):
     filter_by = request.GET.get('filter')

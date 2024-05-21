@@ -4,9 +4,8 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static 
 
-
 urlpatterns = [
-    path('student',views.student, name="view"),
+    path('student/', views.student, name="view"),
     path('preview/<int:book_id>/', views.prev_file, name='prev_file'),
     path('book-detail/<int:book_id>/', views.book_detail, name='book_detail'),
     path('search_suggestions/', views.search_suggestions, name='search_suggestions'),
@@ -21,8 +20,6 @@ urlpatterns = [
     path('date/', views.date_list, name='date_list'),
     path('borrow-request/<int:book_id>/', views.borrow_request, name='borrow_request'),
     path('student/book-detail/<int:book_id>/', views.book_detail, name='book_detail'),
-    
-
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
