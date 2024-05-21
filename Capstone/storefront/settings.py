@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'librarian',
     'student',
     'adminside',
+    'stud_app',
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
