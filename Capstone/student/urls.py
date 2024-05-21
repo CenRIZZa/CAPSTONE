@@ -20,6 +20,7 @@ urlpatterns = [
     path('author_detail/<str:author_name>/', views.author_detail, name='author_detail'),
     path('date/', views.date_list, name='date_list'),
     path('borrow-request/<int:book_id>/', views.borrow_request, name='borrow_request'),
+    path('student/book-detail/<int:book_id>/', views.book_detail, name='book_detail'),
     
 
     
