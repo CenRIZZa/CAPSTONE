@@ -57,7 +57,7 @@ def book_page_views(request):
 
     Student_total = Account.objects.distinct().count()
     lib_total = Librarian.objects.distinct().count()
-
+    user_logs = UserActivity.objects.all()
     user_total = Student_total + lib_total
 
     # Render the template with the necessary data
@@ -66,7 +66,8 @@ def book_page_views(request):
         'page_views': page_views, 
         'user_activities': user_activities, 
         'distinct_users_count_this_month': distinct_users_count_this_month,
-        'user_total':user_total
+        'user_total':user_total,
+        'user_logs':user_logs,
     })
 
 
