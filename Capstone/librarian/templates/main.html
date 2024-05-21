@@ -12,7 +12,20 @@
     <title>Librarian</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    
+        
+        
+        
+        
+        
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
@@ -29,7 +42,6 @@
         }
 
         .navbar-nav .nav-item .nav-link {
-            color: #333;
             font-weight: bold;
         }
 
@@ -175,9 +187,6 @@
             transition: background-color 0.3s;
         }
         
-        .sidebar .nav-link:hover {
-            background-color: #f8f9fa;
-        }
         
         .sidebar .nav-link i {
             margin-right: 0.5rem;
@@ -201,9 +210,10 @@
             z-index: 100;
             padding-top: 4rem;
             width: 250px;
-            background-color: #ffffff;
+            background-color: rgb(74, 128, 210);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: margin-left 0.5s;
+            color: white;
         }
         
         .sidebar-sticky {
@@ -219,14 +229,10 @@
         
         .sidebar .nav-link {
             padding: 0.5rem 1rem;
-            color: #333;
+            color: white;
             font-weight: bold;
             text-decoration: none;
             transition: background-color 0.3s;
-        }
-        
-        .sidebar .nav-link:hover {
-            background-color: #f8f9fa;
         }
         
         .sidebar .nav-link i {
@@ -249,7 +255,52 @@
                 padding: 1rem;
             }
         }
+
+
+        .logout{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 230%;
+            padding: 10px 0;
+        }
+        .logout:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+        .logo{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .navbar-text{
+            color:white;
+            font-weight: bold;
+        }
+        .navbar-text:hover{
+            color: white;
+            text-decoration: none;
+        }
+        .nav-item{
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .nav-item:hover{
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-link{
+            display: flex;
+            align-items: center;
+        }
+        .buttons{
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
+    {% block style %}{% endblock %}
 </head>
 <body>
     <div class="container-fluid">
@@ -281,6 +332,8 @@
                     </ul>
                 </div>
             </nav>
+            {% comment %} {% block navbar %}
+            {% endblock %} {% endcomment %}
             
         <!-- Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -474,6 +527,11 @@
     </tbody>
     </table>
     </div>
+
+    <div id="recent-delete" class="content" >
+        {% block content %}
+        {% endblock%}
+    </div>
                 
 </main>
 
@@ -565,6 +623,7 @@
             });
         }        
     </script>
+    {% block script %}{% endblock %}
 </body>
 </html>
 {%endif%}

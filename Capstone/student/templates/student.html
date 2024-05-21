@@ -110,7 +110,8 @@
     }
     .sidebar-nav li{
         width: 100%;
-        padding: 10px 40px;
+        padding: 20px 0px;
+        padding-left: 40px;
         color: white;
     }
     .bookmark{
@@ -144,11 +145,13 @@
     .navbar-text{
         font-weight: bold;
     }
+    .navbar-icon{
+        padding-right: 3px;
+    }
     .navbar-text, .navbar-icon{
         text-decoration: none;
         transition: color 0.3s;
         vertical-align: middle;
-        padding: 10px 0;
     }
     .navbar-text:hover, .bookmark:hover, .navbar-icon:hover{
         color: lightgray;
@@ -157,6 +160,7 @@
     .navbar-desc{
         color: white;
         font-weight: bold;
+        width: 100%;
     }
     .sidebar-nav li:hover {
         background-color: rgba(255, 255, 255, 0.1);
@@ -185,7 +189,7 @@
         margin-top: 4%;
         margin-bottom: 2.5%;
         width: 100%;
-        animation: fadeInCarousel 1s ease forwards;
+        animation: fadeInCarousel 1s ease;
     }
     .carousel-item {
         transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -309,37 +313,23 @@
         from {
             transform: translateX(-100%);
             transform: translateY(100px);
-            opacity: 0;
         }
         to {
             transform: translateX(0);
             transform: translateY(100px);
-            opacity: 1;
         }
     }
 
 
 
-    /* Define fade-in animation for header */
-    @keyframes fadeInHeader {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-
-
-    @keyframes resizeContainer {
+    {% comment %} @keyframes resizeContainer {
         from {
             grid-template-columns: 0px 1fr; /* Start with sidebar closed */
         }
         to {
             grid-template-columns: 250px 1fr; /* End with sidebar open */
         }
-    }
-
+    } {% endcomment %}
 </style>
 
 {% block style %}
@@ -453,26 +443,6 @@
                 });
             });
         });
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var offcanvasElement = document.getElementById('offcanvasScrolling');
-            var sideBarElement = document.querySelector('.side-bar');
-            var mainContainer = document.getElementById('main-container'); // Select the main container
-            
-            // Add event listener to the offcanvas element
-            offcanvasElement.addEventListener('hidden.bs.offcanvas', function() {
-                sideBarElement.classList.remove('show');
-                mainContainer.classList.remove('with-sidebar');
-            });
-            
-            // Add event listener to the offcanvas element
-            offcanvasElement.addEventListener('show.bs.offcanvas', function() {
-                sideBarElement.classList.add('show');
-                mainContainer.classList.add('with-sidebar');
-            });
-        });
-
         
     </script>
     {% block script %} 
