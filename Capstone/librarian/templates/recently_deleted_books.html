@@ -1,11 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recently Deleted Books</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+{% extends "main.html" %}
+
+{% block navbar%}
+
+<nav class="col-md-2 d-none d-md-block sidebar">
+    <div class="sidebar-sticky">
+        <!-- Sidebar content goes here -->
+        <h5 class="text-center">Librarian</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#home" onclick="showContent('home')">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#upload" onclick="showContent('upload')">Upload</a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'librarian' %}" onclick="showContent('books')">Books</a>
+            </li>
+            <li class ="nav-item">
+                <a href="{% url 'recently_deleted_books' %}" class="btn btn-secondary">View Recently Deleted Books</a>
+            </li>
+            <li class ="nav-item">
+                <a href="{% url 'review_request' %}" class="btn btn-secondary">Borrow Requests</a>
+            </li>
+            <li>
+                <a href="{% url 'logout_user' %}" class="btn btn-secondary">LOG OUT</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+{% endblock %}
+
+{% block style %} 
     <style>
         body {
             background-color: #f8f9fa;
@@ -206,17 +232,17 @@
         }
         .buttons{
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
+            padding: 10px 10px;
         }
     </style>
-</head>
-<body>
-    
-    <div class="container">
+{% endblock %}
+
+{% block content %}    
         <h1 class="mt-4">Recently Deleted Books</h1>
         <hr>
         <div class="buttons">
-            <a href="{% url 'librarian' %}" class="btn btn-primary mb-4">Back</a>
+            
             <form id="deleteAllForm" method="post" action="{% url 'delete_all_recently_deleted_books' %}">
                 {% csrf_token %}
                 <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete All</button>
@@ -265,7 +291,9 @@
             </tbody>
         </table>
         
-    </div>
+{% endblock %}
+
+{% block script %}
     <script>
         function confirmDelete() {
             if (confirm("Are you sure you want to delete all books?")) {
@@ -289,5 +317,5 @@
 
         
     </script>
-</body>
-</html>
+{% endblock %}
+
