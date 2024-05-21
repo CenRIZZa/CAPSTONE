@@ -41,15 +41,16 @@
             width: 100%;
         }
         .navbar {
-            margin-left: 250px;
-            width: calc(100% - 250px);
+            width: 100%;
+            padding-right: 0;
+            padding-left: 0;
         }
         .card {
             margin-bottom: 20px;
         }
         .chart-container {
             position: relative;
-            height: 400px;
+            height: 700px;
         }
     </style>
 </head>
@@ -58,9 +59,9 @@
     <div id="sidebar-wrapper">
         <div class="sidebar-heading">Dashboard</div>
         <div class="list-group list-group-flush">
-            <a href="#" class="list-group-item list-group-item-action">Overview</a>
-            <a href="#" class="list-group-item list-group-item-action">Active</a>
-            <a href="#" class="list-group-item list-group-item-action">Analytics</a>
+            <a href="#" class="list-group-item list-group-item-action" id="overview-link">Overview</a>
+            <a href="#" class="list-group-item list-group-item-action" id="active-link">Active</a>
+            <a href="#" class="list-group-item list-group-item-action" id="analytics-link">Analytics</a>
         </div>
     </div>
     <!-- /Sidebar -->
@@ -70,7 +71,7 @@
         <!-- Top Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Dashboard</a>
+                <a class="navbar-brand" href="#"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -86,78 +87,123 @@
                 </div>
             </div>
         </nav>
-
-        <!-- Metrics Cards -->
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card text-white bg-success">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Users</h5>
-                        <p class="card-text">{{user_total }}</p>
+        <br>
+        <!-- Overview Section -->
+        <div id="overview-section">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Users</h5>
+                            <p class="card-text">{{ user_total }}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-warning">
-                    <div class="card-body">
-                        <h5 class="card-title">Users This Month</h5>
-                        <!-- Display the count of distinct user activities -->
-                        <p class="card-text">{{distinct_users_count_this_month }}</p>
-                    </div>
-                </div>
-            </div>
-            
-
-        <!-- Charts and Tables -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Book Page Views</h5>
-                        <div class="chart-container">
-                            <canvas id="pageViewsChart"></canvas>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">Users This Month</h5>
+                            <p class="card-text">{{ distinct_users_count_this_month }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Active Users</h5>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Login Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for activity in user_activities %}
-                                <tr>
-                                    <td>{{ activity.user.username }}</td>
-                                    <td>{{ activity.login_time }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="3">No user activities</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Book Page Views</h5>
+                            <div class="chart-container" >
+                                <canvas id="pageViewsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Active Users</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Login Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for activity in user_activities %}
+                                    <tr>
+                                        <td>{{ activity.user.username }}</td>
+                                        <td>{{ activity.login_time }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="3">No user activities</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Placeholder for other sections -->
+        <div id="active-section" style="display: none;">
+            <h2>Active Section Content</h2>
+        </div>
+        <div id="analytics-section" style="display: none;">
+            <h2>Analytics Section Content</h2>
+        </div>
     </div>
     <!-- /Page Content -->
 
-    <!-- Script to create Chart.js pie chart -->
+    <!-- Script to manage content display -->
     <script>
-        // Get data for the chart from Django template context
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to show the overview content
+            function showOverview() {
+                document.getElementById('overview-section').style.display = 'block';
+                document.getElementById('active-section').style.display = 'none';
+                document.getElementById('analytics-section').style.display = 'none';
+            }
+
+            // Function to show the active content
+            function showActive() {
+                document.getElementById('overview-section').style.display = 'none';
+                document.getElementById('active-section').style.display = 'block';
+                document.getElementById('analytics-section').style.display = 'none';
+            }
+
+            // Function to show the analytics content
+            function showAnalytics() {
+                document.getElementById('overview-section').style.display = 'none';
+                document.getElementById('active-section').style.display = 'none';
+                document.getElementById('analytics-section').style.display = 'block';
+            }
+
+            // Show the overview content by default
+            showOverview();
+
+            // Add click event listeners to sidebar links
+            document.getElementById('overview-link').addEventListener('click', function () {
+                showOverview();
+            });
+
+            document.getElementById('active-link').addEventListener('click', function () {
+                showActive();
+            });
+
+            document.getElementById('analytics-link').addEventListener('click', function () {
+                showAnalytics();
+            });
+        });
+
+        // Chart.js configuration
         const bookTitles = {{ book_titles|safe }};
         const pageViews = {{ page_views|safe }};
 
-        // Create pie chart
         var ctx = document.getElementById('pageViewsChart').getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'pie',
