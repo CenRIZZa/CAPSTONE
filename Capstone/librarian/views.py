@@ -135,6 +135,16 @@ def delete_all_recently_deleted_books(request):
         recently_deleted_books.delete()
     return redirect('recently_deleted_books')
 
+def delete_recently_deleted_books(request, book_id):
+    if request.method == 'POST':
+        book = get_object_or_404(Books, id=book_id)
+        if book.BookFile:
+            book.BookFile.delete(save=False)
+        if book.BookImage:
+            book.BookImage.delete(save=False)
+        book.delete()
+    return redirect('recently_deleted_books')
+
 @login_required
 def toggle_availability(request, book_id):
     book = Books.objects.get(id=book_id)
@@ -177,13 +187,9 @@ def decline_request_view(request, request_id):
         borrow_request.delete()
         return redirect('borrow_requests')
     return redirect('borrow_requests')
-<<<<<<< HEAD
-=======
 
->>>>>>> ae1934ec34b54a22bf23e069cfa7182af6753dda
-
-
-
+def go_back(request):
+    return redirect('main') 
 
 '''
 def restore_book(request, book_id):
@@ -251,7 +257,3 @@ def delete_all_recently_deleted_books(request):
         return redirect('recently_deleted_books')  # Redirect to the recently_deleted_books page after deletion
     return render(request, 'recently_deleted_books.html')
 '''
-<<<<<<< HEAD
-=======
-
->>>>>>> ae1934ec34b54a22bf23e069cfa7182af6753dda
