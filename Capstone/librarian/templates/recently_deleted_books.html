@@ -4,30 +4,30 @@
 
 <nav class="col-md-2 d-none d-md-block sidebar">
     <div class="sidebar-sticky">
-        <!-- Sidebar content goes here -->
         <h5 class="text-center">Librarian</h5>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="#home" onclick="showContent('home')">Home</a>
+                <a class="nav-link" href="{% url 'librarian' %}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#upload" onclick="showContent('upload')">Upload</a>
+                <a class="nav-link" href="{% url 'upload_view' %}">Upload</a>
             </li>
             <li class="nav-item">
-                <a href="{% url 'librarian' %}" onclick="showContent('books')">Books</a>
+                <a class="nav-link" href="{% url 'librarian1' %}#books">Books</a>
             </li>
-            <li class ="nav-item">
-                <a href="{% url 'recently_deleted_books' %}" class="btn btn-secondary">View Recently Deleted Books</a>
+            <li class="nav-item">
+                <a class="btn btn-secondary" href="{% url 'recently_deleted_books' %}">View Recently Deleted Books</a>
             </li>
-            <li class ="nav-item">
-                <a href="{% url 'review_request' %}" class="btn btn-secondary">Borrow Requests</a>
+            <li class="nav-item">
+                <a class="btn btn-secondary" href="{% url 'review_request' %}">Borrow Requests</a>
             </li>
-            <li>
-                <a href="{% url 'logout_user' %}" class="btn btn-secondary">LOG OUT</a>
+            <li class="nav-item">
+                <a class="btn btn-secondary" href="{% url 'logout_user' %}">LOG OUT</a>
             </li>
         </ul>
     </div>
 </nav>
+
 
 {% endblock %}
 
@@ -290,6 +290,9 @@
                 {% endfor %}
             </tbody>
         </table>
+
+
+        
         
 {% endblock %}
 

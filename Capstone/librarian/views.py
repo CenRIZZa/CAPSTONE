@@ -199,6 +199,9 @@ def decline_request_view(request, request_id):
         return redirect('borrow_requests')
     return redirect('borrow_requests')
 
+
+
+
 '''
 def restore_book(request, book_id):
     book = Books.objects.get(pk=book_id)
