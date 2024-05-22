@@ -117,13 +117,18 @@ def bookmark(request):
     return render(request, 'bookmark_content.html', {'all_books': bookmarked_books})
 
 @login_required
+def bookmark_status(request, book_id):
+    book = get_object_or_404(Books, pk=book_id)
+    bookmarked = request.user in book.bookmarked_by.all()
+    return JsonResponse({'bookmarked': bookmarked})
+
+@login_required
 def bookmark_toggle(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         book_id = request.POST.get('book_id')
-        book = Books.objects.get(pk=book_id)
+        book = get_object_or_404(Books, pk=book_id)
         user = request.user
 
-        # Toggle the bookmarked status
         if user in book.bookmarked_by.all():
             book.bookmarked_by.remove(user)
             bookmarked = False
@@ -133,7 +138,6 @@ def bookmark_toggle(request):
 
         return JsonResponse({'bookmarked': bookmarked})
     return JsonResponse({'error': 'Invalid request'})
-
 
 @login_required
 def borrow_request(request, book_id):
