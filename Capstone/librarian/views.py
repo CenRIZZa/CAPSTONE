@@ -177,6 +177,10 @@ def decline_request_view(request, request_id):
         borrow_request.delete()
         return redirect('borrow_requests')
     return redirect('borrow_requests')
+<<<<<<< HEAD
+=======
+
+>>>>>>> ae1934ec34b54a22bf23e069cfa7182af6753dda
 
 
 
@@ -247,3 +251,7 @@ def delete_all_recently_deleted_books(request):
         return redirect('recently_deleted_books')  # Redirect to the recently_deleted_books page after deletion
     return render(request, 'recently_deleted_books.html')
 '''
+<<<<<<< HEAD
+=======
+
+>>>>>>> ae1934ec34b54a22bf23e069cfa7182af6753dda
