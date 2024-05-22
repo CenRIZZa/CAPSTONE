@@ -177,3 +177,76 @@ def decline_request_view(request, request_id):
         borrow_request.delete()
         return redirect('borrow_requests')
     return redirect('borrow_requests')
+<<<<<<< HEAD
+=======
+
+
+
+
+'''
+def restore_book(request, book_id):
+    book = Books.objects.get(pk=book_id)
+    book.deleted_at = None
+    book.save()
+    return redirect('librarian')
+'''
+
+'''
+#taga display sa recnelty deleted
+def recently_deleted_books(request):
+    recently_deleted = RecentlyDeletedBooks.objects.all()
+    return render(request, 'recently_deleted_books.html', {'recently_deleted': recently_deleted})
+
+
+#pang librarian
+def delete_book(request, book_id):
+    book = Books.objects.get(pk=book_id)
+    book.move_to_recently_deleted()
+    book.save()
+    return redirect('librarian')
+
+def delete_all_books(request):
+    if request.method == 'POST':
+        # Process form submission
+        for book in Books.objects.all():
+            book.move_to_recently_deleted()
+        return redirect('librarian')  # Redirect to the home page after deletion
+    return render(request, 'main.html')  # Render the main.html template
+
+def restore_book(request, book_id):
+    if request.method == 'POST':
+        # Restore the book
+        book = RecentlyDeletedBooks.objects.get(pk=book_id)
+        book.restore()
+        book.save()
+    return redirect('recently_deleted_books')
+
+
+def delete_all_recently_deleted_books(request):
+    if request.method == 'POST':
+        # Process form submission
+        for book in RecentlyDeletedBooks.objects.all():
+            # Delete associated files
+            if book.BookImage:
+                image_path = book.BookImage.path
+                if os.path.isfile(image_path):
+                    new_image_path = os.path.join(settings.MEDIA_ROOT, 'deleted_books', 'images', os.path.basename(image_path))
+                    try:
+                        os.rename(image_path, new_image_path)
+                    except FileExistsError:
+                        # File already exists in destination, do nothing
+                        pass
+            if book.BookFile:
+                file_path = book.BookFile.path
+                if os.path.isfile(file_path):
+                    new_file_path = os.path.join(settings.MEDIA_ROOT, 'deleted_books', 'files', os.path.basename(file_path))
+                    try:
+                        os.rename(file_path, new_file_path)
+                    except FileExistsError:
+                        # File already exists in destination, do nothing
+                        pass
+            book.delete()
+        return redirect('recently_deleted_books')  # Redirect to the recently_deleted_books page after deletion
+    return render(request, 'recently_deleted_books.html')
+'''
+>>>>>>> c582a3d3153979f4fe08312059015ab3a34927ce

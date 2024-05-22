@@ -1,5 +1,6 @@
 {% extends "main.html" %}
 
+<<<<<<< HEAD
 {% block content %}
 <div id="recently-deleted-books" class="content" style="display: block;">
     <h1 class="mt-4">Recently Deleted Books</h1>
@@ -24,6 +25,270 @@
         </thead>
         <tbody id="recently_deleted">
             {% for book in recently_deleted_books %}
+=======
+{% block navbar%}
+
+<nav class="col-md-2 d-none d-md-block sidebar">
+    <div class="sidebar-sticky">
+        <h5 class="text-center">Librarian</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'librarian' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'upload_view' %}">Upload</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'librarian1' %}#books">Books</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-secondary" href="{% url 'recently_deleted_books' %}">View Recently Deleted Books</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-secondary" href="{% url 'review_request' %}">Borrow Requests</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-secondary" href="{% url 'logout_user' %}">LOG OUT</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+{% endblock %}
+
+{% block style %} 
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h1 {
+            color: #343a40;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        hr {
+            border-color: #dee2e6;
+        }
+        .btn-primary {
+            margin-bottom: 10px;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-danger, .btn-delete-all {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover, .btn-delete-all:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .btn-success, .btn-restore {
+            color: #fff;
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover, .btn-restore:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .btn {
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            font-weight: bold;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            outline: none !important;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn:focus {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table th {
+            color: #007bff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f8f9fa;
+        }
+        img {
+            max-width: 100px;
+            height: auto;
+        }
+        .no-image {
+            color: #6c757d;
+            font-style: italic;
+        }body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h1 {
+            color: #343a40;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        hr {
+            border-color: #dee2e6;
+        }
+        .btn-primary {
+            margin-bottom: 10px;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-danger, .btn-delete-all {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover, .btn-delete-all:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .btn-success, .btn-restore {
+            color: #fff;
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover, .btn-restore:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .btn {
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            font-weight: bold;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            outline: none !important;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn:focus {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table th {
+            color: #007bff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f8f9fa;
+        }
+        img {
+            max-width: 100px;
+            height: auto;
+        }
+        .no-image {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .buttons{
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}    
+        <h1 class="mt-4">Recently Deleted Books</h1>
+        <hr>
+        <div class="buttons">
+            
+            <form id="deleteAllForm" method="post" action="{% url 'delete_all_recently_deleted_books' %}">
+                {% csrf_token %}
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete All</button>
+            </form>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Book Image</th>
+                    <th>Actions</th> <!-- New column for actions -->
+                </tr>
+            </thead>
+            <tbody id="recently_deleted">
+                {% for book in recently_deleted_books %}
+>>>>>>> c582a3d3153979f4fe08312059015ab3a34927ce
                 <tr>
                     <td>{{ book.BookTitle }}</td>
                     <td>{{ book.Author }}</td>
@@ -48,8 +313,18 @@
                         </form>
                     </td>
                 </tr>
+<<<<<<< HEAD
             {% endfor %}
         </tbody>
     </table>
 </div>
+=======
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+        
+        
+>>>>>>> c582a3d3153979f4fe08312059015ab3a34927ce
 {% endblock %}

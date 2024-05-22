@@ -23,8 +23,8 @@ LANGUAGE_CHOICES = [
 ]
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
-
+    name = models.CharField(max_length=100, default="Def")
+    
     def __str__(self):
         return self.name
 
@@ -44,6 +44,9 @@ class Books(models.Model):
     bookmarked_by = models.ManyToManyField(User, related_name='bookmarks', blank=True)
     borrowed = models.ManyToManyField(User, related_name='borrow', blank="True")
     PageViews = models.IntegerField(default=0)
+    eBook = models.BooleanField(default=False)
+    hardCopy = models.BooleanField(default=False)
+    stock = models.IntegerField(default=0)
 
     def __str__(self):
         return self.BookTitle + ', ' + self.Author
@@ -78,3 +81,5 @@ class DeclinedRequest(models.Model):
 
     def __str__(self):
         return f"{self.book} declined for {self.requested_by}"
+    
+
