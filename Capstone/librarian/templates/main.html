@@ -1,9 +1,6 @@
 {% load custom_tags2 %}
 
 {% if user.is_authenticated and user|is_librarian %}
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,32 +17,21 @@
             box-sizing: border-box;
             font-family: Arial, Helvetica, sans-serif;
         }
-    
-        
-        
-        
-        
-        
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
         }
-
         .main-content {
             margin-left: 250px;
             padding-top: 4rem;
             transition: margin-left 0.5s;
         }
-
         .navbar-brand {
             font-weight: bold;
         }
-
         .navbar-nav .nav-item .nav-link {
             font-weight: bold;
         }
-
-        /* Additional Styles */
         .content {
             padding: 20px;
             background-color: #ffffff;
@@ -53,7 +39,6 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             animation: fadeIn 0.5s ease-in-out;
         }
-
         @keyframes fadeIn {
             0% {
                 opacity: 0;
@@ -62,60 +47,41 @@
                 opacity: 1;
             }
         }
-
-        .btn-danger,
-        .btn-primary {
+        .btn-danger, .btn-primary {
             font-weight: bold;
         }
-
         .modal-body {
             font-size: 16px;
         }
-
         .modal-footer {
             justify-content: space-between;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
         th, td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-
         th {
             background-color: #f2f2f2;
         }
-
         img.book-image {
             max-width: 100px;
             height: auto;
         }
-
-
-
-
-        {% comment %} new buttons {% endcomment %}
         .btn {
             font-weight: bold;
-            border-radius: 5px; /* Add rounded corners */
-            text-transform: uppercase; /* Convert text to uppercase */
-            transition: all 0.3s ease; /* Add smooth transition effect */
+            border-radius: 5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
         }
-
-        .btn-primary,
-        .btn-danger,
-        .btn-secondary {
-            position: relative; /* Position for hover animation */
+        .btn-primary, .btn-danger, .btn-secondary {
+            position: relative;
         }
-
-        .btn-primary::after,
-        .btn-danger::after,
-        .btn-secondary::after {
+        .btn-primary::after, .btn-danger::after, .btn-secondary::after {
             content: '';
             position: absolute;
             top: 0;
@@ -123,86 +89,32 @@
             width: 100%;
             height: 100%;
             border-radius: inherit;
-            background-color: rgba(255, 255, 255, 0.2); /* White overlay for hover effect */
+            background-color: rgba(255, 255, 255, 0.2);
             opacity: 0;
-            transition: opacity 0.3s ease; /* Add smooth transition for overlay */
+            transition: opacity 0.3s ease;
         }
-
-        .btn-primary:hover::after,
-        .btn-danger:hover::after,
-        .btn-secondary:hover::after {
-            opacity: 1; /* Show white overlay on hover */
+        .btn-primary:hover::after, .btn-danger:hover::after, .btn-secondary:hover::after {
+            opacity: 1;
         }
-
         .btn-primary:hover {
-            background-color: #007bff; /* Primary button color */
-            border-color: #007bff; /* Border color */
-            color: #fff; /* Text color */
-            transform: scale(1.05); /* Scale effect on hover */
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            transform: scale(1.05);
         }
-
         .btn-danger:hover {
-            background-color: #dc3545; /* Danger button color */
-            border-color: #dc3545; /* Border color */
-            color: #fff; /* Text color */
-            transform: scale(1.05); /* Scale effect on hover */
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: #fff;
+            transform: scale(1.05);
         }
-
         .btn-secondary:hover {
-            background-color: #6c757d; /* Secondary button color */
-            border-color: #6c757d; /* Border color */
-            color: #fff; /* Text color */
-            transform: scale(1.05); /* Scale effect on hover */
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: #fff;
+            transform: scale(1.05);
         }
-        {% comment %} sidebar {% endcomment %}
         .sidebar {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-            padding-top: 4rem;
-            width: 250px;
-            background-color: #ffffff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: margin-left 0.5s;
-        }
-        
-        .sidebar-sticky {
-            position: sticky;
-            top: 0;
-        }
-        
-        .sidebar h5 {
-            margin-bottom: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .sidebar .nav-link {
-            padding: 0.5rem 1rem;
-            color: #333;
-            font-weight: bold;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-        
-        
-        .sidebar .nav-link i {
-            margin-right: 0.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                padding-top: 2rem;
-                transition: all 0.3s;
-            }
-        
-            .sidebar .nav-link {
-                padding: 1rem;
-            }
-        }.sidebar {
             position: fixed;
             top: 0;
             bottom: 0;
@@ -215,18 +127,15 @@
             transition: margin-left 0.5s;
             color: white;
         }
-        
         .sidebar-sticky {
             position: sticky;
             top: 0;
         }
-        
         .sidebar h5 {
             margin-bottom: 1.5rem;
             font-weight: bold;
             text-align: center;
         }
-        
         .sidebar .nav-link {
             padding: 0.5rem 1rem;
             color: white;
@@ -234,30 +143,24 @@
             text-decoration: none;
             transition: background-color 0.3s;
         }
-        
         .sidebar .nav-link i {
             margin-right: 0.5rem;
         }
-        
         .sidebar .nav-link.active {
             background-color: #007bff;
             color: #fff;
         }
-        
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
                 padding-top: 2rem;
                 transition: all 0.3s;
             }
-        
             .sidebar .nav-link {
                 padding: 1rem;
             }
         }
-
-
-        .logout{
+        .logout {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -269,33 +172,33 @@
             transition: background-color 0.3s ease;
             cursor: pointer;
         }
-        .logo{
+        .logo {
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 15px;
         }
-        .navbar-text{
-            color:white;
+        .navbar-text {
+            color: white;
             font-weight: bold;
         }
-        .navbar-text:hover{
+        .navbar-text:hover {
             color: white;
             text-decoration: none;
         }
-        .nav-item{
+        .nav-item {
             display: flex;
             justify-content: center;
             margin-bottom: 10px;
         }
-        .nav-item:hover{
+        .nav-item:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-        .nav-link{
+        .nav-link {
             display: flex;
             align-items: center;
         }
-        .buttons{
+        .buttons {
             display: flex;
             justify-content: space-between;
         }
@@ -308,22 +211,21 @@
             <!-- Sidebar -->
             <nav class="col-md-2 d-none d-md-block sidebar">
                 <div class="sidebar-sticky">
-                    <!-- Sidebar content goes here -->
                     <h5 class="text-center">Librarian</h5>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="#home" onclick="showContent('home')">Home</a>
+                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('home')">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#upload" onclick="showContent('upload')">Upload</a>
+                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('upload')">Upload</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#books" onclick="showContent('books')">Books</a>
+                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('books')">Books</a>
                         </li>
-                        <li class ="nav-item">
+                        <li class="nav-item">
                             <a href="{% url 'recently_deleted_books' %}" class="btn btn-secondary">View Recently Deleted Books</a>
                         </li>
-                        <li class ="nav-item">
+                        <li class="nav-item">
                             <a href="{% url 'review_request' %}" class="btn btn-secondary">Borrow Requests</a>
                         </li>
                         <li>
@@ -380,168 +282,146 @@
             </div>
         </div>
 
-<!-- Button to trigger the modal -->
-<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAllModal">
-    Delete All
-</button>
-
-
-<main role="main" class="col-md-10 ml-sm-auto main-content">
-
-    <!-- Home Section-->
-    <div id="home" class="content" style="display: none;">
-        <h1 class="mt-4">Home</h1>
-        <hr>
-        <h4>Welcome to the Library System</h4>
-        <p>Here is a quick tutorial on how to use the system:</p>
-        <ol>
-            <li>
-                <strong>Upload Books:</strong> Navigate to the <a href="#upload" onclick="showContent('upload')">Upload</a> section to add new books to the library. You can fill in the book details and upload an image.
-            </li>
-            <li>
-                <strong>View Books:</strong> Go to the <a href="#books" onclick="showContent('books')">Books</a> section to see the list of available books. You can edit or delete books from here. Availability button can be toggled.
-            </li>
-            <li>
-                <strong>Review Borrow Requests:</strong> Check the <a href="{% url 'review_request' %}">Borrow Requests</a> section to approve or decline requests from users.
-            </li>
-            <li>
-                <strong>Manage Recently Deleted Books:</strong> View and restore books from the <a href="{% url 'recently_deleted_books' %}">Recently Deleted Books</a> section.
-            </li>
-        </ol>
-        <p class="mt-3">For more detailed instructions, refer to the user manual or contact support.</p>
-    </div>
-
- <!-- Upload Section-->
-<div id="upload" class="content" style="display: none;">
-    <h1 class="mt-4">Upload</h1>
-    <hr>
-    <form method="post" enctype="multipart/form-data" action="{% url 'upload_view' %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_BookTitle">Title:</label>
-            <input type="text" class="form-control" id="id_BookTitle" name="BookTitle" required>
-        </div>
-        <div class="form-group">
-            <label for="id_Author">Author:</label>
-            <input type="text" class="form-control" id="id_Author" name="Author" required>
-        </div>
-        <div class="form-group">
-            <label for="id_Description">Description:</label>
-            <input type="text" class="form-control" id="id_Description" name="Description" required>
-        </div>
-        <div class="form-group">
-            <label for="id_Date">Date:</label>
-            <input type="date" class="form-control" id="id_Date" name="Date" required>
-        </div>
-        <div class="form-group">
-            <label for="id_Category">Category:</label>
-            <select class="form-control" id="id_Category" name="Category" required>
-                {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="id_Language">Language:</label>
-            <select class="form-control" id="id_Language" name="Language" required>
-                {% for language in language_choices %}
-                    <option value="{{ language.0 }}">{{ language.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="id_BookFile">Book File: (PDF)</label>
-            <input type="file" class="form-control-file" id="id_BookFile" name="BookFile" required>
-        </div>
-        <div class="form-group">
-            <label for="id_BookImage">Book Image: (JPG)</label>
-            <input type="file" class="form-control-file" id="id_BookImage" name="BookImage" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Upload</button>
-    </form>
-</div>
-
-<!--Books Section-->
-<div id="books" class="content" style="display: none;">
-    <h1 class="mt-4">Books</h1>
-    <hr>
-    <div class="col text-right">
-        <form method="post" action="{% url 'delete_all_books' %}">
-            {% csrf_token %}
-            <!-- Button to trigger the modal -->
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAllModal">
-                Delete All
-            </button>
-        </form>
-    </div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-                <th>Author</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Language</th>
-                <th>Book Image</th>
-                <th>Actions</th>
-            </tr>
-    </thead>
-    <tbody>
-    {% for book in books %}
-    <tr>
-    <td>{{ book.BookTitle }}</td>
-    <td>{{ book.Author }}</td>
-    <td>{{ book.Description }}</td>
-    <td>{{ book.Date }}</td>
-    <td>
-        {% for category in book.Category.all %}
-            {{ category.name }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-    </td>
-    <td>{{book.Language}}</td>
-    <td>
-        {% if book.BookImage %}
-        <img src="{{ book.BookImage.url }}" alt="{{ book.BookTitle }} Image" style="max-width: 100px;">
-        {% else %}
-        No Image
-        {% endif %}
-    </td>
-    <td>
-    <form id="toggleForm-{{ book.id }}" method="post" action="{% url 'toggle_availability' book.id %}" style="display: inline;">
-        {% csrf_token %}
-        <button id="availabilityBtn-{{ book.id }}" class="btn {% if book.available %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleAvailability({{ book.id }})">
-        {% if book.available %}Available{% else %}Not Available{% endif %}
+        <!-- Button to trigger the modal -->
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAllModal">
+            Delete All
         </button>
-        </form>
-    </td>   
-    <td>
-    <form id="deleteForm-{{ book.id }}" method="post" action="{% url 'delete_book' book.id %}" style="display: inline;">
-     {% csrf_token %}
-    <button type="button" class="btn btn-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
-    </form>
-    </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-    </table>
+
+        <main role="main" class="col-md-10 ml-sm-auto main-content">
+            <div id="home" class="content" style="display: block;">
+                <h1 class="mt-4">Home</h1>
+                <hr>
+                <h4>Welcome to the Library System</h4>
+                <p>Here is a quick tutorial on how to use the system:</p>
+                <ol>
+                    <li><strong>Upload Books:</strong> Navigate to the <a href="javascript:void(0);" onclick="showContent('upload')">Upload</a> section to add new books to the library. You can fill in the book details and upload an image.</li>
+                    <li><strong>View Books:</strong> Go to the <a href="javascript:void(0);" onclick="showContent('books')">Books</a> section to see the list of available books. You can edit or delete books from here. Availability button can be toggled.</li>
+                    <li><strong>Review Borrow Requests:</strong> Check the <a href="{% url 'review_request' %}">Borrow Requests</a> section to approve or decline requests from users.</li>
+                    <li><strong>Manage Recently Deleted Books:</strong> View and restore books from the <a href="{% url 'recently_deleted_books' %}">Recently Deleted Books</a> section.</li>
+                </ol>
+                <p class="mt-3">For more detailed instructions, refer to the user manual or contact support.</p>
+            </div>
+
+            <!-- Upload Section-->
+            <div id="upload" class="content" style="display: none;">
+                <h1 class="mt-4">Upload</h1>
+                <hr>
+                <form method="post" enctype="multipart/form-data" action="{% url 'upload_view' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_BookTitle">Title:</label>
+                        <input type="text" class="form-control" id="id_BookTitle" name="BookTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_Author">Author:</label>
+                        <input type="text" class="form-control" id="id_Author" name="Author" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_Description">Description:</label>
+                        <input type="text" class="form-control" id="id_Description" name="Description" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_Date">Date:</label>
+                        <input type="date" class="form-control" id="id_Date" name="Date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_Category">Category:</label>
+                        <select class="form-control" id="id_Category" name="Category" required>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_Language">Language:</label>
+                        <select class="form-control" id="id_Language" name="Language" required>
+                            {% for language in language_choices %}
+                                <option value="{{ language.0 }}">{{ language.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_BookFile">Book File: (PDF)</label>
+                        <input type="file" class="form-control-file" id="id_BookFile" name="BookFile" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_BookImage">Book Image: (JPG)</label>
+                        <input type="file" class="form-control-file" id="id_BookImage" name="BookImage" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+
+            <!-- Books Section-->
+            <div id="books" class="content" style="display: none;">
+                <h1 class="mt-4">Books</h1>
+                <hr>
+                <div class="col text-right">
+                    <form method="post" action="{% url 'delete_all_books' %}">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAllModal">Delete All</button>
+                    </form>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Language</th>
+                            <th>Book Image</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                            <tr>
+                                <td>{{ book.BookTitle }}</td>
+                                <td>{{ book.Author }}</td>
+                                <td>{{ book.Description }}</td>
+                                <td>{{ book.Date }}</td>
+                                <td>
+                                    {% for category in book.Category.all %}
+                                        {{ category.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ book.Language }}</td>
+                                <td>
+                                    {% if book.BookImage %}
+                                        <img src="{{ book.BookImage.url }}" alt="{{ book.BookTitle }} Image" style="max-width: 100px;">
+                                    {% else %}
+                                        No Image
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form id="toggleForm-{{ book.id }}" method="post" action="{% url 'toggle_availability' book.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button id="availabilityBtn-{{ book.id }}" class="btn {% if book.available %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleAvailability({{ book.id }})">
+                                            {% if book.available %}Available{% else %}Not Available{% endif %}
+                                        </button>
+                                    </form>
+                                    <form id="deleteForm-{{ book.id }}" method="post" action="{% url 'delete_book' book.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="recently-deleted-books" class="content" style="display: none;"></div>        
+        </main>
+        </div>
     </div>
-
-    <div id="recent-delete" class="content" >
-        {% block content %}
-        {% endblock%}
-    </div>
-                
-</main>
-
-
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 
     <script>
         function showContent(contentId) {
@@ -551,7 +431,7 @@
             }
             document.getElementById(contentId).style.display = 'block';
         }
-    
+
         function setDeleteUrl(bookId) {
             var bookRow = document.getElementById('bookRow-' + bookId);
             bookRow.style.display = 'none';
@@ -559,40 +439,34 @@
             var deletedBookRow = document.getElementById('deletedBookRow-' + bookId);
             deletedBookRow.style.display = 'table-row';
         }
-    
+
         function deleteAllBooks() {
             var bookRows = document.getElementsByClassName('bookRow');
             for (var i = 0; i < bookRows.length; i++) {
                 bookRows[i].style.display = 'none';
             }
-        
+
             var deletedBookRows = document.getElementsByClassName('deletedBookRow');
             for (var i = 0; i < deletedBookRows.length; i++) {
                 deletedBookRows[i].style.display = 'table-row';
             }
-        
+
             showDeletedBooks();
         }
-    </script>
-    
 
-    <script>
         function confirmDelete(bookId) {
             if (confirm('Are you sure you want to delete this book?')) {
                 document.getElementById('deleteForm-' + bookId).submit();
             }
         }
-    </script>
-    
-    <script>
+
         function toggleAvailability(bookId) {
             var availabilityBtn = document.getElementById('availabilityBtn-' + bookId);
             var isAvailable = availabilityBtn.classList.contains('btn-success');
             var newAvailability = isAvailable ? 'false' : 'true';
-            
-            // Send an AJAX request to update the availability status
+
             $.ajax({
-                url: '{% url 'toggle_availability' book_id=0 %}'.replace('0', bookId),
+                url: '{% url "toggle_availability" 0 %}'.replace('0', bookId),
                 type: 'POST',
                 data: {
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
@@ -601,7 +475,6 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Update the button text and class based on the new availability
                         if (newAvailability === 'true') {
                             availabilityBtn.innerHTML = 'Available';
                             availabilityBtn.classList.remove('btn-danger');
@@ -612,18 +485,20 @@
                             availabilityBtn.classList.add('btn-danger');
                         }
                     } else {
-                        // Handle error response
                         console.log('Error toggling availability');
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Handle AJAX error
                     console.log('Error toggling availability:', error);
                 }
             });
-        }        
+        }
+
+        window.onload = function() {
+            showContent('home');
+        };
     </script>
     {% block script %}{% endblock %}
 </body>
 </html>
-{%endif%}
+{% endif %}
