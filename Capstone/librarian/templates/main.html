@@ -9,6 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Librarian</title>
+    <link rel="icon" href={% static "playground/school_Logo.png" %}>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
@@ -141,10 +142,14 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: margin-left 0.5s;
             color: white;
+            display: flex;
+            justify-content: space-between;
         }
         .sidebar-sticky {
             position: sticky;
             top: 0;
+            height: 100%;
+            
         }
         .sidebar h5 {
             margin-bottom: 1.5rem;
@@ -175,18 +180,6 @@
                 padding: 1rem;
             }
         }
-        .logout {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 230%;
-            padding: 10px 0;
-        }
-        .logout:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
         .logo {
             display: flex;
             justify-content: center;
@@ -205,17 +198,53 @@
             display: flex;
             justify-content: center;
             margin-bottom: 10px;
-        }
-        .nav-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            padding-left: 50px;
+            text-align: center;
         }
         .nav-link {
             display: flex;
             align-items: center;
+            margin: 10px auto;
+            width: 100%;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         .buttons {
             display: flex;
             justify-content: space-between;
+        }
+        .nav{
+            display: flex;
+            flex-direction: column;
+            align-items: cneter;
+            height: 90%;
+        }
+        .bottom-nav{
+            margin-top: auto;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        .logo{
+            display: flex;
+            justify-content: center;
+            align-item: center;
+            padding-bottom
+        }
+        .logout {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            padding-left: 50px;
+            text-align: center;
+        }
+        .nav-item-long{
+            line-height: 2;
+            text-align: center;
+            vertical-align: baseline;
+        }
+        .navbar-icon1{
+            transform: translateY(5px);
         }
     </style>
     {% block style %}{% endblock %}
@@ -226,26 +255,32 @@
             <!-- Sidebar -->
             <nav class="col-md-2 d-none d-md-block sidebar">
                 <div class="sidebar-sticky">
-                    <a href="{% url 'librarian' %}"> <img src="{% static 'playground/school_Logo.png' %}" alt="Logo" height="80px" id="logo"></a>
-                    <ul class="nav flex-column">
-                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('home')">
-                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="home">home</span>Home</li>
-                        </a>
-                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('upload')">
-                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="upload">upload</span>Upload</li>
-                        </a>
-                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('books')">
-                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="books">book</span>Books</li>
-                        </a>
-                        <a href="{% url 'recently_deleted_books' %}" class="btn btn-secondary">
-                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="recent-delete">delete</span>Recently Deleted Books</li>
-                        </a>
-                        <a href="{% url 'review_request' %}" class="btn btn-secondary">
-                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="borrow-req">logout</span>Borrow Requests</li>
-                        </a>
-                        <a href="{% url 'logout_user' %}" class="btn btn-secondary">
-                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="home">logout</span>Logout</li>
-                        </a>      
+                    <div class="logo">
+                        <a href="{% url 'librarian' %}"> <img src="{% static 'playground/school_Logo.png' %}" alt="Logo" height="80px" id="logo"></a>
+                    </div>
+                    <ul class="nav">
+                        <div>
+                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('home')">
+                                <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="home">home</span>Home</li>
+                            </a>
+                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('upload')">
+                                <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="upload">upload</span>Upload</li>
+                            </a>
+                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('books')">
+                                <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="books">book</span>Books</li>
+                            </a>
+                        </div>
+                        <div class="bottom-nav">
+                            <a href="{% url 'recently_deleted_books' %}" class="btn  nav-link">
+                                <li class="nav-item-long"><span class="material-symbols-outlined navbar-icon1" alt="recent-delete">delete</span>Recently Deleted Books</li>
+                            </a>
+                            <a href="{% url 'review_request' %}" class="btn nav-link">
+                                <li class="nav-item-long"><span class="material-symbols-outlined navbar-icon1" alt="borrow-req">request_page</span>Borrow Requests</li>
+                            </a>
+                            <a href="{% url 'logout_user' %}" class="btn nav-link">
+                                <li class="logout"><span class="material-symbols-outlined navbar-icon" alt="home">logout</span>Logout</li>
+                            </a>      
+                        </div>
                     </ul>
                 </div>
             </nav>
