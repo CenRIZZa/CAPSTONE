@@ -1,6 +1,8 @@
 {% load custom_tags2 %}
 
 {% if user.is_authenticated and user|is_librarian %}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +11,19 @@
     <title>Librarian</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!--search-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!--help-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!--ebook icon-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!--article icon-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!--research Paper-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!--Bookmark-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <style>
         *{
@@ -211,26 +226,26 @@
             <!-- Sidebar -->
             <nav class="col-md-2 d-none d-md-block sidebar">
                 <div class="sidebar-sticky">
-                    <h5 class="text-center">Librarian</h5>
+                    <a href="{% url 'librarian' %}"> <img src="{% static 'playground/school_Logo.png' %}" alt="Logo" height="80px" id="logo"></a>
                     <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('home')">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('upload')">Upload</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="javascript:void(0);" onclick="showContent('books')">Books</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'recently_deleted_books' %}" class="btn btn-secondary">View Recently Deleted Books</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'review_request' %}" class="btn btn-secondary">Borrow Requests</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'logout_user' %}" class="btn btn-secondary">LOG OUT</a>
-                        </li>
+                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('home')">
+                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="home">home</span>Home</li>
+                        </a>
+                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('upload')">
+                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="upload">upload</span>Upload</li>
+                        </a>
+                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('books')">
+                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="books">book</span>Books</li>
+                        </a>
+                        <a href="{% url 'recently_deleted_books' %}" class="btn btn-secondary">
+                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="recent-delete">delete</span>Recently Deleted Books</li>
+                        </a>
+                        <a href="{% url 'review_request' %}" class="btn btn-secondary">
+                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="borrow-req">logout</span>Borrow Requests</li>
+                        </a>
+                        <a href="{% url 'logout_user' %}" class="btn btn-secondary">
+                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="home">logout</span>Logout</li>
+                        </a>      
                     </ul>
                 </div>
             </nav>

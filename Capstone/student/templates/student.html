@@ -83,12 +83,12 @@
     .side-bar {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: start;
         align-item: center;
         background-color: rgb(74, 128, 210);
         position: fixed;
         width: 250px;
-        height: 945px;
+        height: 90%;
         z-index: 1;
         animation: slideOutSidebar 1s ease forwards;
     }
@@ -172,7 +172,10 @@
         justify-content: center;
         align-items: center;
         color: white;
+        width:100%;
         padding: 10px 0;
+        margin-top: auto;
+        margin-bottom: 10px;
     }
     .logout:hover {
         background-color: rgba(255, 255, 255, 0.1);
@@ -353,7 +356,7 @@
                     {% block nav %} {% endblock%}
                 </ul>
                 <div class="logout">
-                    <a href="{% url 'logout_user' %}" class="navbar-text">LOG OUT</a>
+                    <a href="{% url 'logout_user' %}" class="navbar-text"><span class="material-symbols-outlined navbar-icon" alt="home">logout</span>LOG OUT</a>
                 </div>
             </div>
         </div>
