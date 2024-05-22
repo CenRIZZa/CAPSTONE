@@ -1,104 +1,97 @@
-{% extends 'student.html '%}
+{% extends 'student.html' %}
 
 {% block title %} Home {% endblock %}
 
 {% block style %}
-
 <style>
-    .preview-title{
+    .preview-title {
         max-height: 75px;
         min-height: 75px;
         overflow: hidden;
-        text-overflow: ellipsis; 
+        text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 1; /* number of lines to show */
+        -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
-        
     }
-    .card-preview-title{
-        line-height:50px;
+    .card-preview-title {
+        line-height: 50px;
     }
-    .book-image{
+    .book-image {
         min-width: 300px;
         max-width: 300px;
         margin: 0 25px;
     }
-    .book-info{
+    .book-info {
         display: flex;
         gap: 50px;
     }
-    .book-image{
+    .book-image {
         border: 5px solid rgba(74, 128, 210, 0.5);
         border-radius: 10px;
     }
-    .book-details{
-        display:flex;
+    .book-details {
+        display: flex;
         align-items: end;
         height: 300px;
     }
-    .text1{
+    .text1 {
         margin-top: 50px;
         font-size: 2rem;
-        font-weight: bold
+        font-weight: bold;
     }
-    .text2{
+    .text2 {
         margin-top: 20px;
         font-size: 1.5rem;
     }
-    .modal-book-text{
+    .modal-book-text {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
-    .modal-body{
-        display:flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .modalHeader{
+    .modal-body {
         display: flex;
         justify-content: center;
         align-items: center;
     }
-    .modal-title{
+    .modalHeader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-title {
         font-size: 2.5rem;
         margin-left: auto;
     }
-    .modalButtons{
+    .modalButtons {
         display: flex;
         justify-content: space-around;
         align-items: center;
     }
-    .btn-mdl{
+    .btn-mdl {
         background-color: rgb(74, 128, 210);
         padding: 10px 20px;
         border: 1px solid white;
         border-radius: 5px;
         color: white;
-        font-weight: bold
+        font-weight: bold;
     }
-    .btn-mdl:hover{
+    .btn-mdl:hover {
         background-color: rgba(74, 128, 210, .8);
     }
 </style>
-
 {% endblock %}
 
 {% block nav %}
-
 <a href="{% url 'view' %}" class="navbar-desc"><li class="active"><span class="material-symbols-outlined navbar-icon" alt="home">home</span>Home</li></a>
 <a href="{% url 'bookmark' %}" class="navbar-desc"><li><span class="material-symbols-outlined bookmark navbar-icon" alt="bookmark">bookmark</span>Bookmark</li></a>
 <a href="{% url 'request_history' %}" class="navbar-desc"><li><span class="material-symbols-outlined navbar-icon" alt="request">request_page</span>Borrow History</li></a>
 <a href="#" class="navbar-desc"><li><span class="material-symbols-outlined navbar-icon" alt="help">help</span>Help</li></a>
-
 {% endblock %}
 
 {% block body %}
-
 {% load static %}
 
-    
 <!-- Carousel -->
 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-indicators">
@@ -108,13 +101,13 @@
     </div>
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="{% static 'playground/sampleheader.webp'%}" class="d-block w-100" alt="...">
+            <img src="{% static 'playground/sampleheader.webp' %}" class="d-block w-100" alt="...">
         </div>
         <div class="carousel-item">
-            <img src="{% static 'playground/sampleheader.webp'%}" class="d-block w-100" alt="...">
+            <img src="{% static 'playground/sampleheader.webp' %}" class="d-block w-100" alt="...">
         </div>
         <div class="carousel-item">
-            <img src="{% static 'playground/sampleheader.webp'%}" class="d-block w-100" alt="...">
+            <img src="{% static 'playground/sampleheader.webp' %}" class="d-block w-100" alt="...">
         </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -127,12 +120,6 @@
     </button>
 </div>
 
-<!-- BODY -->
-
-{% load static %}
-
-
-
 <!-- Top Viewed Books Section -->
 <div class="container-xl">
     <div class="top-bar">
@@ -140,7 +127,7 @@
     </div>
     <div class="owl-carousel owl-theme" id="top-viewed-books-carousel">
         {% for item in top_viewed_books %}
-        <span class="special" data-bs-toggle="modal" data-bs-target="#bookDetailModal" 
+        <span class="special" data-bs-toggle="modal" data-bs-target="#bookDetailModal"
               data-title="{{ item.BookTitle }}"
               data-author="{{ item.Author }}"
               data-description="{{ item.Description }}"
@@ -173,7 +160,7 @@
         </div>
         <div class="owl-carousel owl-theme" id="book-carousel-{{ forloop.counter }}">
             {% for item in books %}
-            <span class="special" data-bs-toggle="modal" data-bs-target="#bookDetailModal" 
+            <span class="special" data-bs-toggle="modal" data-bs-target="#bookDetailModal"
                   data-title="{{ item.BookTitle }}"
                   data-author="{{ item.Author }}"
                   data-description="{{ item.Description }}"
@@ -227,16 +214,14 @@
                                 <p class="col-8"><strong>Language:</strong> <span id="modal-book-language"></span></p>
                                 <p class="col-8"><strong>Views:</strong> <span id="modal-book-views"></span></p>
                             </div>
-
                         </div>
-                        
                     </div>
                 </div>
             </div>
             <div class="modal-footer modalButtons">
                 <a href="#" id="modal-borrow-link" class="btn-mdl">Borrow</a>
                 <a href="#" id="modal-preview-link" class="btn-mdl">Preview</a>
-                <a href="#" id="modal-bookmark-link" class="btn-mdl">Bookmark</a>
+                <a href="#" id="modal-bookmark-link" class="btn-mdl" data-book-id="">Bookmark</a>
             </div>
         </div>
     </div>
@@ -285,7 +270,6 @@
             var bookId = button.getAttribute('data-id');
             var available = button.getAttribute('data-available') === 'true';
 
-        ;
             var modalImage = bookDetailModal.querySelector('#modal-book-image');
             var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
             var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
@@ -305,9 +289,44 @@
             modalBookLanguage.textContent = language;
             modalBookViews.textContent = views;
             modalPreviewLink.href = `/student/preview/${bookId}/`;
-            modalBookmarkLink.href = "{% url 'bookmark' %}";
+            modalBookmarkLink.setAttribute('data-book-id', bookId);
             modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
             modalBorrowLink.classList.toggle('disabled', !available);
+
+            // Check bookmark status
+            $.ajax({
+                type: 'GET',
+                url: `{% url 'bookmark_status' 0 %}`.replace('0', bookId),
+                success: function(response) {
+                    if (response.bookmarked) {
+                        modalBookmarkLink.textContent = 'Unbookmark';
+                    } else {
+                        modalBookmarkLink.textContent = 'Bookmark';
+                    }
+                }
+            });
+        });
+
+        // Handle bookmark toggle
+        $('#modal-bookmark-link').on('click', function (event) {
+            event.preventDefault();
+            const bookId = $(this).data('book-id');
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'bookmark_toggle' %}",
+                data: {
+                    'book_id': bookId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.bookmarked) {
+                        $('#modal-bookmark-link').text('Unbookmark');
+                    } else {
+                        $('#modal-bookmark-link').text('Bookmark');
+                    }
+                }
+            });
         });
     });
 </script>
@@ -315,11 +334,9 @@
 {% endblock %}
 
 {% block script %}
-
 <script>
     $(document).ready(function() {
         $('.owl-carousel').each(function() {
-            // Find the tallest item in the carousel
             var maxHeight = 0;
             $(this).find('.owl-item').each(function() {
                 var itemHeight = $(this).height();
@@ -327,11 +344,9 @@
                     maxHeight = itemHeight;
                 }
             });
-    
-            // Set all items to the tallest height
+
             $(this).find('.owl-item').css('height', maxHeight + 'px');
-    
-            // Initialize the Owl Carousel
+
             $(this).owlCarousel({
                 loop: false,
                 margin: 10,
@@ -351,26 +366,20 @@
         });
     });
 
-  
     document.addEventListener('DOMContentLoaded', function() {
         var offcanvasElement = document.getElementById('offcanvasScrolling');
         var sideBarElement = document.querySelector('.side-bar');
-        var mainContainer = document.getElementById('main-container'); // Select the main container
-        
-        // Add event listener to the offcanvas element
+        var mainContainer = document.getElementById('main-container');
+
         offcanvasElement.addEventListener('hidden.bs.offcanvas', function() {
             sideBarElement.classList.remove('show');
             mainContainer.classList.remove('with-sidebar');
         });
-        
-        // Add event listener to the offcanvas element
+
         offcanvasElement.addEventListener('show.bs.offcanvas', function() {
             sideBarElement.classList.add('show');
             mainContainer.classList.add('with-sidebar');
         });
     });
-
-    
 </script>
-
 {% endblock %}

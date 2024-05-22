@@ -18,6 +18,8 @@ urlpatterns = [
     path('borrow_requests/decline/<int:request_id>/', views.decline_request, name='decline_request'),
     path('delete_approved_request/<int:request_id>/', views.delete_approved_request, name='delete_approved_request'),
     path('delete_declined_request/<int:request_id>/', views.delete_declined_request, name='delete_declined_request'),
+    path('librarian/', views.go_back, name='go_back'),
+    path('delete_recently_deleted_books/<int:book_id>/', views.delete_recently_deleted_books, name='delete_recently_deleted_books'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

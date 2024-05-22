@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'go_back' %}'">Back</button>
         <h1 class="mt-4">Borrow Requests</h1>
         <hr>
         
@@ -207,10 +207,5 @@
     <!-- Bootstrap JS (jQuery must be included before this) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        function goBack() {
-            window.history.back();
-        }
-    </script>
 </body>
 </html>
