@@ -42,7 +42,7 @@
             margin: 0;
             vertical-align: top;
         }
-        #zoom-controls {
+        #zoom-controls, #page-controls, #speaker-controls {
             margin-top: 10px;
         }
         button {
@@ -83,18 +83,23 @@
 </head>
 <body>
     <a href="#" id="back-button" onclick="history.go(-1); return false;">Back</a>
-    <div id="pdf-container" onmousedown="startDragging(event)" onmousemove="drag(event)" onmouseup="stopDragging(event)" oncontextmenu="return false;">
-    </div>
+    <div id="pdf-container" onmousedown="startDragging(event)" onmousemove="drag(event)" onmouseup="stopDragging(event)" oncontextmenu="return false;"></div>
     <div id="zoom-controls">
         <button onclick="zoomOut()">-</button>
         <button onclick="zoomIn()">+</button>
     </div>
-    <div>
+    <div id="page-controls">
         <button onclick="prevPage()">Previous</button>
-        <span id="page-counter"></span>
+        <span id="page-counter" aria-live="polite"></span>
         <button onclick="nextPage()">Next</button>
+        <input type="text" id="page-input" placeholder="Page" onkeydown="jumpToPage(event)">
     </div>
-    <input type="text" id="page-input" placeholder="Page" onkeydown="jumpToPage(event)">
+    <div id="speaker-controls">
+        <button onclick="readPage()">🔊 Read Page</button>
+        <button onclick="pauseReading()">⏸ Pause</button>
+        <button onclick="resumeReading()">▶️ Resume</button>
+        <button onclick="stopReading()">⏹ Stop</button>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
     <script>
         let pdfDoc = null;
@@ -102,6 +107,8 @@
         let scale = 1.0;
         let isDragging = false;
         let startX, startY, scrollLeft, scrollTop;
+        let utterance = null;
+
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         const pdfContainer = document.getElementById("pdf-container");
@@ -118,10 +125,22 @@
                     viewport: viewport
                 };
                 page.render(renderContext).promise.then(() => {
-                    pdfContainer.appendChild(canvas);
+                    if (!pdfContainer.contains(canvas)) {
+                        pdfContainer.appendChild(canvas);
+                    }
                 });
+                page.getTextContent().then(function(textContent) {
+                    const textItems = textContent.items;
+                    let finalText = '';
+                    for (let i = 0; i < textItems.length; i++) {
+                        finalText += textItems[i].str + ' ';
+                    }
+                    canvas.setAttribute('data-text', finalText);
+                });
+            }).catch(error => {
+                console.error('Error rendering page:', error);
             });
-            pageCounter.textContent = pageNum + ' / ' + pdfDoc.numPages;
+            pageCounter.textContent = `${pageNum} / ${pdfDoc.numPages}`;
             pageInput.value = pageNum;
         }
 
@@ -186,9 +205,42 @@
             }
         }
 
+        function readPage() {
+            const text = canvas.getAttribute('data-text');
+            if (text) {
+                if (utterance) {
+                    speechSynthesis.cancel(); // Cancel any ongoing speech
+                }
+                utterance = new SpeechSynthesisUtterance(text);
+                speechSynthesis.speak(utterance);
+            } else {
+                console.error('No text found to read.');
+            }
+        }
+
+        function pauseReading() {
+            if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                speechSynthesis.pause();
+            }
+        }
+
+        function resumeReading() {
+            if (speechSynthesis.paused) {
+                speechSynthesis.resume();
+            }
+        }
+
+        function stopReading() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+        }
+
         pdfjsLib.getDocument("{{ book.BookFile.url }}").promise.then(function(pdf) {
             pdfDoc = pdf;
             renderPage(pageNum, scale);
+        }).catch(error => {
+            console.error('Error loading PDF:', error);
         });
     </script>
 </body>
