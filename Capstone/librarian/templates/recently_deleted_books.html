@@ -1,5 +1,31 @@
 {% extends "main.html" %}
 
+<<<<<<< HEAD
+{% block content %}
+<div id="recently-deleted-books" class="content" style="display: block;">
+    <h1 class="mt-4">Recently Deleted Books</h1>
+    <hr>
+    <div class="buttons">
+        <form id="deleteAllForm" method="post" action="{% url 'delete_all_recently_deleted_books' %}">
+            {% csrf_token %}
+            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete All</button>
+        </form>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Book Image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="recently_deleted">
+            {% for book in recently_deleted_books %}
+=======
 {% block navbar%}
 
 <nav class="col-md-2 d-none d-md-block sidebar">
@@ -262,6 +288,7 @@
             </thead>
             <tbody id="recently_deleted">
                 {% for book in recently_deleted_books %}
+>>>>>>> c582a3d3153979f4fe08312059015ab3a34927ce
                 <tr>
                     <td>{{ book.BookTitle }}</td>
                     <td>{{ book.Author }}</td>
@@ -280,13 +307,18 @@
                         {% endif %}
                     </td>
                     <td>
-                        <!-- Form for restoring a book -->
                         <form method="post" action="{% url 'restore_book' book.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-success">Restore</button>
                         </form>
                     </td>
                 </tr>
+<<<<<<< HEAD
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+=======
                 {% endfor %}
             </tbody>
         </table>
@@ -294,31 +326,5 @@
 
         
         
+>>>>>>> c582a3d3153979f4fe08312059015ab3a34927ce
 {% endblock %}
-
-{% block script %}
-    <script>
-        function confirmDelete() {
-            if (confirm("Are you sure you want to delete all books?")) {
-                document.getElementById("deleteAllForm").submit();
-            }
-        }
-
-        function restoreBook(bookId) {
-            // Implement restore functionality here
-            alert("Restore book with ID " + bookId);
-        }
-
-        function showDeletedBooks() {
-            document.getElementById('recently_deleted').style.display = 'table-row-group';
-        }
-
-        // Call showDeletedBooks function when the page loads
-        window.onload = function() {
-            showDeletedBooks();
-        };
-
-        
-    </script>
-{% endblock %}
-
