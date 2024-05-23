@@ -1,7 +1,7 @@
 {% load custom_tags %}
 {% load static %}
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated%}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -118,7 +118,6 @@
         let isDragging = false;
         let startX, startY, scrollLeft, scrollTop;
         let utterance = null;
-        let voices = [];
 
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
@@ -126,7 +125,7 @@
         const pageCounter = document.getElementById("page-counter");
         const pageInput = document.getElementById("page-input");
 
-        function renderPage(pageNum, scale, callback) {
+        function renderPage(pageNum, scale) {
             pdfDoc.getPage(pageNum).then(function(page) {
                 const viewport = page.getViewport({ scale: scale });
                 canvas.height = viewport.height;
@@ -139,7 +138,6 @@
                     if (!pdfContainer.contains(canvas)) {
                         pdfContainer.appendChild(canvas);
                     }
-                    if (callback) callback(); // Call the callback after rendering
                 });
                 page.getTextContent().then(function(textContent) {
                     const textItems = textContent.items;
@@ -148,12 +146,44 @@
                         finalText += textItems[i].str + ' ';
                     }
                     canvas.setAttribute('data-text', finalText);
+                    readPage(); // Automatically read the text of the new page
                 });
             }).catch(error => {
                 console.error('Error rendering page:', error);
             });
             pageCounter.textContent = `${pageNum} / ${pdfDoc.numPages}`;
             pageInput.value = pageNum;
+        }
+
+        function nextPage() {
+            stopReading(); // Stop TTS before navigating
+            if (pageNum < pdfDoc.numPages) {
+                pageNum++;
+                renderPage(pageNum, scale);
+            }
+        }
+
+        function readPage() {
+            const text = canvas.getAttribute('data-text');
+            if (text) {
+                if (utterance) {
+                    speechSynthesis.cancel(); // Cancel any ongoing speech
+                }
+                utterance = new SpeechSynthesisUtterance(text);
+                speechSynthesis.speak(utterance);
+                $('#notification').fadeIn(); // Show the notification
+                setTimeout(function(){
+                    $('#notification').fadeOut(); // Hide the notification after a delay
+                }, 3000); // 3000 milliseconds = 3 seconds
+            } else {
+                console.error('No text found to read.');
+            }
+        }
+
+        function stopReading() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
         }
 
         function zoomOut() {
@@ -171,16 +201,10 @@
         }
 
         function prevPage() {
+            stopReading(); // Stop TTS before navigating
             if (pageNum > 1) {
                 pageNum--;
-                renderPage(pageNum, scale, readCurrentPage); // Render and read new page
-            }
-        }
-
-        function nextPage() {
-            if (pageNum < pdfDoc.numPages) {
-                pageNum++;
-                renderPage(pageNum, scale, readCurrentPage); // Render and read new page
+                renderPage(pageNum, scale);
             }
         }
 
@@ -212,69 +236,10 @@
                 const page = parseInt(pageInput.value);
                 if (page > 0 && page <= pdfDoc.numPages) {
                     pageNum = page;
-                    renderPage(pageNum, scale, readCurrentPage); // Render and read new page
+                    renderPage(pageNum, scale);
                 }
             }
         }
-
-        function readPage() {
-            readCurrentPage();
-        }
-
-        function readCurrentPage() {
-            const text = canvas.getAttribute('data-text');
-            if (text) {
-                if (utterance) {
-                    speechSynthesis.cancel(); // Cancel any ongoing speech
-                }
-                utterance = new SpeechSynthesisUtterance(text);
-                utterance.voice = voices.find(voice => voice.name === "Google UK English Male") || voices[0]; // Choose a human-like voice
-                utterance.pitch = 1; // Adjust pitch (0-2)
-                utterance.rate = 1; // Adjust rate (0.1-10)
-                utterance.volume = 1; // Adjust volume (0-1)
-                speechSynthesis.speak(utterance);
-                $('#notification').fadeIn(); // Show the notification
-                setTimeout(function(){
-                    $('#notification').fadeOut(); // Hide the notification after a delay
-                }, 3000); // 3000 milliseconds = 3 seconds
-            } else {
-                console.error('No text found to read.');
-            }
-        }
-
-        function pauseReading() {
-            if (speechSynthesis.speaking && !speechSynthesis.paused) {
-                speechSynthesis.pause();
-            }
-        }
-
-        function resumeReading() {
-            if (speechSynthesis.paused) {
-                speechSynthesis.resume();
-            }
-        }
-
-        function stopReading() {
-            if (speechSynthesis.speaking) {
-                speechSynthesis.cancel();
-            }
-        }
-
-        function populateVoiceList() {
-            voices = speechSynthesis.getVoices();
-        }
-
-        populateVoiceList();
-        if (typeof speechSynthesis !== 'undefined') {
-            speechSynthesis.onvoiceschanged = populateVoiceList;
-        }
-
-        pdfjsLib.getDocument("{{ book.BookFile.url }}").promise.then(function(pdf) {
-            pdfDoc = pdf;
-            renderPage(pageNum, scale);
-        }).catch(error => {
-            console.error('Error loading PDF:', error);
-        });
 
         function togglePauseResume() {
             const button = document.getElementById('pauseResumeButton');
@@ -288,7 +253,7 @@
                 }
             }
         }
-
+        
         // Add CSS transition
         document.addEventListener('DOMContentLoaded', function() {
             const button = document.getElementById('pauseResumeButton');
@@ -298,7 +263,16 @@
         window.addEventListener('beforeunload', function(event) {
             stopReading();
         });
+
+        pdfjsLib.getDocument("{{ book.BookFile.url }}").promise.then(function(pdf) {
+            pdfDoc = pdf;
+            renderPage(pageNum, scale);
+        }).catch(error => {
+            console.error('Error loading PDF:', error);
+        });
     </script>
 </body>
 </html>
 {% endif %}
+
+           
