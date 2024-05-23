@@ -105,6 +105,7 @@ def prev_file(request, book_id):
 
 
 
+
 def search_suggestions(request):
     query = request.GET.get('q', '')
     if len(query) >= 3:
