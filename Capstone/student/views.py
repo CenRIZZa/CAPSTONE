@@ -80,7 +80,7 @@ def book_detail(request, book_id):
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseForbidden, HttpResponseNotFound
-from librarian.models import Books
+from librarian.models import Books, ApprovedRequest
 
 def prev_file(request, book_id):
     book = get_object_or_404(Books, id=book_id)
@@ -90,14 +90,20 @@ def prev_file(request, book_id):
     if not book.BookFile:
         return HttpResponseNotFound('File not found')
     
-    # Check if the user is authenticated and has borrowed the book
-    if request.user.is_authenticated and request.user in book.borrowed.all():
+    # Check if the user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden("You need to be logged in to access this book.")
+    
+    # Check if there exists an approved request for the book and user
+    if ApprovedRequest.objects.filter(book=book, requested_by=request.user).exists():
         context = {
             'book': book,
         }
         return render(request, 'prev.html', context)
     else:
-        return HttpResponseForbidden("This book requires borrowing permission from the librarian.")
+        return HttpResponseForbidden("You don't have permission to access this book.")
+
+
 
 
 def search_suggestions(request):
