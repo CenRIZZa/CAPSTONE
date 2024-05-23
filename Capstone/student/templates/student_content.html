@@ -204,6 +204,7 @@
                         <div class="modal-book-text">
                             <h4 id="modal-book-title" class="book-text text1"></h4>
                             <h5 class="book-text text2"><strong>Author: </strong><a href="#" id="modal-book-author"></a></h5>
+                            <h6 class="book-text"><strong>Description: </strong><span id="modal-book-description"></span></h6>
                         </div>
                         <div class="book-details">
                             <div class="wrap row">
@@ -262,6 +263,7 @@
             var button = event.relatedTarget;
             var title = button.getAttribute('data-title');
             var author = button.getAttribute('data-author');
+            var description = button.getAttribute('data-description');
             var date = button.getAttribute('data-date');
             var category = button.getAttribute('data-category');
             var language = button.getAttribute('data-language');
@@ -273,6 +275,7 @@
             var modalImage = bookDetailModal.querySelector('#modal-book-image');
             var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
             var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
+            var modalBookDescription = bookDetailModal.querySelector('#modal-book-description');
             var modalBookDate = bookDetailModal.querySelector('#modal-book-date');
             var modalBookCategory = bookDetailModal.querySelector('#modal-book-category');
             var modalBookLanguage = bookDetailModal.querySelector('#modal-book-language');
@@ -284,6 +287,7 @@
             modalImage.src = image;
             modalBookTitle.textContent = title;
             modalBookAuthor.textContent = author;
+            modalBookDescription.textContent = description;
             modalBookDate.textContent = date;
             modalBookCategory.textContent = category;
             modalBookLanguage.textContent = language;
