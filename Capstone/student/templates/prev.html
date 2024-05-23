@@ -331,11 +331,21 @@
                     }
                 }
                 else if (transcript === 'pause.') {
-                    togglePauseResume();
                     speakCommandSuccess('Reading pause');
-                } else if (transcript === 'resume.') {
                     togglePauseResume();
+                    
+                } else if (transcript === 'resume.') {
                     speakCommandSuccess('Reading continue');
+                    togglePauseResume();
+                    
+                }
+                else if (transcript === 'zoom in.') {
+                    zoomIn();
+                    speakCommandSuccess('Zooming In');
+                }
+                else if (transcript === 'zoom out.') {
+                    zoomOut();
+                    speakCommandSuccess('Zooming out');
                 }
             };
     
