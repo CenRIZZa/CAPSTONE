@@ -7,7 +7,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('student/', views.student, name="view"),
     path('preview/<int:book_id>/', views.prev_file, name='prev_file'),
-    
     path('book-detail/<int:book_id>/', views.book_detail, name='book_detail'),
     path('search_suggestions/', views.search_suggestions, name='search_suggestions'),
     path('bookmark/', views.bookmark, name='bookmark'),
