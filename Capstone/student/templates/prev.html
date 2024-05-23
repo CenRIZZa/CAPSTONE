@@ -1,7 +1,7 @@
 {% load custom_tags %}
 {% load static %}
 
-{% if user.is_authenticated and user in book.borrowed.all %}
+{% if user.is_authenticated %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -118,6 +118,7 @@
         let isDragging = false;
         let startX, startY, scrollLeft, scrollTop;
         let utterance = null;
+        let voices = [];
 
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
@@ -125,7 +126,7 @@
         const pageCounter = document.getElementById("page-counter");
         const pageInput = document.getElementById("page-input");
 
-        function renderPage(pageNum, scale) {
+        function renderPage(pageNum, scale, callback) {
             pdfDoc.getPage(pageNum).then(function(page) {
                 const viewport = page.getViewport({ scale: scale });
                 canvas.height = viewport.height;
@@ -138,6 +139,7 @@
                     if (!pdfContainer.contains(canvas)) {
                         pdfContainer.appendChild(canvas);
                     }
+                    if (callback) callback(); // Call the callback after rendering
                 });
                 page.getTextContent().then(function(textContent) {
                     const textItems = textContent.items;
@@ -171,14 +173,14 @@
         function prevPage() {
             if (pageNum > 1) {
                 pageNum--;
-                renderPage(pageNum, scale);
+                renderPage(pageNum, scale, readCurrentPage); // Render and read new page
             }
         }
 
         function nextPage() {
             if (pageNum < pdfDoc.numPages) {
                 pageNum++;
-                renderPage(pageNum, scale);
+                renderPage(pageNum, scale, readCurrentPage); // Render and read new page
             }
         }
 
@@ -210,18 +212,26 @@
                 const page = parseInt(pageInput.value);
                 if (page > 0 && page <= pdfDoc.numPages) {
                     pageNum = page;
-                    renderPage(pageNum, scale);
+                    renderPage(pageNum, scale, readCurrentPage); // Render and read new page
                 }
             }
         }
 
         function readPage() {
+            readCurrentPage();
+        }
+
+        function readCurrentPage() {
             const text = canvas.getAttribute('data-text');
             if (text) {
                 if (utterance) {
                     speechSynthesis.cancel(); // Cancel any ongoing speech
                 }
                 utterance = new SpeechSynthesisUtterance(text);
+                utterance.voice = voices.find(voice => voice.name === "Google UK English Male") || voices[0]; // Choose a human-like voice
+                utterance.pitch = 1; // Adjust pitch (0-2)
+                utterance.rate = 1; // Adjust rate (0.1-10)
+                utterance.volume = 1; // Adjust volume (0-1)
                 speechSynthesis.speak(utterance);
                 $('#notification').fadeIn(); // Show the notification
                 setTimeout(function(){
@@ -250,6 +260,15 @@
             }
         }
 
+        function populateVoiceList() {
+            voices = speechSynthesis.getVoices();
+        }
+
+        populateVoiceList();
+        if (typeof speechSynthesis !== 'undefined') {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+
         pdfjsLib.getDocument("{{ book.BookFile.url }}").promise.then(function(pdf) {
             pdfDoc = pdf;
             renderPage(pageNum, scale);
@@ -269,7 +288,7 @@
                 }
             }
         }
-        
+
         // Add CSS transition
         document.addEventListener('DOMContentLoaded', function() {
             const button = document.getElementById('pauseResumeButton');
