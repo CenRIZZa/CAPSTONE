@@ -10,6 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ book.BookTitle }} - Preview</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -80,13 +81,13 @@
             background-color: #0056b3;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
 </head>
 <body>
     <a href="#" id="back-button" onclick="history.go(-1); return false;">Back</a>
-    <p><strong><b>Views:</strong> </b>{{ book.PageViews }}</p>
-    <div id="pdf-container" onmousedown="startDragging(event)" onmousemove="drag(event)" onmouseup="stopDragging(event)" oncontextmenu="return false;">
-    </div>
-
+    <div id="pdf-container" onmousedown="startDragging(event)" onmousemove="drag(event)" onmouseup="stopDragging(event)" oncontextmenu="return false;"></div>
     <div id="zoom-controls">
         <button onclick="zoomOut()">-</button>
         <button onclick="zoomIn()">+</button>
@@ -99,11 +100,17 @@
     </div>
     <div id="speaker-controls">
         <button onclick="readPage()">🔊 Read Page</button>
-        <button onclick="pauseReading()">⏸ Pause</button>
-        <button onclick="resumeReading()">▶️ Resume</button>
+        <button id="pauseResumeButton" onclick="togglePauseResume()">⏸ Pause</button>
         <button onclick="stopReading()">⏹ Stop</button>
+
+        <div id="notification" class="alert alert-info alert-dismissible fade show" role="alert" style="display: none;">
+            Text to Speech has started
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+
     <script>
         let pdfDoc = null;
         let pageNum = 1;
@@ -216,6 +223,10 @@
                 }
                 utterance = new SpeechSynthesisUtterance(text);
                 speechSynthesis.speak(utterance);
+                $('#notification').fadeIn(); // Show the notification
+                setTimeout(function(){
+                    $('#notification').fadeOut(); // Hide the notification after a delay
+                }, 3000); // 3000 milliseconds = 3 seconds
             } else {
                 console.error('No text found to read.');
             }
@@ -244,6 +255,29 @@
             renderPage(pageNum, scale);
         }).catch(error => {
             console.error('Error loading PDF:', error);
+        });
+
+        function togglePauseResume() {
+            const button = document.getElementById('pauseResumeButton');
+            if (speechSynthesis.speaking) {
+                if (speechSynthesis.paused) {
+                    speechSynthesis.resume(); // If paused, resume
+                    button.textContent = "⏸ Pause";
+                } else {
+                    speechSynthesis.pause(); // If speaking, pause
+                    button.textContent = "▶️ Resume";
+                }
+            }
+        }
+        
+        // Add CSS transition
+        document.addEventListener('DOMContentLoaded', function() {
+            const button = document.getElementById('pauseResumeButton');
+            button.style.transition = "all 0.3s ease";
+        });
+        
+        window.addEventListener('beforeunload', function(event) {
+            stopReading();
         });
     </script>
 </body>
