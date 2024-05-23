@@ -24,10 +24,17 @@ LANGUAGE_CHOICES = [
 
 class Category(models.Model):
     name = models.CharField(max_length=100, default="Def")
+    code = models.CharField(max_length=100, default="")
     
     def __str__(self):
-        return self.name
+        return self.code + '-' + self.name
 
+class SubCategory(models.Model):
+    name = models.CharField(max_length=100, default="Def")
+    code = models.CharField(max_length=100, default="")
+    
+    def __str__(self):
+        return self.code + '-' + self.name
 
 class Books(models.Model):
     BookTitle = models.CharField(max_length=100)
@@ -35,6 +42,7 @@ class Books(models.Model):
     Description = models.TextField(null=True, blank=True)
     Date = models.DateField()
     Category = models.ManyToManyField(Category)
+    SubCategory = models.ManyToManyField(SubCategory)
     Language = models.CharField(max_length=100, choices=LANGUAGE_CHOICES, default='english')
     
     BookFile = models.FileField(upload_to="books/files/", default='default_value.pdf')
