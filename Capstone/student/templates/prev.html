@@ -126,12 +126,19 @@
         const pdfContainer = document.getElementById("pdf-container");
         const pageCounter = document.getElementById("page-counter");
         const pageInput = document.getElementById("page-input");
-        
+    
+        // Function to speak command success message
+        function speakCommandSuccess(message) {
+            utterance = new SpeechSynthesisUtterance(message);
+            speechSynthesis.speak(utterance);
+        }
+    
         function nextPage() {
             stopReading(); // Stop TTS before navigating
             if (pageNum < pdfDoc.numPages) {
                 pageNum++;
                 renderPage(pageNum, scale, false); // Set shouldRead to false
+                
             }
         }
     
@@ -140,9 +147,10 @@
             if (pageNum > 1) {
                 pageNum--;
                 renderPage(pageNum, scale, false); // Set shouldRead to false
+                
             }
         }
-        
+    
         function renderPage(pageNum, scale, shouldRead = false) {
             pdfDoc.getPage(pageNum).then(function(page) {
                 const viewport = page.getViewport({ scale: scale });
@@ -174,7 +182,7 @@
             pageCounter.textContent = `${pageNum} / ${pdfDoc.numPages}`;
             pageInput.value = pageNum;
         }
-        
+    
         function readPage() {
             const text = canvas.getAttribute('data-text');
             if (text) {
@@ -184,7 +192,7 @@
                 utterance = new SpeechSynthesisUtterance(text);
                 speechSynthesis.speak(utterance);
                 $('#notification').fadeIn(); // Show the notification
-                setTimeout(function(){
+                setTimeout(function() {
                     $('#notification').fadeOut(); // Hide the notification after a delay
                 }, 3000); // 3000 milliseconds = 3 seconds
             } else {
@@ -257,13 +265,24 @@
                 }
             }
         }
+
+        function goToPage(pageNumber) {
+            stopReading(); // Stop TTS before navigating
+            if (pageNumber >= 1 && pageNumber <= pdfDoc.numPages) {
+                pageNum = pageNumber;
+                renderPage(pageNum, scale, false); // Set shouldRead to false
+            } else {
+                console.error('Invalid page number:', pageNumber);
+            }
+        }
         
+    
         // Add CSS transition
         document.addEventListener('DOMContentLoaded', function() {
             const button = document.getElementById('pauseResumeButton');
-            button.style.transition =  "all 0.3s ease";
+            button.style.transition = "all 0.3s ease";
         });
-        
+    
         window.addEventListener('beforeunload', function(event) {
             stopReading();
         });
@@ -286,15 +305,37 @@
                 console.log('Recognized:', transcript);
                 if (transcript === 'next.') {
                     nextPage();
-                } 
-                else if (transcript === 'stop.') {
+                    speakCommandSuccess('Next page navigated.');
+                } else if (transcript === 'stop.') {
                     stopReading();
-                }
-                else if (transcript === 'read.') {
+                    speakCommandSuccess('Reading stopped.');
+                } else if (transcript === 'read.') {
                     readPage();
-                }
-                else if (transcript === 'previous.') {
+                    speakCommandSuccess('Reading started.');
+                } else if (transcript === 'previous.') {
                     prevPage();
+                    speakCommandSuccess('Previous page navigated.');
+                } else if (transcript.startsWith('go to page')) {
+                    const words = transcript.split(' ');
+                    const pageNumberIndex = words.indexOf('page') + 1; // Find the index of the word "page"
+                    if (pageNumberIndex !== 0 && pageNumberIndex < words.length) {
+                        const pageNumber = parseInt(words[pageNumberIndex]);
+                        if (!isNaN(pageNumber)) {
+                            goToPage(pageNumber);
+                            speakCommandSuccess(`Navigated to page ${pageNumber}.`);
+                        } else {
+                            console.error('Invalid page number:', words[pageNumberIndex]);
+                        }
+                    } else {
+                        console.error('Page number not found in transcript:', transcript);
+                    }
+                }
+                else if (transcript === 'pause.') {
+                    togglePauseResume();
+                    speakCommandSuccess('Reading pause');
+                } else if (transcript === 'resume.') {
+                    togglePauseResume();
+                    speakCommandSuccess('Reading continue');
                 }
             };
     
@@ -313,6 +354,7 @@
             console.error('Speech recognition not supported in this browser.');
         }
     </script>
+    
     
     
     
