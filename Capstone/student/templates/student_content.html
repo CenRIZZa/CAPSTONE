@@ -79,6 +79,16 @@
     .btn-mdl:hover {
         background-color: rgba(74, 128, 210, .8);
     }
+    .spinner-border {
+        display: none;
+        width: 3rem;
+        height: 3rem;
+        border-width: .3rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 </style>
 {% endblock %}
 
@@ -151,7 +161,9 @@
         </span>
         {% endfor %}
     </div>
+    <hr>
 </div>
+
 
 {% for category, books in books_per_category.items %}
     <div class="container-xl">
@@ -228,6 +240,11 @@
     </div>
 </div>
 
+<!-- Loading Spinner -->
+<div id="loading-spinner" class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>
+
 <!-- Borrow Message Toast -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     {% if messages %}
@@ -258,6 +275,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var bookDetailModal = document.getElementById('bookDetailModal');
+        var loadingSpinner = document.getElementById('loading-spinner');
 
         bookDetailModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
@@ -312,9 +330,12 @@
         });
 
         // Handle bookmark toggle
-        $('#modal-bookmark-link').on('click', function (event) {
+        $('#modal-bookmark-link').on('click', function(event) {
             event.preventDefault();
             const bookId = $(this).data('book-id');
+
+            // Show loading spinner
+            loadingSpinner.style.display = 'block';
 
             $.ajax({
                 type: 'POST',
@@ -324,11 +345,20 @@
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function(response) {
+                    // Hide loading spinner
+                    loadingSpinner.style.display = 'none';
+
                     if (response.bookmarked) {
                         $('#modal-bookmark-link').text('Unbookmark');
                     } else {
                         $('#modal-bookmark-link').text('Bookmark');
                     }
+                },
+                error: function(xhr, status, error) {
+                    // Hide loading spinner
+                    loadingSpinner.style.display = 'none';
+                    console.error('Bookmark toggle failed:', error);
+                    alert('An error occurred while toggling the bookmark. Please try again.');
                 }
             });
         });
