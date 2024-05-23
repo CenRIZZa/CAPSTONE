@@ -281,11 +281,27 @@
         background-color: #3D6DB6;
         transform: translateY(-5%);
     }
-    .search-bar-container{
+    .search-container {
+        flex: 2;
+        position: relative;
         display: flex;
         justify-content: center;
-        align-items: center;
-        margin-bottom:2.5%;
+        margin: 0 auto;
+    }
+    .search-input {
+        width: 100%;
+        max-width: 400px;
+        padding: 10px 20px;
+        border: 2px solid rgb(74, 128, 210);
+        border-radius: 30px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        border-color: #3D6DB6;
+        box-shadow: 0 0 10px rgba(61, 109, 182, 0.2);
+        outline: none;
     }
     .search-content{
         font-size: 1.5rem;
@@ -296,6 +312,35 @@
     }
     .search-icon{
         font-size: 2.5rem
+    }
+    .suggestion-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+    }
+    
+    .suggestion-item img {
+        max-width: 50px;
+        margin-right: 10px;
+    }
+    
+    .suggestion-item:hover {
+        background: #f0f0f0;
+        cursor: pointer;
+    }
+    .suggestions {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 400px;
+        border: 1px solid #ccc;
+        background: #fff;
+        z-index: 10;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .search-icon:hover{
         color: lightgray;
@@ -348,7 +393,11 @@
                 </svg></span>
             <div class="logo">
                 <a href="{% url 'view' %}"> <img src="{% static 'playground/school_Logo.png'%}" alt="Logo" height="80px" id="logo"></a>
-            </div>   
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="search-input" placeholder="Search for books...">
+                <div class="suggestions" id="suggestions"></div>
+            </div>
         </header>
         <div class="offcanvas offcanvas-start show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
             <div class="offcanvas-body side-bar show">
@@ -366,118 +415,195 @@
             {% endblock %}
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Add click event listener to the search button (when clicked, the sidebar will appear)
-        document.getElementById('search').addEventListener('click', function() {
-            var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasWithBothOptions'));
-            offcanvas.show();
-        });
+   <!-- Modal Structure -->
+   <div class="modal fade" id="bookDetailModal" tabindex="-1" aria-labelledby="bookDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header modalHeader">
+                <h5 class="modal-title">Book Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="book-info">
+                    <div class="book-img">
+                        <img src="" alt="" id="modal-book-image" class="img-fluid book-image">
+                    </div>
+                    <div class="book-data">
+                        <div class="modal-book-text">
+                            <h4 id="modal-book-title" class="book-text text1"></h4>
+                            <h5 class="book-text text2"><strong>Author: </strong><a href="#" id="modal-book-author"></a></h5>
+                        </div>
+                        <div class="book-details">
+                            <div class="wrap row">
+                                <p class="col-8"><strong>Date:</strong> <span id="modal-book-date"></span></p>
+                                <p class="col-8"><strong>Category:</strong> <span id="modal-book-category"></span></p>
+                            </div>
+                            <div class="wrap row">
+                                <p class="col-8"><strong>Language:</strong> <span id="modal-book-language"></span></p>
+                                <p class="col-8"><strong>Views:</strong> <span id="modal-book-views"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer modalButtons">
+                <a href="#" id="modal-borrow-link" class="btn-mdl">Borrow</a>
+                <a href="#" id="modal-preview-link" class="btn-mdl">Preview</a>
+                <a href="#" id="modal-bookmark-link" class="btn-mdl" data-book-id="">Bookmark</a>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
     $(document).ready(function() {
-        // Function to fetch and display suggestions
-        function fetchSuggestions() {
-            var filter = $('[name="filter"]').val();
-            var query = $('[name="query"]').val();
-
-            $.get("{% url 'search_suggestions' %}", { filter: filter, query: query }, function(data) {
-                // Clear previous suggestions
-                $('#suggestions').empty();
-
-                // Append new suggestions
-                data.forEach(function(item) {
-                    var suggestion = $('<a href="#" class="list-group-item list-group-item-action">')
-                        .text(item.title)
-                        .append($('<img>').attr('src', item.image_url).addClass('img-thumbnail mx-2').css('width', '50px'))
-                        .click(function() {
-                            $('[name="query"]').val(item.title);
-                            $('#suggestions').hide();
-                        });
-
-                    $('#suggestions').append(suggestion);
+        $('#search-input').on('input', function() {
+            var query = $(this).val();
+            if (query.length >= 3) {
+                $.get("{% url 'search_suggestions' %}", { q: query }, function(data) {
+                    $('#suggestions').empty();
+                    data.forEach(function(book) {
+                        var suggestion = $('<div class="suggestion-item" data-bs-toggle="modal" data-bs-target="#bookDetailModal">')
+                            .attr('data-title', book.title)
+                            .attr('data-author', book.author)
+                            .attr('data-date', book.date)
+                            .attr('data-category', book.category)
+                            .attr('data-language', book.language)
+                            .attr('data-image', book.image_url)
+                            .attr('data-views', book.views)
+                            .attr('data-id', book.id)
+                            .attr('data-available', book.available)
+                            .append($('<img>').attr('src', book.image_url))
+                            .append($('<span>').text(book.title + ' by ' + book.author));
+                        $('#suggestions').append(suggestion);
+                    });
+                    $('#suggestions').show();
                 });
-
-                // Show suggestions
-                $('#suggestions').show();
-            });
-        }
-
-        // Event listener for input field
-        $('[name="query"]').on('input', function() {
-            if ($(this).val().length >= 3) {
-                fetchSuggestions();
             } else {
                 $('#suggestions').hide();
             }
         });
+<<<<<<< HEAD
+
+=======
         
         // Hide suggestions when clicked outside
+>>>>>>> 0bc99b1bd842f2318ff8ae00d6e70b289094395e
         $(document).click(function(event) {
-            if (!$(event.target).closest('#suggestions').length && !$(event.target).is('[name="query"]')) {
+            if (!$(event.target).closest('#search-input').length) {
                 $('#suggestions').hide();
             }
         });
     });
 
-        var bookmarkElement = document.getElementById('bookmark');
-        if (bookmarkElement) {
-            bookmarkElement.addEventListener('click', function() {
-                window.location.href = '/bookmark.html'; // Replace '/bookmark.html' with the actual URL of your bookmark page
-            });
-        }
+    document.addEventListener('DOMContentLoaded', function () {
+        var bookDetailModal = document.getElementById('bookDetailModal');
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get all suggestion links
-            var suggestionLinks = document.querySelectorAll('.suggestion-link');
-            
-            // Add click event listener to each suggestion link
-            suggestionLinks.forEach(function(link) {
-                link.addEventListener('click', function(event) {
-                    // Prevent the default behavior of the link (preventing form submission)
-                    event.preventDefault();
-                    
-                    // Get the href attribute of the clicked link
-                    var href = link.getAttribute('href');
-                    
-                    // Redirect to the href attribute
-                    window.location.href = href;
-                });
+        bookDetailModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var title = button.getAttribute('data-title');
+            var author = button.getAttribute('data-author');
+            var date = button.getAttribute('data-date');
+            var category = button.getAttribute('data-category');
+            var language = button.getAttribute('data-language');
+            var image = button.getAttribute('data-image');
+            var views = button.getAttribute('data-views');
+            var bookId = button.getAttribute('data-id');
+            var available = button.getAttribute('data-available') === 'true';
+
+            var modalImage = bookDetailModal.querySelector('#modal-book-image');
+            var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
+            var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
+            var modalBookDate = bookDetailModal.querySelector('#modal-book-date');
+            var modalBookCategory = bookDetailModal.querySelector('#modal-book-category');
+            var modalBookLanguage = bookDetailModal.querySelector('#modal-book-language');
+            var modalBookViews = bookDetailModal.querySelector('#modal-book-views');
+            var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
+            var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
+            var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
+
+            modalImage.src = image;
+            modalBookTitle.textContent = title;
+            modalBookAuthor.textContent = author;
+            modalBookDate.textContent = date;
+            modalBookCategory.textContent = category;
+            modalBookLanguage.textContent = language;
+            modalBookViews.textContent = views;
+            modalPreviewLink.href = `/student/preview/${bookId}/`;
+            modalBookmarkLink.setAttribute('data-book-id', bookId);
+            modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
+            modalBorrowLink.classList.toggle('disabled', !available);
+
+            // Check bookmark status
+            $.ajax({
+                type: 'GET',
+                url: `{% url 'bookmark_status' 0 %}`.replace('0', bookId),
+                success: function(response) {
+                    if (response.bookmarked) {
+                        modalBookmarkLink.textContent = 'Unbookmark';
+                    } else {
+                        modalBookmarkLink.textContent = 'Bookmark';
+                    }
+                }
             });
         });
-        
-    </script>
-    {% block script %} 
-    {% endblock %}
+
+        // Handle bookmark toggle
+        $('#modal-bookmark-link').on('click', function (event) {
+            event.preventDefault();
+            const bookId = $(this).data('book-id');
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'bookmark_toggle' %}",
+                data: {
+                    'book_id': bookId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.bookmarked) {
+                        $('#modal-bookmark-link').text('Unbookmark');
+                    } else {
+                        $('#modal-bookmark-link').text('Bookmark');
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% block script %}
+{% endblock %}
 </body>
 </html>
 {%else%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centered Alert</title>
-    <style>
-        .alert {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #721c24; /* Red color */
-            background-color: #f8d7da; /* Light red background */
-            border-color: #f5c6cb; /* Light red border */
-            padding: 15px; /* Padding for better visibility */
-            border: 1px solid transparent; /* Border for better visibility */
-            border-radius: .25rem; /* Rounded corners */
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centered Alert</title>
+<style>
+    .alert {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        padding: 15px;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+    }
+</style>
 </head>
 <body>
-    <div class="alert alert-danger" role="alert">
-        You are not authorized to access this page!
-    </div>
+<div class="alert alert-danger" role="alert">
+    You are not authorized to access this page!
+</div>
 </body>
 </html>
 {%endif%}

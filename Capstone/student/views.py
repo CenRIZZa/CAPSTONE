@@ -64,7 +64,6 @@ def book_info(request, book_id):
 
 def book_detail(request, book_id):
     book = get_object_or_404(Books, pk=book_id)
-    Books.objects.filter(pk=book_id).update(PageViews=F('PageViews') + 1)
 
     borrow_requested = BorrowRequest.objects.filter(book=book, requested_by=request.user).exists()
 
@@ -85,6 +84,7 @@ from librarian.models import Books
 
 def prev_file(request, book_id):
     book = get_object_or_404(Books, id=book_id)
+    Books.objects.filter(pk=book_id).update(PageViews=F('PageViews') + 1)
     
     # Check if the file exists
     if not book.BookFile:
@@ -101,22 +101,25 @@ def prev_file(request, book_id):
 
 
 def search_suggestions(request):
-    filter_by = request.GET.get('filter')
-    query = request.GET.get('query')
-
-    if filter_by == 'title':
-        books = Books.objects.filter(BookTitle__icontains=query)
-        suggestions = [{'title': book.BookTitle, 'image_url': book.BookImage.url} for book in books]
-    elif filter_by == 'author':
-        books = Books.objects.filter(Author__icontains=query)
-        suggestions = [{'title': book.BookTitle, 'image_url': book.BookImage.url} for book in books]
-    elif filter_by == 'category':
-        books = Books.objects.filter(Category__icontains=query)
-        suggestions = [{'title': book.BookTitle, 'image_url': book.BookImage.url} for book in books]
-    else:
-        suggestions = []
-
-    return JsonResponse(suggestions, safe=False)
+    query = request.GET.get('q', '')
+    if len(query) >= 3:
+        books = Books.objects.filter(BookTitle__icontains=query) | Books.objects.filter(Author__icontains=query)
+        suggestions = [
+            {
+                'id': book.id,
+                'title': book.BookTitle,
+                'author': book.Author,
+                'date': book.Date.strftime('%Y-%m-%d'),
+                'category': ', '.join(category.name for category in book.Category.all()),
+                'language': book.Language,
+                'image_url': book.BookImage.url,
+                'views': book.PageViews,
+                'available': book.available
+            }
+            for book in books
+        ]
+        return JsonResponse(suggestions, safe=False)
+    return JsonResponse([], safe=False)
 
 @login_required
 def bookmark(request):
