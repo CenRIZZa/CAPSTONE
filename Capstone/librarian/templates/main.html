@@ -383,6 +383,16 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="id_Subcategories">SubCategory:</label>
+                        <select class="form-control" id="id_Subcategories" name="SubCategory" required>
+                            {% for subcategory in subcategories %}
+                                <option value="{{ subcategory.id }}">{{ subcategory.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    
+                    <div class="form-group">
                         <label for="id_Language">Language:</label>
                         <select class="form-control" id="id_Language" name="Language" required>
                             {% for language in language_choices %}

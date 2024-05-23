@@ -6,10 +6,12 @@ from django.utils import timezone
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import BookForm
-from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRequest, DeclinedRequest
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
+from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRequest, DeclinedRequest
+from .models import SubCategory
 
 @login_required
 def upload_view(request):
@@ -20,9 +22,10 @@ def upload_view(request):
             return redirect('librarian')
     else:
         form = BookForm()
-
+    subcategories = SubCategory.objects.all()
     categories = Category.objects.all()
-    return render(request, 'main.html', {'form': form, 'categories': categories})
+    
+    return render(request, 'main.html', {'form': form, 'categories': categories, 'subcategories':subcategories,})
 
 @login_required
 def review_request(request):
