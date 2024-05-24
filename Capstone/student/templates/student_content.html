@@ -102,33 +102,7 @@
 {% block body %}
 {% load static %}
 
-<!-- Carousel -->
-<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-    </div>
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="{% static 'playground/sampleheader.webp' %}" class="d-block w-100" alt="...">
-        </div>
-        <div class="carousel-item">
-            <img src="{% static 'playground/sampleheader.webp' %}" class="d-block w-100" alt="...">
-        </div>
-        <div class="carousel-item">
-            <img src="{% static 'playground/sampleheader.webp' %}" class="d-block w-100" alt="...">
-        </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
-</div>
+<!-- Carousel and other sections here -->
 
 <!-- Top Viewed Books Section -->
 <div class="container-xl">
@@ -147,7 +121,10 @@
               data-image="{{ item.BookImage.url }}"
               data-views="{{ item.PageViews }}"
               data-id="{{ item.id }}"
-              data-available="{{ item.available|yesno:"true,false" }}">
+              data-borrow-link="{% url 'borrow_request' item.id %}"
+              data-preview-link="{% url 'prev_file' item.id %}"
+              data-is-ebook="{{ item.eBook|yesno:'true,false' }}"
+              data-is-research-paper="{{ item.research_paper|yesno:'true,false' }}">
             <div class="item">
                 <a class="card-link">
                     <div class="card">
@@ -164,6 +141,79 @@
     <hr>
 </div>
 
+<!-- Research Papers Section -->
+<div class="container-xl">
+    <div class="top-bar">
+        <h4 class="booklabels"><b>Research Papers</b></h4>
+    </div>
+    <div class="owl-carousel owl-theme" id="research-papers-carousel">
+        {% for item in research_papers %}
+        <span class="special" data-bs-toggle="modal" data-bs-target="#bookDetailModal"
+              data-title="{{ item.BookTitle }}"
+              data-author="{{ item.Author }}"
+              data-description="{{ item.Description }}"
+              data-date="{{ item.Date }}"
+              data-category="{{ item.Category.all|join:', ' }}"
+              data-language="{{ item.Language }}"
+              data-image="{{ item.BookImage.url }}"
+              data-views="{{ item.PageViews }}"
+              data-id="{{ item.id }}"
+              data-borrow-link="{% url 'borrow_request' item.id %}"
+              data-preview-link="{% url 'prev_file' item.id %}"
+              data-is-ebook="{{ item.eBook|yesno:'true,false' }}"
+              data-is-research-paper="{{ item.research_paper|yesno:'true,false' }}">
+            <div class="item">
+                <a class="card-link">
+                    <div class="card">
+                        <img src="{{ item.BookImage.url }}" class="card-img-top" alt="...">
+                        <div class="card-body preview-title">
+                            <h5 class="card-title card-preview-title">{{ item.BookTitle }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </span>
+        {% endfor %}
+    </div>
+    <hr>
+</div>
+
+<!-- eBooks Section -->
+<div class="container-xl">
+    <div class="top-bar">
+        <h4 class="booklabels"><b>eBooks</b></h4>
+    </div>
+    <div class="owl-carousel owl-theme" id="ebooks-carousel">
+        {% for item in ebooks %}
+        <span class="special" data-bs-toggle="modal" data-bs-target="#bookDetailModal"
+              data-title="{{ item.BookTitle }}"
+              data-author="{{ item.Author }}"
+              data-description="{{ item.Description }}"
+              data-date="{{ item.Date }}"
+              data-category="{{ item.Category.all|join:', ' }}"
+              data-language="{{ item.Language }}"
+              data-image="{{ item.BookImage.url }}"
+              data-views="{{ item.PageViews }}"
+              data-id="{{ item.id }}"
+              data-borrow-link="{% url 'borrow_request' item.id %}"
+              data-preview-link="{% url 'prev_file' item.id %}"
+              data-is-ebook="{{ item.eBook|yesno:'true,false' }}"
+              data-is-research-paper="{{ item.research_paper|yesno:'true,false' }}">
+            <div class="item">
+                <a class="card-link">
+                    <div class="card">
+                        <img src="{{ item.BookImage.url }}" class="card-img-top" alt="...">
+                        <div class="card-body preview-title">
+                            <h5 class="card-title card-preview-title">{{ item.BookTitle }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </span>
+        {% endfor %}
+    </div>
+    <hr>
+</div>
 
 {% for category, books in books_per_category.items %}
     <div class="container-xl">
@@ -182,7 +232,10 @@
                   data-image="{{ item.BookImage.url }}"
                   data-views="{{ item.PageViews }}"
                   data-id="{{ item.id }}"
-                  data-available="{{ item.available|yesno:"true,false" }}">
+                  data-borrow-link="{% url 'borrow_request' item.id %}"
+                  data-preview-link="{% url 'prev_file' item.id %}"
+                  data-is-ebook="{{ item.eBook|yesno:'true,false' }}"
+                  data-is-research-paper="{{ item.research_paper|yesno:'true,false' }}">
                 <div class="item">
                     <a class="card-link">
                         <div class="card">
@@ -226,6 +279,9 @@
                             <div class="wrap row">
                                 <p class="col-8"><strong>Language:</strong> <span id="modal-book-language"></span></p>
                                 <p class="col-8"><strong>Views:</strong> <span id="modal-book-views"></span></p>
+                                <!-- Add hidden fields for eBook and research paper flags -->
+                                <input type="hidden" id="modal-book-ebook" value="">
+                                <input type="hidden" id="modal-book-research" value="">
                             </div>
                         </div>
                     </div>
@@ -283,7 +339,10 @@
             var image = button.getAttribute('data-image');
             var views = button.getAttribute('data-views');
             var bookId = button.getAttribute('data-id');
-            var available = button.getAttribute('data-available') === 'true';
+            var borrowLink = button.getAttribute('data-borrow-link');
+            var previewLink = button.getAttribute('data-preview-link');
+            var isEbook = button.getAttribute('data-is-ebook') === 'true';
+            var isResearchPaper = button.getAttribute('data-is-research-paper') === 'true';
 
             var modalImage = bookDetailModal.querySelector('#modal-book-image');
             var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
@@ -305,10 +364,18 @@
             modalBookCategory.textContent = category;
             modalBookLanguage.textContent = language;
             modalBookViews.textContent = views;
-            modalPreviewLink.href = `/student/preview/${bookId}/`;
+            modalPreviewLink.href = previewLink;
             modalBookmarkLink.setAttribute('data-book-id', bookId);
-            modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
-            modalBorrowLink.classList.toggle('disabled', !available);
+            modalBorrowLink.href = borrowLink;
+
+            // Update borrow button text based on book type
+            if (isEbook) {
+                modalBorrowLink.textContent = 'Borrow Hard Copy';
+            } else if (isResearchPaper) {
+                modalBorrowLink.textContent = 'Borrow';
+            } else {
+                modalBorrowLink.textContent = 'Borrow';
+            }
 
             // Check bookmark status
             $.ajax({
@@ -402,6 +469,60 @@
         offcanvasElement.addEventListener('show.bs.offcanvas', function() {
             sideBarElement.classList.add('show');
             mainContainer.classList.add('with-sidebar');
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('bookDetailModal');
+
+        function openBookDetailModal(book) {
+            document.getElementById('modal-book-image').src = book.image;
+            document.getElementById('modal-book-title').innerText = book.title;
+            document.getElementById('modal-book-author').innerText = book.author;
+            document.getElementById('modal-book-description').innerText = book.description;
+            document.getElementById('modal-book-date').innerText = book.date;
+            document.getElementById('modal-book-category').innerText = book.category;
+            document.getElementById('modal-book-language').innerText = book.language;
+            document.getElementById('modal-book-views').innerText = book.views;
+            document.getElementById('modal-borrow-link').href = book.borrowLink;
+            document.getElementById('modal-preview-link').href = book.previewLink;
+            document.getElementById('modal-bookmark-link').dataset.bookId = book.id;
+
+            // Update borrow button text based on book type
+            const borrowButton = document.getElementById('modal-borrow-link');
+            if (book.isEbook) {
+                borrowButton.innerText = 'Borrow Hard Copy';
+            } else if (book.isResearchPaper) {
+                borrowButton.innerText = 'Borrow';
+            } else {
+                borrowButton.innerText = 'Borrow';
+            }
+
+            // Show the modal
+            $('#bookDetailModal').modal('show');
+        }
+
+        // Bind event listeners to elements that trigger the modal
+        document.querySelectorAll('.special').forEach(element => {
+            element.addEventListener('click', function() {
+                const book = {
+                    image: this.getAttribute('data-image'),
+                    title: this.getAttribute('data-title'),
+                    author: this.getAttribute('data-author'),
+                    description: this.getAttribute('data-description'),
+                    date: this.getAttribute('data-date'),
+                    category: this.getAttribute('data-category'),
+                    language: this.getAttribute('data-language'),
+                    views: this.getAttribute('data-views'),
+                    borrowLink: this.getAttribute('data-borrow-link'),
+                    previewLink: this.getAttribute('data-preview-link'),
+                    id: this.getAttribute('data-id'),
+                    isEbook: this.getAttribute('data-is-ebook') === 'true',
+                    isResearchPaper: this.getAttribute('data-is-research-paper') === 'true'
+                };
+                openBookDetailModal(book);
+            });
         });
     });
 </script>
