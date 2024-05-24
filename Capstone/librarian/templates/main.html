@@ -391,8 +391,23 @@
                             {% endfor %}
                         </select>
                     </div>
-                    
-                    
+                    <div class="form-group">
+                        <div>
+                            <label for="id_eBook">Ebook:</label>
+                            <input type="checkbox" name="eBook" id="id_eBook">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div>
+                            <label for="id_hardCopy">hardCopy:</label>
+                            <input type="checkbox" name="hardCopy" id="id_hardCopy">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_stock">stock:</label>
+                        <input type="number" class="form-control" id="id_stock" name="stock">
+                    </div>
+
                     <div class="form-group">
                         <label for="id_Language">Language:</label>
                         <select class="form-control" id="id_Language" name="Language" required>
@@ -401,6 +416,9 @@
                             {% endfor %}
                         </select>
                     </div>
+
+                    
+
                     <div class="form-group">
                         <label for="id_BookFile">Book File: (PDF)</label>
                         <input type="file" class="form-control-file" id="id_BookFile" name="BookFile" required>
