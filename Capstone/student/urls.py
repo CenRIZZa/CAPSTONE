@@ -22,6 +22,7 @@ urlpatterns = [
     path('student/book-detail/<int:book_id>/', views.book_detail, name='book_detail'),
     path('request-history/', views.request_history_view, name='request_history'),
     path('bookmark_status/<int:book_id>/', views.bookmark_status, name='bookmark_status'),
+    path('unbookmark_all/', views.unbookmark_all, name='unbookmark_all'),
     
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
