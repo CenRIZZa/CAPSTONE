@@ -240,11 +240,6 @@
     </div>
 </div>
 
-<!-- Loading Spinner -->
-<div id="loading-spinner" class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Loading...</span>
-</div>
-
 <!-- Borrow Message Toast -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     {% if messages %}
@@ -275,7 +270,6 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var bookDetailModal = document.getElementById('bookDetailModal');
-        var loadingSpinner = document.getElementById('loading-spinner');
         var bookmarkButton = document.getElementById('modal-bookmark-link');
 
         bookDetailModal.addEventListener('show.bs.modal', function (event) {
@@ -334,11 +328,6 @@
         $('#modal-bookmark-link').on('click', function(event) {
             event.preventDefault();
             const bookId = $(this).data('book-id');
-            const button = $(this);
-
-            // Show loading spinner and disable button
-            loadingSpinner.style.display = 'block';
-            button.prop('disabled', true);
 
             $.ajax({
                 type: 'POST',
@@ -348,20 +337,15 @@
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function(response) {
-                    // Hide loading spinner and enable button
-                    loadingSpinner.style.display = 'none';
-                    button.prop('disabled', false);
-
                     if (response.bookmarked) {
                         $('#modal-bookmark-link').text('Unbookmark');
                     } else {
                         $('#modal-bookmark-link').text('Bookmark');
                     }
+                    // Refresh the page on success
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
-                    // Hide loading spinner and enable button
-                    loadingSpinner.style.display = 'none';
-                    button.prop('disabled', false);
                     console.error('Bookmark toggle failed:', error);
                     alert('An error occurred while toggling the bookmark. Please try again.');
                 }
