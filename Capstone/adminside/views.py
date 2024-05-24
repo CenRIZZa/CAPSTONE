@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from librarian.models import Books
 from userauth.models import Account,Librarian
+from django.contrib.auth.models import User
 # Create your views here.
 def adminPage(request):
 
@@ -59,7 +60,7 @@ def book_page_views(request):
     lib_total = Librarian.objects.distinct().count()
     user_logs = UserActivity.objects.all()
     user_total = Student_total + lib_total
-
+    users = User.objects.all()
     # Render the template with the necessary data
     return render(request, 'book_page_views.html', {
         'book_titles': book_titles, 
@@ -68,7 +69,25 @@ def book_page_views(request):
         'distinct_users_count_this_month': distinct_users_count_this_month,
         'user_total':user_total,
         'user_logs':user_logs,
+        'users': users,
     })
+
+
+# views.py
+
+from django.shortcuts import render, redirect
+from .forms import AccountForm
+
+def create_account(request):
+    if request.method == 'POST':
+        form = AccountForm(request.POST)
+        if form.is_valid():
+            account = form.save(commit=False)
+            account.save()
+            return redirect('book_page_views')  # Redirect to a success page
+    else:
+        form = AccountForm()
+    return render(request, 'book_page_views.html', {'form': form})
 
 
 
