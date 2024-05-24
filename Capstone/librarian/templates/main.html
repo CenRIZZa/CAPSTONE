@@ -385,8 +385,9 @@
                     <div class="form-group">
                         <label for="id_Subcategories">SubCategory:</label>
                         <select class="form-control" id="id_Subcategories" name="SubCategory" required>
+                            <option value="">Select a subcategory</option>
                             {% for subcategory in subcategories %}
-                                <option value="{{ subcategory.id }}">{{ subcategory.name }}</option>
+                                <option value="{{ subcategory.id }}" data-category-id="{{ subcategory.category_id }}">{{ subcategory.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -556,6 +557,24 @@
         window.onload = function() {
             showContent('home');
         };
+
+
+
+
+        $(document).ready(function() {
+            $('#id_Category').change(function() {
+                var selectedCategoryId = $(this).val();
+                $('#id_Subcategories option').each(function() {
+                    var subcategoryCategoryId = $(this).data('category-id');
+                    if (subcategoryCategoryId == selectedCategoryId || !selectedCategoryId) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                $('#id_Subcategories').val(''); // Reset subcategory selection
+            });
+        });
     </script>
     {% block script %}{% endblock %}
 </body>

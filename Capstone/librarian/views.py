@@ -94,9 +94,9 @@ def main(request):
             book.deleted_at = timezone.now()
             book.save()
             return redirect('librarian')
-        
+    subcategories = SubCategory.objects.all()  
     categories = Category.objects.all()
-    return render(request, 'main.html', {'books': books, 'recently_deleted_books': recently_deleted_books, 'language_choices': language_choices, 'categories': categories})
+    return render(request, 'main.html', {'books': books, 'recently_deleted_books': recently_deleted_books, 'language_choices': language_choices, 'categories': categories, 'subcategories':subcategories})
 
 @login_required
 def delete_book(request, book_id):
