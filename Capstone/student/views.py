@@ -25,13 +25,21 @@ def student(request):
     # Fetch distinct years
     years = Books.objects.values_list('Date__year', flat=True).distinct()
 
+    # Fetch research papers
+    research_papers = Books.objects.filter(research_paper=True)
+
+    # Fetch eBooks
+    ebooks = Books.objects.filter(eBook=True)
+
     return render(request, 'student_content.html', {
         'books_per_category': books_per_category,
         'authors': authors,
         'years': years,
         'top_viewed_books': top_viewed_books,
+        'research_papers': research_papers,  # Include research papers in the context
+        'ebooks': ebooks,  # Include eBooks in the context
     })
-
+    
 def author_list(request):
     authors = Books.objects.values_list('Author', flat=True).distinct()
     return render(request, 'author_list.html', {'authors': authors})
@@ -85,11 +93,20 @@ from librarian.models import Books, ApprovedRequest
 
 def prev_file(request, book_id):
     book = get_object_or_404(Books, id=book_id)
+    
+    # Increment page views
     Books.objects.filter(pk=book_id).update(PageViews=F('PageViews') + 1)
     
     # Check if the file exists
     if not book.BookFile:
         return HttpResponseNotFound('File not found')
+    
+    # Bypass authentication and permission checks if the book is an eBook
+    if book.eBook:
+        context = {
+            'book': book,
+        }
+        return render(request, 'prev.html', context)
     
     # Check if the user is authenticated
     if not request.user.is_authenticated:
@@ -103,9 +120,6 @@ def prev_file(request, book_id):
         return render(request, 'prev.html', context)
     else:
         return HttpResponseForbidden("You don't have permission to access this book.")
-
-
-
 
 def search_suggestions(request):
     query = request.GET.get('q', '')

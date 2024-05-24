@@ -53,6 +53,7 @@ class Books(models.Model):
     borrowed = models.ManyToManyField(User, related_name='borrow', blank="True")
     PageViews = models.IntegerField(default=0)
     eBook = models.BooleanField(default=False)
+    research_paper = models.BooleanField(default=False)
     hardCopy = models.BooleanField(default=False)
     stock = models.IntegerField(default=0)
 
