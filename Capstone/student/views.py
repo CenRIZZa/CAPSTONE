@@ -6,6 +6,7 @@ from django.contrib import messages
 from librarian.models import Books, BorrowRequest, ApprovedRequest, DeclinedRequest
 from django.urls import reverse
 from django.db.models import Count, F
+import logging
 
 def student(request):
     all_books = Books.objects.all()
@@ -139,6 +140,17 @@ def bookmark_status(request, book_id):
     bookmarked = request.user in book.bookmarked_by.all()
     return JsonResponse({'bookmarked': bookmarked})
 
+@login_required
+def unbookmark_all(request):
+    if request.method == 'POST':
+        user = request.user
+        try:
+            user.bookmarks.clear()  # Clear the bookmarks correctly
+            return JsonResponse({'success': True})
+        except Exception as e:
+            logging.error(f"Error unbookmarking all books for user {user.id}: {e}")
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 @login_required
 def bookmark_toggle(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':

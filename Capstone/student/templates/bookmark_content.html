@@ -171,6 +171,7 @@
 <div class="bookmark-head">
     <div class="bookmark-title">
         <h1 class="">Bookmarks</h1>
+        <button id="unbookmark-all" class="btn-mdl">Unbookmark All</button>
     </div>
 </div>
 <div class="bookmark-content row">
@@ -335,6 +336,32 @@
                     alert('An error occurred. Please try again.');
                 }
             });
+        });
+
+        // Unbookmark all functionality
+        document.getElementById('unbookmark-all').addEventListener('click', function() {
+            if (confirm('Are you sure you want to unbookmark all books?')) {
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'unbookmark_all' %}",
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            document.querySelectorAll('.col-sm-3').forEach(function(bookCard) {
+                                bookCard.remove();
+                            });
+                            alert('All books have been unbookmarked.');
+                        } else {
+                            alert('An error occurred while unbookmarking.');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while unbookmarking.');
+                    }
+                });
+            }
         });
     });
 </script>
