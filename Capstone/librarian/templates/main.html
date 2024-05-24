@@ -353,84 +353,86 @@
                 <p class="mt-3">For more detailed instructions, refer to the user manual or contact support.</p>
             </div>
 
-            <!-- Upload Section-->
-            <div id="upload" class="content" style="display: none;">
-                <h1 class="mt-4">Upload</h1>
-                <hr>
-                <form method="post" enctype="multipart/form-data" action="{% url 'upload_view' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="id_BookTitle">Title:</label>
-                        <input type="text" class="form-control" id="id_BookTitle" name="BookTitle" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_Author">Author:</label>
-                        <input type="text" class="form-control" id="id_Author" name="Author" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_Description">Description:</label>
-                        <input type="text" class="form-control" id="id_Description" name="Description" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_Date">Date:</label>
-                        <input type="date" class="form-control" id="id_Date" name="Date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_Category">Category:</label>
-                        <select class="form-control" id="id_Category" name="Category" required>
-                            {% for category in categories %}
-                                <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_Subcategories">SubCategory:</label>
-                        <select class="form-control" id="id_Subcategories" name="SubCategory" required>
-                            <option value="">Select a subcategory</option>
-                            {% for subcategory in subcategories %}
-                                <option value="{{ subcategory.id }}" data-category-id="{{ subcategory.category_id }}">{{ subcategory.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <div>
-                            <label for="id_eBook">Ebook:</label>
-                            <input type="checkbox" name="eBook" id="id_eBook">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div>
-                            <label for="id_hardCopy">hardCopy:</label>
-                            <input type="checkbox" name="hardCopy" id="id_hardCopy">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_stock">stock:</label>
-                        <input type="number" class="form-control" id="id_stock" name="stock">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="id_Language">Language:</label>
-                        <select class="form-control" id="id_Language" name="Language" required>
-                            {% for language in language_choices %}
-                                <option value="{{ language.0 }}">{{ language.1 }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    
-
-                    <div class="form-group">
-                        <label for="id_BookFile">Book File: (PDF)</label>
-                        <input type="file" class="form-control-file" id="id_BookFile" name="BookFile" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="id_BookImage">Book Image: (JPG)</label>
-                        <input type="file" class="form-control-file" id="id_BookImage" name="BookImage" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Upload</button>
-                </form>
+<!-- Upload Section-->
+<div id="upload" class="content" style="display: none;">
+    <h1 class="mt-4">Upload</h1>
+    <hr>
+    <form method="post" enctype="multipart/form-data" action="{% url 'upload_view' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_BookTitle">Title:</label>
+            <input type="text" class="form-control" id="id_BookTitle" name="BookTitle" required>
+        </div>
+        <div class="form-group">
+            <label for="id_Author">Author:</label>
+            <input type="text" class="form-control" id="id_Author" name="Author" required>
+        </div>
+        <div class="form-group">
+            <label for="id_Description">Description:</label>
+            <input type="text" class="form-control" id="id_Description" name="Description" required>
+        </div>
+        <div class="form-group">
+            <label for="id_Date">Date:</label>
+            <input type="date" class="form-control" id="id_Date" name="Date" required>
+        </div>
+        <div class="form-group">
+            <label for="id_Category">Category:</label>
+            <select class="form-control" id="id_Category" name="Category" required>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="id_Subcategories">SubCategory:</label>
+            <select class="form-control" id="id_Subcategories" name="SubCategory" required>
+                <option value="">Select a subcategory</option>
+                {% for subcategory in subcategories %}
+                    <option value="{{ subcategory.id }}" data-category-id="{{ subcategory.category_id }}">{{ subcategory.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <div>
+                <label for="id_eBook">Ebook (Toggle if eBook, if not ignore):</label>
+                <input type="checkbox" name="eBook" id="id_eBook">
             </div>
+        </div>
+        <div class="form-group">
+            <div>
+                <label for="id_research_paper">Research Paper (Toggle if research paper, if not ignore):</label>
+                <input type="checkbox" name="research_paper" id="id_research_paper">
+            </div>
+        </div>
+        <div class="form-group">
+            <div>
+                <label for="id_hardCopy">HardCopy (Toggle if there's a hardcopy of the file):</label>
+                <input type="checkbox" name="hardCopy" id="id_hardCopy">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="id_stock">Stock:</label>
+            <input type="number" class="form-control" id="id_stock" name="stock">
+        </div>
+        <div class="form-group">
+            <label for="id_Language">Language:</label>
+            <select class="form-control" id="id_Language" name="Language" required>
+                {% for language in language_choices %}
+                    <option value="{{ language.0 }}">{{ language.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="id_BookFile">Book File: (PDF)</label>
+            <input type="file" class="form-control-file" id="id_BookFile" name="BookFile" required>
+        </div>
+        <div class="form-group">
+            <label for="id_BookImage">Book Image: (JPG)</label>
+            <input type="file" class="form-control-file" id="id_BookImage" name="BookImage" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+</div>
 
             <!-- Books Section-->
             <div id="books" class="content" style="display: none;">
@@ -789,6 +791,23 @@
             }
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const ebookCheckbox = document.getElementById('id_eBook');
+            const researchPaperCheckbox = document.getElementById('id_research_paper');
+    
+            ebookCheckbox.addEventListener('change', function() {
+                if (ebookCheckbox.checked) {
+                    researchPaperCheckbox.checked = false;
+                }
+            });
+    
+            researchPaperCheckbox.addEventListener('change', function() {
+                if (researchPaperCheckbox.checked) {
+                    ebookCheckbox.checked = false;
+                }
+            });
+        });
+        
         function toggleAvailability(bookId) {
             var availabilityBtn = document.getElementById('availabilityBtn-' + bookId);
             var isAvailable = availabilityBtn.classList.contains('btn-success');
