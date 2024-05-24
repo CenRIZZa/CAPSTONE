@@ -8,4 +8,5 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('home/', views.adminPage),
     path('book-page-views/', views.book_page_views, name='book_page_views'),
+    path('create-account/', views.create_account, name='create_account'),
 ]
