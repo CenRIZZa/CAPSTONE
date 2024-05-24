@@ -330,11 +330,11 @@
                         console.error('Page number not found in transcript:', transcript);
                     }
                 }
-                else if (transcript === 'pause.') {
+                else if (transcript === 'pause.' || 'wait.') {
                     speakCommandSuccess('Reading pause');
                     togglePauseResume();
                     
-                } else if (transcript === 'resume.') {
+                } else if (transcript === 'resume.' || 'go on.') {
                     speakCommandSuccess('Reading continue');
                     togglePauseResume();
                     
