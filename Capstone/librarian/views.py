@@ -27,17 +27,6 @@ def upload_view(request):
     
     return render(request, 'main.html', {'form': form, 'categories': categories, 'subcategories':subcategories,})
 
-@login_required
-def review_request(request):
-    borrow_requests = BorrowRequest.objects.filter(expires_at__gt=timezone.now())
-    approved_requests = ApprovedRequest.objects.all()
-    declined_requests = DeclinedRequest.objects.all()
-    context = {
-        'borrow_requests': borrow_requests,
-        'approved_requests': approved_requests,
-        'declined_requests': declined_requests,
-    }
-    return render(request, 'review_request.html', context)
 
 @login_required
 def approve_request(request, request_id):
@@ -50,7 +39,7 @@ def approve_request(request, request_id):
     )
 
     borrow_request.delete()
-    return redirect('review_request')
+    return redirect('librarian')
 
 @login_required
 def decline_request(request, request_id):
@@ -63,19 +52,23 @@ def decline_request(request, request_id):
     )
 
     borrow_request.delete()
-    return redirect('review_request')
+    return redirect('librarian')
 
 @login_required
 def delete_approved_request(request, request_id):
     approved_request = get_object_or_404(ApprovedRequest, id=request_id)
     approved_request.delete()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('review_request')))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('librarian')))
 
 @login_required
 def delete_declined_request(request, request_id):
     declined_request = get_object_or_404(DeclinedRequest, id=request_id)
-    declined_request.delete()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('review_request')))
+    
+    if request.method == 'POST':
+        declined_request.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('librarian')))
+    else:
+        pass
 
 def delete_expired_requests():
     expired_requests = BorrowRequest.objects.filter(expires_at__lt=timezone.now())
@@ -85,6 +78,10 @@ def delete_expired_requests():
 def main(request):
     books = Books.objects.filter(deleted_at__isnull=True)
     recently_deleted_books = Books.objects.filter(deleted_at__isnull=False)
+    borrow_requests = BorrowRequest.objects.all()
+    borrow_requests = BorrowRequest.objects.filter(expires_at__gt=timezone.now())
+    approved_requests = ApprovedRequest.objects.all()
+    declined_requests = DeclinedRequest.objects.all()
     language_choices = LANGUAGE_CHOICES
 
     if request.method == 'POST':
@@ -94,9 +91,22 @@ def main(request):
             book.deleted_at = timezone.now()
             book.save()
             return redirect('librarian')
-    subcategories = SubCategory.objects.all()  
+            
+    subcategories = SubCategory.objects.all()
     categories = Category.objects.all()
-    return render(request, 'main.html', {'books': books, 'recently_deleted_books': recently_deleted_books, 'language_choices': language_choices, 'categories': categories, 'subcategories':subcategories})
+    
+    context = {
+        'books': books,
+        'recently_deleted_books': recently_deleted_books,
+        'language_choices': language_choices,
+        'categories': categories,
+        'subcategories': subcategories,
+        'borrow_requests': borrow_requests,
+        'approved_requests': approved_requests,
+        'declined_requests': declined_requests,
+    }
+    
+    return render(request, 'main.html', context)
 
 @login_required
 def delete_book(request, book_id):
@@ -104,12 +114,6 @@ def delete_book(request, book_id):
     book.deleted_at = timezone.now()
     book.save()
     return redirect('librarian')
-
-@login_required
-def recently_deleted_books(request):
-    recently_deleted_books = Books.objects.filter(deleted_at__isnull=False)
-    categories = Category.objects.all()
-    return render(request, 'recently_deleted_books.html', {'recently_deleted_books': recently_deleted_books, 'categories': categories})
 
 @login_required
 def delete_all_books(request):
@@ -124,7 +128,7 @@ def restore_book(request, book_id):
     book = Books.objects.get(pk=book_id)
     book.deleted_at = None
     book.save()
-    return redirect('recently_deleted_books')
+    return redirect('librarian')
 
 @login_required
 def delete_all_recently_deleted_books(request):
@@ -136,7 +140,7 @@ def delete_all_recently_deleted_books(request):
             if book.BookImage:
                 book.BookImage.delete(save=False)
         recently_deleted_books.delete()
-    return redirect('recently_deleted_books')
+    return redirect('librarian')
 
 def delete_recently_deleted_books(request, book_id):
     if request.method == 'POST':
@@ -146,7 +150,7 @@ def delete_recently_deleted_books(request, book_id):
         if book.BookImage:
             book.BookImage.delete(save=False)
         book.delete()
-    return redirect('recently_deleted_books')
+    return redirect('librarian')
 
 @login_required
 def toggle_availability(request, book_id):
@@ -161,11 +165,6 @@ def logout_user(request):
     return redirect('login_user')
 
 @login_required
-def borrow_requests_view(request):
-    borrow_requests = BorrowRequest.objects.all()
-    return render(request, 'borrow_requests.html', {'borrow_requests': borrow_requests})
-
-@login_required
 def approve_request_view(request, request_id):
     borrow_request = get_object_or_404(BorrowRequest, id=request_id)
     if request.method == 'POST':
@@ -176,8 +175,8 @@ def approve_request_view(request, request_id):
         )
         borrow_request.delete()
         borrow_request.book.borrowed.add(request.user)
-        return redirect('borrow_requests')
-    return redirect('borrow_requests')
+        return redirect('librarian')
+    return redirect('librarian')
 
 @login_required
 def decline_request_view(request, request_id):
@@ -189,8 +188,8 @@ def decline_request_view(request, request_id):
             requested_at=borrow_request.requested_at
         )
         borrow_request.delete()
-        return redirect('borrow_requests')
-    return redirect('borrow_requests')
+        return redirect('librarian')
+    return redirect('librarian')
 
 def go_back(request):
     return redirect('main') 
