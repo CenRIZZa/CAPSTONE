@@ -467,93 +467,146 @@
     </form>
 </div>
 
-            <!-- Books Section-->
-            <div id="books" class="content" style="display: none;">
-                <div class="header-lib">
-                    <h1 class="mt-4">Books</h1>
-                    <div>
-                        <form id="deleteAllFormBooks" method="post" action="{% url 'delete_all_books' %}">
-                            {% csrf_token %}
-                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAllBooks">
-                                Delete All
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                <hr>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Description</th>
-                            <th>Date</th>
-                            <th>Category</th>
-                            <th>Language</th>
-                            <th>Book Image</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for book in books %}
-                            <tr>
-                                <td>{{ book.BookTitle }}</td>
-                                <td>{{ book.Author }}</td>
-                                <td>{{ book.Description }}</td>
-                                <td>{{ book.Date }}</td>
-                                <td>
-                                    {% for category in book.Category.all %}
-                                        {{ category.name }}{% if not forloop.last %}, {% endif %}
-                                    {% endfor %}
-                                </td>
-                                <td>{{ book.Language }}</td>
-                                <td>
-                                    {% if book.BookImage %}
-                                        <img src="{{ book.BookImage.url }}" alt="{{ book.BookTitle }} Image" style="max-width: 100px;">
-                                    {% else %}
-                                        No Image
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <form id="toggleForm-{{ book.id }}" method="post" action="{% url 'toggle_availability' book.id %}" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button id="availabilityBtn-{{ book.id }}" class="btn {% if book.available %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleAvailability({{ book.id }})">
-                                            {% if book.available %}Available{% else %}Not Available{% endif %}
-                                        </button>
-                                    </form>
-                                    <form id="deleteFormBook-{{ book.id }}" method="post" action="{% url 'delete_book' book.id %}" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModalBook" data-bookid="{{ book.id }}">Delete Book</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <!-- Modal for Delete All for Books -->
-                <div class="modal fade" id="deleteAllBooks" tabindex="-1" aria-labelledby="deleteAllModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteAllModalLabel">Delete All Books</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                <!-- Books Section -->
+                <div id="books" class="content" style="display: none;">
+                    <div class="header-lib">
+                        <h1 class="mt-4">Books</h1>
+                        <div>
+                            <form id="deleteAllFormBooks" method="post" action="{% url 'delete_all_books' %}">
+                                {% csrf_token %}
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteAllBooks">
+                                    Delete All
                                 </button>
+                            </form>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Filter Form -->
+                    <form id="filterForm" method="get" action="{% url 'librarian' %}">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="yearFilter">Year</label>
+                                <select class="form-control" id="yearFilter" name="year">
+                                    <option value="">All Years</option>
+                                    {% for year in years %}
+                                        <option value="{{ year }}" {% if request.GET.year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
-                            <div class="modal-body">
-                                Are you sure you want to delete all books?
+                            <div class="form-group col-md-3">
+                                <label for="languageFilter">Language</label>
+                                <select class="form-control" id="languageFilter" name="language">
+                                    <option value="">All Languages</option>
+                                    {% for code, name in language_choices %}
+                                        <option value="{{ code }}" {% if request.GET.language == code %}selected{% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <form id="deleteAllFormBooks" method="post" action="{% url 'delete_all_books' %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">Delete All</button>
-                                </form>
+                            <div class="form-group col-md-3">
+                                <label for="fileTypeFilter">File Type</label>
+                                <select class="form-control" id="fileTypeFilter" name="file_type">
+                                    <option value="">All Types</option>
+                                    <option value="eBook" {% if request.GET.file_type == "eBook" %}selected{% endif %}>eBook</option>
+                                    <option value="Research Paper" {% if request.GET.file_type == "Research Paper" %}selected{% endif %}>Research Paper</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="categoryFilter">Category</label>
+                                <select class="form-control" id="categoryFilter" name="category">
+                                    <option value="">All Categories</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.name }}" {% if request.GET.category == category.name %}selected{% endif %}>{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </form>
+                    <hr>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Description</th>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Sub-Category</th>
+                                <th>Language</th>
+                                <th>Book Image</th>
+                                <th>File type</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in books %}
+                                <tr>
+                                    <td>{{ book.BookTitle }}</td>
+                                    <td>{{ book.Author }}</td>
+                                    <td>{{ book.Description }}</td>
+                                    <td>{{ book.Date }}</td>
+                                    <td>
+                                        {% for category in book.Category.all %}
+                                            {{ category.name }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% for subcategory in book.SubCategory.all %}
+                                            {{ subcategory.name }}{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    
+                                    <td>{{ book.Language }}</td>
+                                    <td>
+                                        {% if book.BookImage %}
+                                            <img src="{{ book.BookImage.url }}" alt="{{ book.BookTitle }} Image" style="max-width: 100px;">
+                                        {% else %}
+                                            No Image
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ book.get_file_type }}</td>
+                                    <td>{{book.stock}}</td>
+                                    <td>
+                                        <form id="toggleForm-{{ book.id }}" method="post" action="{% url 'toggle_availability' book.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button id="availabilityBtn-{{ book.id }}" class="btn {% if book.available %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleAvailability({{ book.id }})">
+                                                {% if book.available %}Available{% else %}Not Available{% endif %}
+                                            </button>
+                                        </form>
+                                        <form id="deleteFormBook-{{ book.id }}" method="post" action="{% url 'delete_book' book.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModalBook" data-bookid="{{ book.id }}">Delete Book</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <!-- Modal for Delete All for Books -->
+                    <div class="modal fade" id="deleteAllBooks" tabindex="-1" aria-labelledby="deleteAllModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteAllModalLabel">Delete All Books</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete all books?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form id="deleteAllFormBooks" method="post" action="{% url 'delete_all_books' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete All</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             <!-- Modal for Delete Books -->
             <div class="modal fade" id="deleteModalBook" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -597,7 +650,10 @@
                             <th>Description</th>
                             <th>Date</th>
                             <th>Category</th>
+                            <th>Sub-Category</th>
                             <th>Book Image</th>
+                            <th>File Type</th>
+                            <th>Stock</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -614,12 +670,19 @@
                                 {% endfor %}
                             </td>
                             <td>
+                                {% for subcategory in book.SubCategory.all %}
+                                    {{ subcategory.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
                                 {% if book.BookImage.url %}
                                     <img src="{{ book.BookImage.url }}" alt="{{ book.BookTitle }}" class="lib_img">
                                 {% else %}
                                     No Image
                                 {% endif %}
                             </td>
+                            <td>{{ book.get_file_type }}</td>
+                            <td>{{book.stock}}</td>
                             <td>
                                 <form method="post" action="{% url 'restore_book' book.id %}">
                                     {% csrf_token %}
@@ -677,6 +740,7 @@
                         </div>
                     </div>
                 </div>
+<<<<<<< HEAD
             </div>
             <!-- Borrow Request-->
             <div id="borrow-req" class="content" style="display: none;">
@@ -874,8 +938,214 @@
                 {% else %}
                 <p>No declined requests at the moment.</p>
                 {% endif %}
+=======
+>>>>>>> 9559b84f38c9051c6ddd10ec9d119b896fba4c53
             </div>
- 
+<!-- Borrow Request-->
+<div id="borrow-req" class="content" style="display: none;">
+    <h2 class="sections">Pending Requests</h2>
+    <hr>
+    {% if borrow_requests %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Requested By</th>
+                <th>Requested At</th>
+                <th>Expires At</th>
+                <th>File Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in borrow_requests %}
+            <tr>
+                <td>{{ request.book }}</td>
+                <td>{{ request.requested_by }}</td>
+                <td>{{ request.requested_at }}</td>
+                <td>{{ request.expires_at }}</td>
+                <td>{{ request.book.get_file_type }}</td>
+                <td>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#approveModal{{ request.id }}">Approve</button>
+                    <!-- Approve Modal -->
+                    <div class="modal fade" id="approveModal{{ request.id }}" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel{{ request.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="approveModalLabel{{ request.id }}">Approve Request</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to approve this request?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form method="post" action="{% url 'approve_request' request.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">Approve</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Approve Modal -->
+                    
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#declineModal{{ request.id }}">Decline</button>
+                    <!-- Decline Modal -->
+                    <div class="modal fade" id="declineModal{{ request.id }}" tabindex="-1" role="dialog" aria-labelledby="declineModalLabel{{ request.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="declineModalLabel{{ request.id }}">Decline Request</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to decline this request?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form method="post" action="{% url 'decline_request' request.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Decline</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Decline Modal -->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No borrow requests at the moment.</p>
+    {% endif %}
+    
+    <!-- Approved Requests -->
+    <hr>
+    <h2 class="sections margin">Approved Requests</h2>
+    <hr>
+    {% if approved_requests %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Requested By</th>
+                <th>Requested At</th>
+                <th>Approved At</th>
+                <th>File Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in approved_requests %}
+            <tr>
+                <td>{{ request.book }}</td>
+                <td>{{ request.requested_by }}</td>
+                <td>{{ request.requested_at }}</td>
+                <td>{{ request.approved_at }}</td>
+                <td>{{ request.book.get_file_type }}</td>
+                <td>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteApprovedModal{{ request.id }}">Delete</button>
+                    <!-- Delete Approved Modal -->
+                    <div class="modal fade" id="deleteApprovedModal{{ request.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteApprovedModalLabel{{ request.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteApprovedModalLabel{{ request.id }}">Delete Approved Request</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this approved request?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form method="post" action="{% url 'delete_approved_request' request.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Delete Approved Modal -->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No approved requests at the moment.</p>
+    {% endif %}
+    
+    <!-- Declined Requests -->
+    <hr>
+    <h2 class="sections margin">Declined Requests</h2>
+    <hr>
+    {% if declined_requests %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Requested By</th>
+                <th>Requested At</th>
+                <th>Declined At</th>
+                <th>File Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in declined_requests %}
+            <tr>
+                <td>{{ request.book }}</td>
+                <td>{{ request.requested_by }}</td>
+                <td>{{ request.requested_at }}</td>
+                <td>{{ request.declined_at }}</td>
+                <td>{{ request.book.get_file_type }}</td>
+                <td>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteDeclinedModal{{ request.id }}">Delete</button>
+                    <!-- Delete Declined Modal -->
+                    <div class="modal fade" id="deleteDeclinedModal{{ request.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteDeclinedModalLabel{{ request.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteDeclinedModalLabel{{ request.id }}">Delete Declined Request</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this declined request?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form method="post" action="{% url 'delete_declined_request' request.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Delete Declined Modal -->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No declined requests at the moment.</p>
+    {% endif %}
+</div>
+
+
         </main>
 
         </div>
@@ -893,7 +1163,13 @@
                 contents[i].style.display = 'none';
             }
             document.getElementById(contentId).style.display = 'block';
+            localStorage.setItem('activeContent', contentId);
         }
+        window.onload = function() {
+            var activeContent = localStorage.getItem('activeContent') || 'home';
+            showContent(activeContent);
+        };
+
 
         function setDeleteUrl(bookId) {
             var bookRow = document.getElementById('bookRow-' + bookId);
@@ -973,12 +1249,6 @@
                 }
             });
         }
-
-        window.onload = function() {
-            showContent('home');
-        };
-
-
 
 
         $(document).ready(function() {

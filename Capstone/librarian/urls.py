@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('librarian/', views.main, name='librarian'),
-    path('librarian1/', views.main, name='librarian1'),
     path('librarian/delete_book/<int:book_id>/', views.delete_book, name='delete_book'),
     path('librarian/delete_all_books/', views.delete_all_books, name='delete_all_books'),
     path('librarian/recently_deleted_books/delete_all/', views.delete_all_recently_deleted_books, name='delete_all_recently_deleted_books'),

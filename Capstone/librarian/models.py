@@ -58,7 +58,14 @@ class Books(models.Model):
     stock = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.BookTitle + ', ' + self.Author
+        return self.BookTitle
+    
+    def get_file_type(self):
+        if self.eBook:
+            return 'eBook'
+        elif self.research_paper:
+            return 'Research Paper'
+        return 'Unknown'
     
 class BorrowRequest(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
@@ -66,6 +73,7 @@ class BorrowRequest(models.Model):
     requested_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(default=timezone.now() + timedelta(days=3))
     status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'), ('Expired', 'Expired')], default='Pending')
+    file_type = models.CharField(max_length=20, choices=[('eBook', 'eBook'), ('Research Paper', 'Research Paper')], default='eBook')
     
     def is_expired(self):
         return timezone.now() > self.expires_at

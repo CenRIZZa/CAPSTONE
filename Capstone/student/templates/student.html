@@ -506,7 +506,6 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         var bookDetailModal = document.getElementById('bookDetailModal');
-        var bookmarkButton = document.getElementById('modal-bookmark-link');
 
         bookDetailModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
@@ -519,10 +518,7 @@
             var image = button.getAttribute('data-image');
             var views = button.getAttribute('data-views');
             var bookId = button.getAttribute('data-id');
-            var borrowLink = button.getAttribute('data-borrow-link');
-            var previewLink = button.getAttribute('data-preview-link');
-            var isEbook = button.getAttribute('data-is-ebook') === 'true';
-            var isResearchPaper = button.getAttribute('data-is-research-paper') === 'true';
+            var available = button.getAttribute('data-available') === 'true';
 
             var modalImage = bookDetailModal.querySelector('#modal-book-image');
             var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
@@ -544,18 +540,10 @@
             modalBookCategory.textContent = category;
             modalBookLanguage.textContent = language;
             modalBookViews.textContent = views;
-            modalPreviewLink.href = previewLink;
+            modalPreviewLink.href = `/student/preview/${bookId}/`;
             modalBookmarkLink.setAttribute('data-book-id', bookId);
-            modalBorrowLink.href = borrowLink;
-
-            // Update borrow button text based on book type
-            if (isEbook) {
-                modalBorrowLink.textContent = 'Borrow Hard Copy';
-            } else if (isResearchPaper) {
-                modalBorrowLink.textContent = 'Borrow';
-            } else {
-                modalBorrowLink.textContent = 'Borrow';
-            }
+            modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
+            modalBorrowLink.classList.toggle('disabled', !available);
 
             // Check bookmark status
             $.ajax({
@@ -570,6 +558,7 @@
                 }
             });
         });
+
         // Handle bookmark toggle
         $('#modal-bookmark-link').on('click', function (event) {
             event.preventDefault();
@@ -589,58 +578,6 @@
                         $('#modal-bookmark-link').text('Bookmark');
                     }
                 }
-            });
-        });
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('bookDetailModal');
-
-        function openBookDetailModal(book) {
-            document.getElementById('modal-book-image').src = book.image;
-            document.getElementById('modal-book-title').innerText = book.title;
-            document.getElementById('modal-book-author').innerText = book.author;
-            document.getElementById('modal-book-description').innerText = book.description;
-            document.getElementById('modal-book-date').innerText = book.date;
-            document.getElementById('modal-book-category').innerText = book.category;
-            document.getElementById('modal-book-language').innerText = book.language;
-            document.getElementById('modal-book-views').innerText = book.views;
-            document.getElementById('modal-borrow-link').href = book.borrowLink;
-            document.getElementById('modal-preview-link').href = book.previewLink;
-            document.getElementById('modal-bookmark-link').dataset.bookId = book.id;
-
-            // Update borrow button text based on book type
-            const borrowButton = document.getElementById('modal-borrow-link');
-            if (book.isEbook) {
-                borrowButton.innerText = 'Borrow Hard Copy';
-            } else if (book.isResearchPaper) {
-                borrowButton.innerText = 'Borrow';
-            } else {
-                borrowButton.innerText = 'Borrow';
-            }
-
-            // Show the modal
-            $('#bookDetailModal').modal('show');
-        }
-
-        // Bind event listeners to elements that trigger the modal
-        document.querySelectorAll('.special').forEach(element => {
-            element.addEventListener('click', function() {
-                const book = {
-                    image: this.getAttribute('data-image'),
-                    title: this.getAttribute('data-title'),
-                    author: this.getAttribute('data-author'),
-                    description: this.getAttribute('data-description'),
-                    date: this.getAttribute('data-date'),
-                    category: this.getAttribute('data-category'),
-                    language: this.getAttribute('data-language'),
-                    views: this.getAttribute('data-views'),
-                    borrowLink: this.getAttribute('data-borrow-link'),
-                    previewLink: this.getAttribute('data-preview-link'),
-                    id: this.getAttribute('data-id'),
-                    isEbook: this.getAttribute('data-is-ebook') === 'true',
-                    isResearchPaper: this.getAttribute('data-is-research-paper') === 'true'
-                };
-                openBookDetailModal(book);
             });
         });
     });
