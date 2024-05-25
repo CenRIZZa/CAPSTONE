@@ -374,7 +374,7 @@
             background-color: rgb(74, 128, 210);
             padding: 10px 20px;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 2rem;
         }
         .upload:hover{
             background-color: #5E8DD4;
@@ -385,8 +385,8 @@
             align-items: center;
             flex-shrink: 1;
         }
-        
-    </style>  
+    </style>
+    {% block style %}{% endblock %}
 </head>
 <body>
     <div class="container-fluid">
@@ -421,7 +421,7 @@
                     </ul>
                 </div>
             </nav>
-        </div>
+
         <main role="main" class="col-md-10 ml-sm-auto main-content">
             <div id="home" class="content home-lib" style="display: block;">
                 <h1 class="mt-4">Home</h1>
@@ -629,16 +629,18 @@
                                 <td>{{ book.get_file_type }}</td>
                                 <td>{{book.stock}}</td>
                                 <td>
-                                    <form id="toggleForm-{{ book.id }}" method="post" action="{% url 'toggle_availability' book.id %}" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button id="availabilityBtn-{{ book.id }}" class="btn {% if book.available %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleAvailability({{ book.id }})">
-                                            {% if book.available %}Available{% else %}Not Available{% endif %}
-                                        </button>
-                                    </form>
-                                    <form id="deleteFormBook-{{ book.id }}" method="post" action="{% url 'delete_book' book.id %} delete-btn" style="display: inline;">
-                                        {% csrf_token %}
-                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModalBook" data-bookid="{{ book.id }}">Delete Book</button>
-                                    </form>
+                                    <div class="restore-delete">
+                                        <form id="toggleForm-{{ book.id }}" method="post" action="{% url 'toggle_availability' book.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button id="availabilityBtn-{{ book.id }}" class="btn {% if book.available %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleAvailability({{ book.id }})">
+                                                {% if book.available %}Available{% else %}Not Available{% endif %}
+                                            </button>
+                                        </form>
+                                        <form id="deleteFormBook-{{ book.id }}" method="post" action="{% url 'delete_book' book.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModalBook" data-bookid="{{ book.id }}">Delete Book</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -744,14 +746,16 @@
                             <td>{{ book.get_file_type }}</td>
                             <td>{{book.stock}}</td>
                             <td>
-                                <form method="post" action="{% url 'restore_book' book.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-success">Restore</button>
-                                </form>
-                                <form id="deleteFormRecentDel-{{ book.id }}" method="post" action="{% url 'delete_recently_deleted_books' book.id %}" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModalRecentDel" data-bookid="{{ book.id }}">Delete Book</button>
-                                </form>                               
+                                <div class="restore-delete">
+                                    <form method="post" action="{% url 'restore_book' book.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">Restore</button>
+                                    </form>
+                                    <form id="deleteFormRecentDel-{{ book.id }}" method="post" action="{% url 'delete_recently_deleted_books' book.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModalRecentDel" data-bookid="{{ book.id }}">Delete Book</button>
+                                    </form> 
+                                </div>                               
                             </td>
                         </tr>
                         {% endfor %}
