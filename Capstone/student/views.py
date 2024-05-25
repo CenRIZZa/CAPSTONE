@@ -130,6 +130,7 @@ def search_suggestions(request):
                 'id': book.id,
                 'title': book.BookTitle,
                 'author': book.Author,
+                'description': book.Description,
                 'date': book.Date.strftime('%Y-%m-%d'),
                 'category': ', '.join(category.name for category in book.Category.all()),
                 'language': book.Language,
