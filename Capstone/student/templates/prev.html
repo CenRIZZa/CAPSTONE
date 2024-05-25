@@ -87,6 +87,7 @@
 </head>
 <body>
     <a href="#" id="back-button" onclick="history.go(-1); return false;">Back</a>
+    <p>Page Views: {{ book.PageViews }}</p>
     <div id="pdf-container" onmousedown="startDragging(event)" onmousemove="drag(event)" onmouseup="stopDragging(event)" oncontextmenu="return false;"></div>
     <div id="zoom-controls">
         <button onclick="zoomOut()">-</button>

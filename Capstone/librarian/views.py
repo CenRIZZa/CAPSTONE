@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from .forms import BookForm
-
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
@@ -98,7 +98,7 @@ def approve_request(request, request_id):
         book=borrow_request.book,
         requested_by=borrow_request.requested_by,
         requested_at=borrow_request.requested_at,
-        file_type=borrow_request.book.get_file_type()
+        #file_type=borrow_request.book.get_file_type()
     )
     borrow_request.delete()
     return redirect('librarian')
@@ -111,7 +111,7 @@ def decline_request(request, request_id):
         book=borrow_request.book,
         requested_by=borrow_request.requested_by,
         requested_at=borrow_request.requested_at,
-        file_type=borrow_request.book.get_file_type()
+        #file_type=borrow_request.book.get_file_type()
     )
     borrow_request.delete()
     return redirect('librarian')
@@ -202,7 +202,6 @@ def approve_request_view(request, request_id):
             book=borrow_request.book,
             requested_by=borrow_request.requested_by,
             requested_at=borrow_request.requested_at,
-            file_type=borrow_request.file_type
         )
         borrow_request.delete()
         borrow_request.book.borrowed.add(request.user)
@@ -217,11 +216,12 @@ def decline_request_view(request, request_id):
             book=borrow_request.book,
             requested_by=borrow_request.requested_by,
             requested_at=borrow_request.requested_at,
-            file_type=borrow_request.file_type
         )
         borrow_request.delete()
         return redirect('librarian')
     return redirect('librarian')
+
+
 
 def go_back(request):
     return redirect('main') 
