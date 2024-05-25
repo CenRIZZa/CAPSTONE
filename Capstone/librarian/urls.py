@@ -19,7 +19,5 @@ urlpatterns = [
     path('delete_recently_deleted_books/<int:book_id>/', views.delete_recently_deleted_books, name='delete_recently_deleted_books'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

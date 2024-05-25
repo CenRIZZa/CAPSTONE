@@ -218,6 +218,7 @@ def request_history_view(request):
     }
 
     return render(request, 'requesthistory.html', context)
+
 def logout_user(request):
     logout(request)
     messages.success(request, ("You were Logged Out!"))
