@@ -76,7 +76,7 @@ def book_page_views(request):
 # views.py
 
 from django.shortcuts import render, redirect
-from .forms import AccountForm
+from .forms import AccountForm, LibrarianForm
 
 def create_account(request):
     if request.method == 'POST':
@@ -89,6 +89,16 @@ def create_account(request):
         form = AccountForm()
     return render(request, 'book_page_views.html', {'form': form})
 
+def create_librarian(request):
+    if request.method == 'POST':
+        form = LibrarianForm(request.POST)
+        if form.is_valid():
+            librarian = form.save(commit=False)
+            librarian.save()
+            return redirect('book_page_views')  # Redirect to a success page
+    else:
+        form = LibrarianForm()
+    return render(request, 'book_page_views.html', {'form': form})
 
 
 

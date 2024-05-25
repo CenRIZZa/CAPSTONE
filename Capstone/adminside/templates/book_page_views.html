@@ -251,16 +251,21 @@
 
 
         <div id="Create-section">
-            <h2>Account Creation</h2>
             <div class="container">
                 <div class="row justify-content-center mt-5">
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h2 class="card-title text-center">Student</h2>
+                                <h2>Account Creation</h2>
+                                
+                                <select class="form-select" id="role" name="role" onchange="toggleForm()">
+                                    <option value="Student">Student</option>
+                                    <option value="Librarian">Librarian</option>
+                                </select>
                             </div>
                             <div class="card-body">
-                                <form method="post" action="{% url 'create_account' %}">
+                                <!-- Student Form -->
+                                <form id="student-form" method="post" action="{% url 'create_account' %}">
                                     {% csrf_token %}
                                     <div class="mb-3">
                                         <label for="lrn" class="form-label">LRN</label>
@@ -291,6 +296,33 @@
                                         <input type="email" class="form-control" id="email" name="email">
                                     </div>
                                     <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                                </form>
+            
+                                <!-- Librarian Form -->
+                                <form id="librarian-form" method="post" action="{% url 'create_librarian' %}">
+                                    {% csrf_token %}
+                                    <!-- Your Librarian form fields here -->
+                                    <div class="mb-3">
+                                        <label for="Username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="username" name="Username">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fname" class="form-label">First Name</label>
+                                        <input type="text" class="form-control" id="fname" name="fname">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="lname" class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" id="lname" name="lname">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="Bday" class="form-label">Birthday</label>
+                                        <input type="date" class="form-control" id="bday" name="Bday">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block">Create Librarian</button>
                                 </form>
                             </div>
                         </div>
@@ -383,6 +415,24 @@
                 responsive: true,
                 maintainAspectRatio: false
             }
+        });
+
+        function toggleForm() {
+            var role = document.getElementById('role').value;
+            var studentForm = document.getElementById('student-form');
+            var librarianForm = document.getElementById('librarian-form');
+
+            if (role === 'Student') {
+                studentForm.style.display = 'block';
+                librarianForm.style.display = 'none';
+            } else if (role === 'Librarian') {
+                studentForm.style.display = 'none';
+                librarianForm.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleForm(); // Call once to set the initial state
         });
     </script>
    
