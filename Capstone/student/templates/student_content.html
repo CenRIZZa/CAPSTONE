@@ -437,12 +437,29 @@
                 </div>
             </div>
             <div class="modal-footer modalButtons">
-                <a href="#" id="modal-borrow-link" class="btn-mdl">Borrow</a>
+                <a href="#" id="modal-borrow-link" class="btn-mdl" data-approved="{{ approved_requested }}">Borrow</a>
                 <a href="#" id="modal-preview-link" class="btn-mdl">Preview</a>
                 <a href="#" id="modal-bookmark-link" class="btn-mdl" data-book-id="">Bookmark</a>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Borrow Message Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    {% if messages %}
+    <div id="borrowMessageToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Request Sent</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <!-- Borrow Message Toast -->
@@ -566,6 +583,21 @@
                     alert('An error occurred while toggling the bookmark. Please try again.');
                 }
             });
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const borrowButton = document.getElementById('modal-borrow-link');
+
+        borrowButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            const isApproved = this.getAttribute('data-approved') === 'true';
+
+            if (isApproved) {
+                alert("You have already been approved to borrow this book.");
+            } else {
+                // Proceed with the normal borrow request
+                window.location.href = this.href;
+            }
         });
     });
 </script>

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from django.conf import settings
 from django.shortcuts import redirect, render, get_object_or_404
@@ -24,6 +24,10 @@ def main(request):
     approved_requests = ApprovedRequest.objects.all()
     declined_requests = DeclinedRequest.objects.all()
     books_to_be_returned = Out.objects.all()
+    
+    # Filter out research papers for the "Book Status" section
+    book_status_approved_requests = ApprovedRequest.objects.filter(book__research_paper=False)
+    book_status_books_to_be_returned = Out.objects.filter(book__research_paper=False)
     return_logs = ReturnLog.objects.all()
     language_choices = LANGUAGE_CHOICES
 
@@ -32,7 +36,7 @@ def main(request):
 
     if request.method == 'POST':
         book_id = request.POST.get('book_id')
-        if book_id:
+        if (book_id):
             book = Books.objects.get(pk=book_id)
             book.deleted_at = timezone.now()
             book.save()
@@ -74,6 +78,8 @@ def main(request):
         'approved_requests': approved_requests,
         'declined_requests': declined_requests,
         'books_to_be_returned': books_to_be_returned,
+        'book_status_approved_requests': book_status_approved_requests,
+        'book_status_books_to_be_returned': book_status_books_to_be_returned,
         'return_logs': return_logs,
         'years': [date.year for date in years],  # Extract the year from each date
     }
@@ -102,7 +108,6 @@ def approve_request(request, request_id):
         book=borrow_request.book,
         requested_by=borrow_request.requested_by,
         requested_at=borrow_request.requested_at,
-        #file_type=borrow_request.book.get_file_type()
     )
     borrow_request.delete()
     return redirect('librarian')
@@ -115,7 +120,6 @@ def decline_request(request, request_id):
         book=borrow_request.book,
         requested_by=borrow_request.requested_by,
         requested_at=borrow_request.requested_at,
-        #file_type=borrow_request.book.get_file_type()
     )
     borrow_request.delete()
     return redirect('librarian')
@@ -129,7 +133,6 @@ def delete_approved_request(request, request_id):
 @login_required
 def delete_declined_request(request, request_id):
     declined_request = get_object_or_404(DeclinedRequest, id=request_id)
-    
     if request.method == 'POST':
         declined_request.delete()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('librarian')))
@@ -250,11 +253,13 @@ def toggle_out_status(request, out_id):
         ReturnLog.objects.create(
             book=out_entry.book,
             returnLogTime=timezone.now(),  # Set appropriate return time
-            expiryLogTime=timezone.now() + timezone.timedelta(days=14)  # Example expiry time of 14 days from now
+            expiryLogTime=timezone.now() + timedelta(days=14)  # Example expiry time of 14 days from now
         )
+        # Delete related approved request if it exists
+        ApprovedRequest.objects.filter(book=out_entry.book, requested_by=out_entry.book.borrowed.first()).delete()
         out_entry.delete()
     
-    return redirect(reverse('librarian'))  # Replace 'dashboard' with your view name
+    return redirect(reverse('librarian'))
 
 def book_status_view(request):
     approved_requests = ApprovedRequest.objects.select_related('book').all()

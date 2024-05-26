@@ -9,6 +9,8 @@ from django.db.models import Count, F
 import logging
 from .models import Notification
 from django.http import HttpResponseForbidden, HttpResponseNotFound
+from django.utils import timezone
+
 
 def student(request):
     filter_params = {
@@ -173,6 +175,17 @@ def bookmark(request):
 
 @login_required
 def fetch_notifications(request):
+    # Check for expired borrow requests
+    expired_requests = BorrowRequest.objects.filter(expires_at__lt=timezone.now(), status='Pending', requested_by=request.user)
+    for request in expired_requests:
+        request.status = 'Expired'
+        request.save()
+        Notification.objects.create(
+            user=request.requested_by,
+            message=f"Your borrow request for {request.book.BookTitle} has expired."
+        )
+    
+    # Fetch notifications for the user
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
     data = [{'id': n.id, 'message': n.message, 'read': n.read} for n in notifications]
     return JsonResponse(data, safe=False)
@@ -230,8 +243,9 @@ def borrow_request(request, book_id):
     user = request.user
 
     borrow_requested = BorrowRequest.objects.filter(book=book, requested_by=user).exists()
+    approved_requested = ApprovedRequest.objects.filter(book=book, requested_by=user).exists()
 
-    if book.available and not borrow_requested:
+    if book.available and not borrow_requested and not approved_requested:
         # Increment the TimesBorrow field
         book.TimesBorrow += 1
         book.save()
@@ -240,6 +254,8 @@ def borrow_request(request, book_id):
         messages.success(request, "Your request to borrow this book has been submitted.")
     elif borrow_requested:
         messages.info(request, "You have already requested to borrow this book.")
+    elif approved_requested:
+        messages.info(request, "You have already been approved to borrow this book.")
     else:
         messages.error(request, "This book is not available for borrowing.")
 
