@@ -89,6 +89,17 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
+    .notification-icon {
+        position: relative;
+    }
+    .notification-icon .badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+    }
 </style>
 {% endblock %}
 
@@ -552,5 +563,64 @@
             });
         });
     });
+    document.addEventListener('DOMContentLoaded', function() {
+        function fetchNotifications() {
+            $.get("{% url 'fetch_notifications' %}", function(data) {
+                $('#notification-dropdown').empty();
+                $('#notification-count').text(data.length);
+                data.forEach(function(notification) {
+                    var item = $('<div class="dropdown-item">')
+                        .text(notification.message)
+                        .attr('data-id', notification.id)
+                        .toggleClass('read', notification.read)
+                        .click(function() {
+                            markAsRead(notification.id);
+                        });
+
+                    var deleteButton = $('<button>')
+                        .text('Delete')
+                        .click(function(event) {
+                            event.stopPropagation();
+                            deleteNotification(notification.id);
+                        });
+
+                    item.append(deleteButton);
+                    $('#notification-dropdown').append(item);
+                });
+            });
+        }
+
+        function markAsRead(notificationId) {
+            $.post("{% url 'mark_notification_read' 0 %}".replace('0', notificationId), {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            }, function() {
+                fetchNotifications();
+            });
+        }
+
+
+        function deleteNotification(notificationId) {
+            $.post("{% url 'delete_notification' 0 %}".replace('0', notificationId), {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            }, function() {
+                fetchNotifications();
+            });
+        }
+
+        $('#notification-bell').on('click', function() {
+            $('#notification-dropdown').toggle();
+        });
+
+        setInterval(fetchNotifications, 60000); // Fetch every 60 seconds
+        fetchNotifications();
+    });
+
+    // Hide dropdown when clicking outside
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.notification-icon').length) {
+            $('#notification-dropdown').hide();
+        }
+    });
+
 </script>
 {% endblock %}

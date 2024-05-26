@@ -23,7 +23,9 @@ urlpatterns = [
     path('request-history/', views.request_history_view, name='request_history'),
     path('bookmark_status/<int:book_id>/', views.bookmark_status, name='bookmark_status'),
     path('unbookmark_all/', views.unbookmark_all, name='unbookmark_all'),
-    path('fetch_notifications/', views.fetch_notifications, name='fetch_notifications'),
+    path('notifications/', views.fetch_notifications, name='fetch_notifications'),
+    path('notifications/read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/delete/<int:notification_id>/', views.delete_notification, name='delete_notification'),
  
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

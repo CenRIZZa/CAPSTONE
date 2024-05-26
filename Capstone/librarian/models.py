@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from student.models import Notification
+from django.db.models.signals import post_save
 # Create your models here.
 
 
@@ -100,4 +102,18 @@ class DeclinedRequest(models.Model):
     def __str__(self):
         return f"{self.book} declined for {self.requested_by}"
     
+@receiver(post_save, sender=ApprovedRequest)
+def create_approved_notification(sender, instance, created, **kwargs):
+    if created:
+        Notification.objects.create(
+            user=instance.requested_by,
+            message=f"Your request for {instance.book.BookTitle} has been approved."
+        )
 
+@receiver(post_save, sender=DeclinedRequest)
+def create_declined_notification(sender, instance, created, **kwargs):
+    if created:
+        Notification.objects.create(
+            user=instance.requested_by,
+            message=f"Your request for {instance.book.BookTitle} has been declined."
+        )

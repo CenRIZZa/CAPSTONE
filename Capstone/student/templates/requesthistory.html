@@ -4,7 +4,7 @@
 
 {% block style %}
 <style>
-    .content{
+    .content {
         padding: 0 50px;
         margin-top: 150px;
     }
@@ -60,22 +60,20 @@
     .text-center {
         text-align: center;
     }
-    .sections{
+    .sections {
         text-align: center;
     }
-    .sec-mar{
+    .sec-mar {
         margin-top: 50px;
     }
 </style>
 {% endblock %}
 
 {% block nav %}
-
 <a href="{% url 'view' %}" class="navbar-desc"><li><span class="material-symbols-outlined navbar-icon" alt="home">home</span>Home</li></a>
 <a href="{% url 'bookmark' %}" class="navbar-desc"><li><span class="material-symbols-outlined bookmark navbar-icon" alt="bookmark">bookmark</span>Bookmark</li></a>
 <a href="{% url 'request_history' %}" class="navbar-desc"><li class="active"><span class="material-symbols-outlined navbar-icon" alt="request">request_page</span>Borrow History</li></a>
 <a href="#" class="navbar-desc"><li><span class="material-symbols-outlined navbar-icon" alt="help">help</span>Help</li></a>
-
 {% endblock %}
 
 {% block body %}
@@ -167,7 +165,6 @@
 {% endblock %}
 
 {% block script %}
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var offcanvasElement = document.getElementById('offcanvasScrolling');
@@ -185,7 +182,51 @@
             sideBarElement.classList.add('show');
             mainContainer.classList.add('with-sidebar');
         });
+
+        // Fetch notifications
+        function fetchNotifications() {
+            $.get("{% url 'fetch_notifications' %}", function(data) {
+                $('#notification-dropdown').empty();
+                $('#notification-count').text(data.length);
+                data.forEach(function(notification) {
+                    var item = $('<div class="dropdown-item">')
+                        .html(`<div class="notification-icon"><span class="material-symbols-outlined">notification_important</span></div>${notification.message}`)
+                        .attr('data-id', notification.id)
+                        .toggleClass('read', notification.read)
+                        .click(function() {
+                            markAsRead(notification.id);
+                        });
+
+                    var deleteButton = $('<button class="btn btn-danger btn-sm ms-auto">')
+                        .text('Delete')
+                        .click(function(event) {
+                            event.stopPropagation();
+                            deleteNotification(notification.id);
+                        });
+
+                    item.append(deleteButton);
+                    $('#notification-dropdown').append(item);
+                });
+            });
+        }
+
+        // Initial fetch
+        fetchNotifications();
+
+        // Periodically fetch notifications
+        setInterval(fetchNotifications, 60000); // Fetch every 60 seconds
+
+        // Notification dropdown toggle
+        $('#notification-bell').on('click', function() {
+            $('#notification-dropdown').toggle();
+        });
+
+        // Hide dropdown when clicking outside
+        $(document).click(function(event) {
+            if (!$(event.target).closest('.notification-icon').length) {
+                $('#notification-dropdown').hide();
+            }
+        });
     });
 </script>
-
 {% endblock %}

@@ -41,7 +41,6 @@ def student(request):
         'research_papers': research_papers,  # Include research papers in the context
         'ebooks': ebooks,  # Include eBooks in the context
     })
-    
 def author_list(request):
     authors = Books.objects.values_list('Author', flat=True).distinct()
     return render(request, 'author_list.html', {'authors': authors})
@@ -150,12 +149,25 @@ def bookmark(request):
     bookmarked_books = Books.objects.filter(bookmarked_by=request.user)
     return render(request, 'bookmark_content.html', {'all_books': bookmarked_books})
 
+
+@login_required
 def fetch_notifications(request):
-    if request.user.is_authenticated and request.user.is_student:
-        notifications = Notification.objects.filter(user=request.user)
-        data = [{'message': n.message} for n in notifications]
-        return JsonResponse(data, safe=False)
-    return JsonResponse([], safe=False)
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    data = [{'id': n.id, 'message': n.message, 'read': n.read} for n in notifications]
+    return JsonResponse(data, safe=False)
+
+@login_required
+def mark_notification_read(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.read = True
+    notification.save()
+    return JsonResponse({'success': True})
+
+@login_required
+def delete_notification(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.delete()
+    return JsonResponse({'success': True})
 
 @login_required
 def bookmark_status(request, book_id):
