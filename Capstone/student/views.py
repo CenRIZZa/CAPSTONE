@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from librarian.models import Books, BorrowRequest, ApprovedRequest, DeclinedRequest
+from librarian.models import Books, BorrowRequest, ApprovedRequest, DeclinedRequest, LANGUAGE_CHOICES, Category
 from django.urls import reverse
 from django.db.models import Count, F
 import logging
@@ -11,36 +11,57 @@ from .models import Notification
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 
 def student(request):
-    all_books = Books.objects.all()
-    top_viewed_books = Books.objects.all().order_by('-PageViews')[:7]
+    filter_params = {
+        'year': request.GET.get('year'),
+        'category': request.GET.get('category'),
+        'language': request.GET.get('language')
+    }
 
-    books_per_category = {}
-    for book in all_books:
-        for category in book.Category.all():
-            if category not in books_per_category:
-                books_per_category[category] = []
-            books_per_category[category].append(book)
+    books = Books.objects.all()
+
+    if filter_params['year']:
+        books = books.filter(Date__year=filter_params['year'])
+    if filter_params['category']:
+        books = books.filter(Category__id=filter_params['category'])
+    if filter_params['language']:
+        books = books.filter(Language=filter_params['language'])
+
+    top_viewed_books = books.order_by('-PageViews')[:7]
+    categories = Category.objects.all()
 
     # Fetch all unique authors
     authors = Books.objects.values_list('Author', flat=True).distinct()
 
     # Fetch distinct years
-    years = Books.objects.values_list('Date__year', flat=True).distinct()
+    years = Books.objects.dates('Date', 'year').distinct()
 
     # Fetch research papers
-    research_papers = Books.objects.filter(research_paper=True)
+    research_papers = books.filter(research_paper=True)
 
     # Fetch eBooks
-    ebooks = Books.objects.filter(eBook=True)
+    ebooks = books.filter(eBook=True)
+
+    # Categorize books by category
+    books_per_category = {}
+    for book in books:
+        for category in book.Category.all():
+            if category not in books_per_category:
+                books_per_category[category] = []
+            books_per_category[category].append(book)
 
     return render(request, 'student_content.html', {
-        'books_per_category': books_per_category,
+        'books': books,
+        'top_viewed_books': top_viewed_books,
+        'categories': categories,
         'authors': authors,
         'years': years,
-        'top_viewed_books': top_viewed_books,
-        'research_papers': research_papers,  # Include research papers in the context
-        'ebooks': ebooks,  # Include eBooks in the context
+        'research_papers': research_papers,
+        'ebooks': ebooks,
+        'filter_params': filter_params,
+        'books_per_category': books_per_category,
+        'language_choices': LANGUAGE_CHOICES
     })
+    
 def author_list(request):
     authors = Books.objects.values_list('Author', flat=True).distinct()
     return render(request, 'author_list.html', {'authors': authors})

@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <style>
+        
         *{
             margin: 0;
             padding: 0;
@@ -409,6 +410,9 @@
                         <a class="nav-link" href="javascript:void(0);" onclick="showContent('books')">
                             <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="books">book</span>Books</li>
                         </a>
+                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('book-status')">
+                            <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="book-status">info</span>Book Status</li>
+                        </a>
                         <a class="nav-link" href="javascript:void(0);" onclick="showContent('recent-delete')">
                             <li class="nav-item-long"><span class="material-symbols-outlined navbar-icon1" alt="recent-delete">delete</span>Recently Deleted Books</li>
                         </a>
@@ -692,6 +696,89 @@
                     </div>
                 </div>
             </div>
+<!--Book Status-->
+<div id="book-status" class="content" style="display: none;">
+    <h2>Book to be borrowed</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Author</th>
+                <th>File Type</th>
+                <th>Expires at</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in approved_requests %}
+            <tr>
+                <td>{{ request.book.BookTitle }}</td>
+                <td><img src="{{ request.book.BookImage.url }}" alt="{{ request.book.BookTitle }}" width="50" height="75"></td>
+                <td>{{ request.book.Author }}</td>
+                <td>
+                    {% if request.book.eBook %}
+                        eBook
+                    {% elif request.book.research_paper %}
+                        Research Paper
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </td>
+                <td>{{ request.expireTime }}</td>
+                <td>
+                    <form id="toggleForm-{{ request.id }}" method="post" action="{% url 'toggle_book_status' request.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="button" data-id="{{ request.id }}" data-status="{{ request.inOut }}" data-type="request" class="availabilityBtn btn {% if request.inOut %}btn-success{% else %}btn-danger{% endif %}">
+                            {% if request.inOut %}In{% else %}Out{% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Books to be Returned</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Author</th>
+                <th>Return Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for out in books_to_be_returned %}
+            <tr>
+                <td>{{ out.book.BookTitle }}</td>
+                <td><img src="{{ out.book.BookImage.url }}" alt="{{ out.book.BookTitle }}" width="50" height="75"></td>
+                <td>{{ out.book.Author }}</td>
+                <td>{{ out.returnTime }}</td>
+                <td>
+                    <form id="toggleForm-{{ out.id }}" method="post" action="{% url 'toggle_out_status' out.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="button" data-id="{{ out.id }}" data-status="{{ out.out }}" data-type="out" class="availabilityBtn btn {% if out.out %}btn-danger{% else %}btn-success{% endif %}">
+                            {% if out.out %}Out{% else %}In{% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+                <!-- Modal Structure -->
+        <div id="statusModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+            
             <!-- Recently Deleted -->
             <div id="recent-delete" class="content" style="display: none;">
                 <div class="header-lib">
@@ -1212,6 +1299,59 @@
         });
     });
     
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.availabilityBtn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const id = this.getAttribute('data-id');
+                const status = this.getAttribute('data-status') === 'true';
+                const type = this.getAttribute('data-type');
+                openModal(id, status, type);
+            });
+        });
+    });
+
+    function openModal(id, status, type) {
+        const modal = document.getElementById('statusModal');
+        const modalBody = document.getElementById('modalBody');
+
+        let actionUrl, buttonClass, buttonText;
+        if (type === 'request') {
+            actionUrl = `{% url 'toggle_book_status' 0 %}`.replace('0', id);
+            buttonClass = status ? 'btn-success' : 'btn-danger';
+            buttonText = status ? 'In' : 'Out';
+        } else if (type === 'out') {
+            actionUrl = `{% url 'toggle_out_status' 0 %}`.replace('0', id);
+            buttonClass = status ? 'btn-danger' : 'btn-success';
+            buttonText = status ? 'Out' : 'In';
+        }
+
+        const content = `
+            <p>Are you sure you want to change the status of this book?</p>
+            <form id="toggleForm-${id}" method="post" action="${actionUrl}" style="display: inline;">
+                {% csrf_token %}
+                <button id="availabilityBtn-${id}" class="btn ${buttonClass}">
+                    ${buttonText}
+                </button>
+            </form>
+        `;
+
+        modalBody.innerHTML = content;
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('statusModal');
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('statusModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
 </script>
 </body>
 </html>

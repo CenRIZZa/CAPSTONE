@@ -200,7 +200,6 @@
 
 {% block body %}
 {% load static %}
-
 <!-- Carousel and other sections here -->
 <!-- Carousel -->
 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -230,8 +229,32 @@
     </button>
 </div>
 
+
+<!-- Filter Form -->
+<form method="get" id="filterForm" class="form-inline mb-4">
+    <select name="year" class="form-control" id="yearFilter">
+        <option value="">All Year</option>
+        {% for year in years %}
+        <option value="{{ year.year }}" {% if filter_params.year == year.year|stringformat:"s" %}selected{% endif %}>{{ year.year }}</option>
+        {% endfor %}
+    </select>
+    <select name="category" class="form-control" id="categoryFilter">
+        <option value="">All Category</option>
+        {% for category in categories %}
+        <option value="{{ category.id }}" {% if filter_params.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+        {% endfor %}
+    </select>
+    <select name="language" id="languageFilter" class="form-control">
+        <option value="">All Language</option>
+        {% for code, name in language_choices %}
+        <option value="{{ code }}" {% if filter_params.language == code %}selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+    </select>
+</form>
+
 <!-- Top Viewed Books Section -->
 <div class="container-xl">
+    <hr>
     <div class="top-bar">
         <h4 class="booklabels"><b>Top Viewed Books</b></h4>
     </div>
@@ -714,5 +737,24 @@
         }
     });
 
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterForm = document.getElementById('filterForm');
+        const yearFilter = document.getElementById('yearFilter');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const languageFilter = document.getElementById('languageFilter');
+
+        yearFilter.addEventListener('change', function() {
+            filterForm.submit();
+        });
+
+        categoryFilter.addEventListener('change', function() {
+            filterForm.submit();
+        });
+
+        languageFilter.addEventListener('change', function() {
+            filterForm.submit();
+        });
+    });
 </script>
 {% endblock %}

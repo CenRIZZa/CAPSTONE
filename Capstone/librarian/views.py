@@ -10,8 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
-from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRequest, DeclinedRequest
-from .models import SubCategory
+from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRequest, DeclinedRequest, SubCategory, Out
 from django.db.models.functions import TruncYear
 from librarian.utils import delete_expired_borrow_requests
 
@@ -219,6 +218,33 @@ def decline_request_view(request, request_id):
     return redirect('librarian')
 
 
+
+def toggle_book_status(request, request_id):
+    approved_request = get_object_or_404(ApprovedRequest, id=request_id)
+    approved_request.inOut = not approved_request.inOut
+
+    if not approved_request.inOut:
+        # Move to Out model
+        out_entry = Out.objects.create(
+            book=approved_request.book,
+            returnTime=timezone.now(),  # Set appropriate return time
+            out=True
+        )
+        approved_request.delete()
+    else:
+        approved_request.save()
+
+    return redirect(reverse('librarian'))
+
+def toggle_out_status(request, out_id):
+    out_entry = get_object_or_404(Out, id=out_id)
+    out_entry.out = not out_entry.out
+    out_entry.save()
+    return redirect(reverse('librarian'))
+
+def book_status_view(request):
+    approved_requests = ApprovedRequest.objects.select_related('book').all()
+    return render(request, 'main.html', {'approved_requests': approved_requests})
 
 def delete_expired_requests():
     delete_expired_borrow_requests()

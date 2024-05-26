@@ -17,6 +17,9 @@ urlpatterns = [
     path('delete_declined_request/<int:request_id>/', views.delete_declined_request, name='delete_declined_request'),
     path('librarian/', views.go_back, name='go_back'),
     path('delete_recently_deleted_books/<int:book_id>/', views.delete_recently_deleted_books, name='delete_recently_deleted_books'),
+    path('toggle_book_status/<int:request_id>/', views.toggle_book_status, name='toggle_book_status'),
+    path('book_status/', views.book_status_view, name='book_status_view'),
+    path('toggle_out_status/<int:out_id>/', views.toggle_out_status, name='toggle_out_status'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     

@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from student.models import Notification
 from django.db.models.signals import post_save
+from django.utils.timezone import now
 # Create your models here.
 
 
@@ -84,15 +85,36 @@ class BorrowRequest(models.Model):
     def is_expired(self):
         return timezone.now() > self.expires_at
     
+    
+
+def book_returnlog_expiry():
+    return now() + timedelta(days=30)
+
 class ApprovedRequest(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
     requested_by = models.ForeignKey(User, on_delete=models.CASCADE)
     requested_at = models.DateTimeField()
     approved_at = models.DateTimeField(auto_now_add=True)
+    inOut = models.BooleanField(default=True)
+    expireTime = models.DateTimeField(default=default_expiry)
 
     def __str__(self):
         return f"{self.book} approved for {self.requested_by}"
 
+
+def three_days_from_now():
+    return now() + timedelta(days=3)
+
+class Out(models.Model):
+    book = models.ForeignKey(Books, on_delete=models.CASCADE)
+    approved_at = models.DateTimeField(auto_now_add=True)
+    out = models.BooleanField(default=False)
+    returnTime = models.DateTimeField(default=three_days_from_now)
+    
+    def __str__(self):
+        return f"{self.book} status"
+    
+    
 class DeclinedRequest(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
     requested_by = models.ForeignKey(User, on_delete=models.CASCADE)
