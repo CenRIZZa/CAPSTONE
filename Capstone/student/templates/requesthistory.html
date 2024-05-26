@@ -2,6 +2,18 @@
 
 {% block title %} Request History {% endblock %}
 
+{% block notification %}
+
+<div class="notification-icon">
+    <span class="material-symbols-outlined" id="notification-bell">notifications</span>
+    <span class="notification-badge" id="notification-count">0</span>
+    <div class="dropdown" id="notification-dropdown">
+        <!-- Notification items will be appended here -->
+    </div>
+</div>
+
+{% endblock %}
+
 {% block style %}
 <style>
     .content {
@@ -65,6 +77,89 @@
     }
     .sec-mar {
         margin-top: 50px;
+    }
+    .notification-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 5px 10px;
+        font-size: 12px;
+        transform: translate(10px, -10px);
+    }
+    .dropdown {
+        display: none;
+        position: absolute;
+        top: 45px;
+        right: 0;
+        background-color: white;
+        color: black;
+        min-width: 300px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        border-radius: 5px;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+     .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .dropdown-item:last-child {
+        border-bottom: none;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f1f1f1;
+    }
+    
+    .dropdown-item.read {
+        font-weight: normal;
+    }
+    .dropdown-item:not(.read) {
+        font-weight: bold;
+    }
+    .notification-icon, .notification-icon-2 {
+        width: 45px;
+        height: 45px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .notification-icon {
+        margin-right: 75px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+    }
+    .notif-message{
+        margin: 0 10px;
+    }
+    .notification-icon .badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+    }
+    .material-symbols-outlined {
+        font-size: 35px;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .material-symbols-outlined:hover {
+        color: #808080;
+    }
+    .btn-close{
+        width: 10px;
+        height: 10px;
     }
 </style>
 {% endblock %}
@@ -183,22 +278,25 @@
             mainContainer.classList.add('with-sidebar');
         });
 
-        // Fetch notifications
+        
+    });
+    {% comment %} notif js {% endcomment %}
+    document.addEventListener('DOMContentLoaded', function() {
         function fetchNotifications() {
             $.get("{% url 'fetch_notifications' %}", function(data) {
                 $('#notification-dropdown').empty();
                 $('#notification-count').text(data.length);
                 data.forEach(function(notification) {
                     var item = $('<div class="dropdown-item">')
-                        .html(`<div class="notification-icon"><span class="material-symbols-outlined">notification_important</span></div>${notification.message}`)
+                        .html(`<div class="notification-icon-2"><span class="material-symbols-outlined">notification_important</span></div><p class="notif-message">${notification.message}</p>`)
                         .attr('data-id', notification.id)
                         .toggleClass('read', notification.read)
                         .click(function() {
                             markAsRead(notification.id);
                         });
 
-                    var deleteButton = $('<button class="btn btn-danger btn-sm ms-auto">')
-                        .text('Delete')
+                    var deleteButton = $('<button class="btn btn-close ms-auto">')
+                        .html('')
                         .click(function(event) {
                             event.stopPropagation();
                             deleteNotification(notification.id);
@@ -210,23 +308,36 @@
             });
         }
 
-        // Initial fetch
-        fetchNotifications();
+        function markAsRead(notificationId) {
+            $.post("{% url 'mark_notification_read' 0 %}".replace('0', notificationId), {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            }, function() {
+                fetchNotifications();
+            });
+        }
 
-        // Periodically fetch notifications
-        setInterval(fetchNotifications, 60000); // Fetch every 60 seconds
 
-        // Notification dropdown toggle
+        function deleteNotification(notificationId) {
+            $.post("{% url 'delete_notification' 0 %}".replace('0', notificationId), {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            }, function() {
+                fetchNotifications();
+            });
+        }
+
         $('#notification-bell').on('click', function() {
             $('#notification-dropdown').toggle();
         });
 
-        // Hide dropdown when clicking outside
-        $(document).click(function(event) {
-            if (!$(event.target).closest('.notification-icon').length) {
-                $('#notification-dropdown').hide();
-            }
-        });
+        setInterval(fetchNotifications, 60000); // Fetch every 60 seconds
+        fetchNotifications();
+    });
+
+    // Hide dropdown when clicking outside
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.notification-icon').length) {
+            $('#notification-dropdown').hide();
+        }
     });
 </script>
 {% endblock %}
