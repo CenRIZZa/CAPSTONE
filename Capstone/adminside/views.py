@@ -31,6 +31,15 @@ def book_page_views(request):
     # Retrieve all books and sort them by page views in descending order
     books = Books.objects.all().order_by('-PageViews')[:10]
     
+    top_books = Books.objects.filter(eBook=True).order_by('-TimesBorrow')[:4]
+    
+    ebook = Books.objects.filter(eBook=True)
+
+    
+    # Extract necessary data (book titles and times borrowed)
+    ebook_titles = [book.BookTitle for book in ebook]
+    times_borrowed = [book.TimesBorrow for book in top_books]
+
     # Get the most recent user activity for each user
     latest_user_activities = UserActivity.objects.filter(
         active=True
@@ -56,6 +65,9 @@ def book_page_views(request):
     book_titles = [book.BookTitle for book in books]
     page_views = [book.PageViews for book in books]
 
+    ebook_titles = [top_books.BookTitle for top_books in top_books]
+    borrow = [top_books.TimesBorrow for top_books in top_books]
+
     Student_total = Account.objects.distinct().count()
     lib_total = Librarian.objects.distinct().count()
     user_logs = UserActivity.objects.all()
@@ -63,13 +75,16 @@ def book_page_views(request):
     users = User.objects.all()
     # Render the template with the necessary data
     return render(request, 'book_page_views.html', {
-        'book_titles': book_titles, 
-        'page_views': page_views, 
-        'user_activities': user_activities, 
-        'distinct_users_count_this_month': distinct_users_count_this_month,
-        'user_total':user_total,
-        'user_logs':user_logs,
-        'users': users,
+    'book_titles': book_titles, 
+    'page_views': page_views, 
+    'user_activities': user_activities, 
+    'distinct_users_count_this_month': distinct_users_count_this_month,
+    'user_total':user_total,
+    'user_logs':user_logs,
+    'users': users,  # Add this line to pass the users variable
+    'times_borrowed': times_borrowed,
+    'ebook_titles':ebook_titles ,
+    'borrow':borrow ,
     })
 
 
@@ -152,5 +167,25 @@ def user_logged_out_handler(sender, request, user, **kwargs):
     # Set UserActivity instances as inactive upon logout
     UserActivity.objects.filter(user=user, active=True).update(active=False)
     print("NOT ACTIVE")
+
+
+
+
+
+
+# views.py
+from django.http import JsonResponse
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def toggle_user_status(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        user = User.objects.get(id=user_id)
+        user.is_active = not user.is_active
+        user.save()
+        return JsonResponse({'status': 'success', 'new_status': user.is_active})
+    return JsonResponse({'status': 'error'}, status=400)
 
 

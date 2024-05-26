@@ -120,6 +120,20 @@
                         </div>
                     </div>
                 </div>
+
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Book Page Views</h5>
+                            <div class="chart-container" >
+                                <canvas id="topBooksChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-body">
@@ -224,6 +238,7 @@
         </script>
         
         
+<!-- Template: book_page_views.html -->
         <div id="analytics-section">
             <h2>User List</h2>
             <div class="table-responsive">
@@ -232,23 +247,101 @@
                         <tr>
                             <th>Username</th>
                             <th>Email</th>
-                            <!-- Add more columns as needed -->
+                            <th>Name</th>
+                            <th>Active</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in users %}
-                            <tr>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.email }}</td>
-                                <!-- Add more columns as needed -->
-                            </tr>
+                        <tr id="user-row-{{ user.id }}">
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.first_name }}, {{ user.last_name }}</td>
+                            <td id="user-status-{{ user.id }}">{{ user.is_active }}</td>
+                            <td>
+                                <button 
+                                    class="btn {% if user.is_active %}btn-danger{% else %}btn-success{% endif %}" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#confirmDisableModal" 
+                                    data-user-id="{{ user.id }}" 
+                                    data-user-status="{{ user.is_active }}">
+                                    {% if user.is_active %}Disable{% else %}Activate{% endif %}
+                                </button>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
+                    
                 </table>
             </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="confirmDisableModal" tabindex="-1" aria-labelledby="confirmDisableModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDisableModalLabel">Confirm Action</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to <span id="action-text">disable</span> this account?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-primary" id="confirmAction">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Include jQuery and Bootstrap JS for handling the modal -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Include Bootstrap Bundle (includes Bootstrap JS and Popper.js) -->
+
+        <script>
+            $(document).ready(function(){
+                var userId, userStatus;
+            
+                $('#confirmDisableModal').on('show.bs.modal', function (event) {
+                    var button = $(event.relatedTarget);
+                    userId = button.data('user-id');
+                    userStatus = button.data('user-status');
+                    var actionText = userStatus ? 'disable' : 'activate';
+                    $('#action-text').text(actionText);
+                });
+            
+                $('#confirmAction').click(function(){
+                    $.ajax({
+                        url: '{% url "toggle_user_status" %}',
+                        method: 'POST',
+                        data: {
+                            'user_id': userId,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function(response){
+                            if(response.status == 'success'){
+                                var newStatus = response.new_status;
+                                $('#user-status-' + userId).text(newStatus);
+                                var newButtonText = newStatus ? 'Disable' : 'Activate';
+                                var newButtonClass = newStatus ? 'btn btn-danger' : 'btn btn-success';
+                                $('button[data-user-id="' + userId + '"]').text(newButtonText).removeClass('btn-success btn-danger').addClass(newButtonClass);
+                                $('button[data-user-id="' + userId + '"]').data('user-status', newStatus);
+                                $('#confirmDisableModal').modal('hide');    
+                            }
+                        }
+                    });
+                });
+            });
+            </script>
+
+
+
+        
+        
+        
+        
 
         <div id="Create-section">
             <div class="container">
@@ -434,6 +527,37 @@
         document.addEventListener('DOMContentLoaded', function () {
             toggleForm(); // Call once to set the initial state
         });
+
+
+        const ebook_titles = {{ ebook_titles|safe }};
+        const times_borrowed = {{ borrow|safe }};
+        
+        var ctx = document.getElementById('topBooksChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ebook_titles,
+                datasets: [{
+                    label: 'Book Page Views',
+                    data: times_borrowed,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        
+        
     </script>
    
     <!-- Bootstrap Bundle with Popper -->
