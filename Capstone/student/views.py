@@ -199,6 +199,10 @@ def borrow_request(request, book_id):
     borrow_requested = BorrowRequest.objects.filter(book=book, requested_by=user).exists()
 
     if book.available and not borrow_requested:
+        # Increment the TimesBorrow field
+        book.TimesBorrow += 1
+        book.save()
+
         BorrowRequest.objects.create(book=book, requested_by=user)
         messages.success(request, "Your request to borrow this book has been submitted.")
     elif borrow_requested:
