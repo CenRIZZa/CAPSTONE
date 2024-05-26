@@ -44,7 +44,6 @@ class Books(models.Model):
     Category = models.ManyToManyField(Category)
     SubCategory = models.ManyToManyField(SubCategory)
     Language = models.CharField(max_length=100, choices=LANGUAGE_CHOICES, default='english')
-    
     BookFile = models.FileField(upload_to="books/files/", default='default_value.pdf')
     BookImage = models.ImageField(upload_to="books/images/", default='default_image.jpg')
     deleted_at = models.DateTimeField(null=True, blank=True)
@@ -56,6 +55,7 @@ class Books(models.Model):
     research_paper = models.BooleanField(default=False)
     hardCopy = models.BooleanField(default=False)
     stock = models.IntegerField(default=0)
+    TimesBorrow = models.IntegerField(default=0)
 
     def __str__(self):
         return self.BookTitle
