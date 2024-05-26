@@ -67,20 +67,21 @@ class Books(models.Model):
             return 'Research Paper'
         return 'Unknown'
     
+
+def default_expiry():
+    return timezone.now() + timedelta(days=3)
+
 class BorrowRequest(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
     requested_by = models.ForeignKey(User, on_delete=models.CASCADE)
     requested_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(default=timezone.now() + timedelta(days=3))
+    expires_at = models.DateTimeField(default=default_expiry)
     status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'), ('Expired', 'Expired')], default='Pending')
     file_type = models.CharField(max_length=20, choices=[('eBook', 'eBook'), ('Research Paper', 'Research Paper')], default='eBook')
     
     def is_expired(self):
         return timezone.now() > self.expires_at
-
-
-
-
+    
 class ApprovedRequest(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
     requested_by = models.ForeignKey(User, on_delete=models.CASCADE)

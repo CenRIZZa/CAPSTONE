@@ -13,6 +13,7 @@ from django.contrib import messages
 from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRequest, DeclinedRequest
 from .models import SubCategory
 from django.db.models.functions import TruncYear
+from librarian.utils import delete_expired_borrow_requests
 
 
 
@@ -132,10 +133,6 @@ def delete_declined_request(request, request_id):
     else:
         pass
 
-def delete_expired_requests():
-    expired_requests = BorrowRequest.objects.filter(expires_at__lt=timezone.now())
-    expired_requests.delete()
-
 
 
 @login_required
@@ -223,6 +220,9 @@ def decline_request_view(request, request_id):
 
 
 
+def delete_expired_requests():
+    delete_expired_borrow_requests()
+    
 def go_back(request):
     return redirect('main') 
 

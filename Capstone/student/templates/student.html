@@ -54,7 +54,6 @@
     .material-symbols-outlined:hover {
         color: #ffcc00;
     }
-
     .notification {
         position: relative;
     }
@@ -82,6 +81,29 @@
         border-radius: 5px;
         overflow: hidden;
         z-index: 1;
+    }
+
+    .dropdown-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f1f1f1;
+    }
+    .main-container {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        grid-template-rows: 1px 1fr;
+        grid-template-areas:
+            "header header"
+            "content content"
+        ;
+        
     }
 
     .dropdown-item {
@@ -463,6 +485,13 @@
                 <input type="text" class="search-input" id="search-input" placeholder="Search for books...">
                 <div class="suggestions" id="suggestions"></div>
             </div>
+            <div class="notification-icon">
+                <span class="material-symbols-outlined" id="notification-bell">notifications</span>
+                <span class="notification-badge" id="notification-count">0</span>
+                <div class="dropdown" id="notification-dropdown">
+                    <!-- Notification items will be appended here -->
+                </div>
+            </div>
         </header>
         <div class="offcanvas offcanvas-start show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
             <div class="offcanvas-body side-bar show">
@@ -557,6 +586,37 @@
         $(document).click(function(event) {
             if (!$(event.target).closest('#search-input').length) {
                 $('#suggestions').hide();
+            }
+        });
+
+        // Notification dropdown toggle
+        $('#notification-bell').on('click', function() {
+            $('#notification-dropdown').toggle();
+        });
+
+        // Fetch notifications
+        function fetchNotifications() {
+            $.get("{% url 'fetch_notifications' %}", function(data) {
+                $('#notification-dropdown').empty();
+                $('#notification-count').text(data.length);
+                data.forEach(function(notification) {
+                    var item = $('<div class="dropdown-item">')
+                        .text(notification.message);
+                    $('#notification-dropdown').append(item);
+                });
+            });
+        }
+
+        // Initial fetch
+        fetchNotifications();
+
+        // Periodically fetch notifications
+        setInterval(fetchNotifications, 60000); // Fetch every 60 seconds
+
+        // Hide dropdown when clicking outside
+        $(document).click(function(event) {
+            if (!$(event.target).closest('.notification-icon').length) {
+                $('#notification-dropdown').hide();
             }
         });
     });
