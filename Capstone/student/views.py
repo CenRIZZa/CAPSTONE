@@ -7,6 +7,8 @@ from librarian.models import Books, BorrowRequest, ApprovedRequest, DeclinedRequ
 from django.urls import reverse
 from django.db.models import Count, F
 import logging
+from .models import Notification
+from django.http import HttpResponseForbidden, HttpResponseNotFound
 
 def student(request):
     all_books = Books.objects.all()
@@ -87,9 +89,8 @@ def book_detail(request, book_id):
 
     return render(request, 'info.html', context)
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseForbidden, HttpResponseNotFound
-from librarian.models import Books, ApprovedRequest
+
+
 
 def prev_file(request, book_id):
     book = get_object_or_404(Books, id=book_id)
@@ -148,6 +149,13 @@ def bookmark(request):
     # Filter books that are bookmarked by the current user
     bookmarked_books = Books.objects.filter(bookmarked_by=request.user)
     return render(request, 'bookmark_content.html', {'all_books': bookmarked_books})
+
+def fetch_notifications(request):
+    if request.user.is_authenticated and request.user.is_student:
+        notifications = Notification.objects.filter(user=request.user)
+        data = [{'message': n.message} for n in notifications]
+        return JsonResponse(data, safe=False)
+    return JsonResponse([], safe=False)
 
 @login_required
 def bookmark_status(request, book_id):
