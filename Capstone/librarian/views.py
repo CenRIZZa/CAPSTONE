@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib import messages
-from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRequest, DeclinedRequest, SubCategory, Out
+from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRequest, DeclinedRequest, SubCategory, Out, ReturnLog
 from django.db.models.functions import TruncYear
 from librarian.utils import delete_expired_borrow_requests
 
@@ -23,6 +23,8 @@ def main(request):
     borrow_requests = BorrowRequest.objects.filter(expires_at__gt=timezone.now())
     approved_requests = ApprovedRequest.objects.all()
     declined_requests = DeclinedRequest.objects.all()
+    books_to_be_returned = Out.objects.all()
+    return_logs = ReturnLog.objects.all()
     language_choices = LANGUAGE_CHOICES
 
     # Generate a list of years from the book dates
@@ -71,6 +73,8 @@ def main(request):
         'borrow_requests': borrow_requests,
         'approved_requests': approved_requests,
         'declined_requests': declined_requests,
+        'books_to_be_returned': books_to_be_returned,
+        'return_logs': return_logs,
         'years': [date.year for date in years],  # Extract the year from each date
     }
 
@@ -236,11 +240,21 @@ def toggle_book_status(request, request_id):
 
     return redirect(reverse('librarian'))
 
+@login_required
 def toggle_out_status(request, out_id):
     out_entry = get_object_or_404(Out, id=out_id)
     out_entry.out = not out_entry.out
     out_entry.save()
-    return redirect(reverse('librarian'))
+    
+    if not out_entry.out:  # When the book is marked as "In"
+        ReturnLog.objects.create(
+            book=out_entry.book,
+            returnLogTime=timezone.now(),  # Set appropriate return time
+            expiryLogTime=timezone.now() + timezone.timedelta(days=14)  # Example expiry time of 14 days from now
+        )
+        out_entry.delete()
+    
+    return redirect(reverse('librarian'))  # Replace 'dashboard' with your view name
 
 def book_status_view(request):
     approved_requests = ApprovedRequest.objects.select_related('book').all()

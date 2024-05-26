@@ -769,6 +769,20 @@
             {% endfor %}
         </tbody>
     </table>
+    <h2>Return Logs</h2>
+    <div class="list-group">
+        {% for log in return_logs %}
+        <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Title: {{ log.book.BookTitle }}</h5>
+                <small>Returned: {{ log.returnLogTime }}</small>
+                <small>Log Expiry: {{ log.expiryLogTime }}</small>
+                
+            </div>
+            <img src="{{ log.book.BookImage.url }}" alt="{{ log.book.BookTitle }}" width="50" height="75" class="mr-3">
+        </a>
+        {% endfor %}
+    </div>
 </div>
 
                 <!-- Modal Structure -->
@@ -1316,24 +1330,27 @@
         const modal = document.getElementById('statusModal');
         const modalBody = document.getElementById('modalBody');
 
-        let actionUrl, buttonClass, buttonText;
+        let actionUrl, buttonClass, buttonText, questionText;
         if (type === 'request') {
             actionUrl = `{% url 'toggle_book_status' 0 %}`.replace('0', id);
-            buttonClass = status ? 'btn-success' : 'btn-danger';
-            buttonText = status ? 'In' : 'Out';
+            buttonClass = status ? 'btn-success' : 'btn-success';
+            buttonText = status ? 'In' : 'Yes';
+            questionText = 'Are you sure you want to change the status of this book?';
         } else if (type === 'out') {
             actionUrl = `{% url 'toggle_out_status' 0 %}`.replace('0', id);
             buttonClass = status ? 'btn-danger' : 'btn-success';
-            buttonText = status ? 'Out' : 'In';
+            buttonText = status ? 'Out' : 'Yes';
+            questionText = 'Are you sure that this book is returned?';
         }
 
         const content = `
-            <p>Are you sure you want to change the status of this book?</p>
+            <p>${questionText}</p>
             <form id="toggleForm-${id}" method="post" action="${actionUrl}" style="display: inline;">
                 {% csrf_token %}
                 <button id="availabilityBtn-${id}" class="btn ${buttonClass}">
                     ${buttonText}
                 </button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
             </form>
         `;
 

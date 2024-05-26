@@ -87,8 +87,6 @@ class BorrowRequest(models.Model):
     
     
 
-def book_returnlog_expiry():
-    return now() + timedelta(days=30)
 
 class ApprovedRequest(models.Model):
     book = models.ForeignKey(Books, on_delete=models.CASCADE)
@@ -110,6 +108,17 @@ class Out(models.Model):
     approved_at = models.DateTimeField(auto_now_add=True)
     out = models.BooleanField(default=False)
     returnTime = models.DateTimeField(default=three_days_from_now)
+    
+    def __str__(self):
+        return f"{self.book} status"
+    
+def book_returnlog_expiry():
+    return now() + timedelta(days=30)    
+
+class ReturnLog(models.Model):
+    book = models.ForeignKey(Books, on_delete=models.CASCADE)
+    returnLogTime = models.DateTimeField(auto_now_add=True)
+    expiryLogTime = models.DateTimeField(default=book_returnlog_expiry)
     
     def __str__(self):
         return f"{self.book} status"
