@@ -23,7 +23,8 @@
     }
     .content {
         padding: 0 50px;
-        margin-top: 150px;
+        margin-top: 100px;
+        margin-bottom: 50px;
     }
     .container {
         margin-top: 5rem;
@@ -165,7 +166,20 @@
     .btn-close{
         width: 10px;
         height: 10px;
+        margin-right: 10px;
     }
+    .book-title{
+        text-transform: capitalize;
+    }
+    .notif-message{
+        padding-right: 10px;
+        border-right: 1px solid rgba(0,0,0,0.3);
+    }
+    .no-notif{
+        font-size: 1rem;
+        padding: 10px 25px;
+    }
+        
 </style>
 {% endblock %}
 
@@ -198,7 +212,7 @@
                 <tbody>
                     {% for request in pending_requests %}
                     <tr class="{% if request.is_expired %}table-danger{% endif %}">
-                        <td>{{ request.book.BookTitle }}</td>
+                        <td class="book-title">{{ request.book.BookTitle }}</td>
                         <td>{{ request.status }}</td>
                         <td>{{ request.requested_at }}</td>
                         <td>{{ request.expires_at }}</td>
@@ -224,7 +238,7 @@
                 <tbody>
                     {% for request in approved_requests %}
                     <tr>
-                        <td>{{ request.book.BookTitle }}</td>
+                        <td class="book-title">{{ request.book.BookTitle }}</td>
                         <td>{{ request.requested_at }}</td>
                         <td>{{ request.approved_at }}</td>
                     </tr>
@@ -249,7 +263,7 @@
                 <tbody>
                     {% for request in declined_requests %}
                     <tr>
-                        <td>{{ request.book.BookTitle }}</td>
+                        <td class="book-title">{{ request.book.BookTitle }}</td>
                         <td>{{ request.requested_at }}</td>
                         <td>{{ request.declined_at }}</td>
                     </tr>
@@ -296,7 +310,7 @@
                     data.forEach(function(notification) {
                         var item = $('<div class="dropdown-item">')
                             .html(`
-                                <div class="notification-icon">
+                                <div class="notification-icon-2">
                                     <span class="material-symbols-outlined">notification_important</span>
                                 </div>
                                 <div class="notif-message">
@@ -322,7 +336,7 @@
                         $('#notification-dropdown').append(item);
                     });
                 } else {
-                    $('#notification-dropdown').html('<span class="dropdown-item-text" id="no-notifications">No notifications</span>');
+                    $('#notification-dropdown').html('<span class="dropdown-item-text no-notif" id="no-notifications">No notifications</span>');
                     $('#notification-count').hide();
                 }
             });
