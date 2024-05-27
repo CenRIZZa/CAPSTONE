@@ -450,7 +450,9 @@
         function fetchNotifications() {
             $.get("{% url 'fetch_notifications' %}", function(data) {
                 $('#notification-dropdown').empty();
-                $('#notification-count').text(data.length);
+                if (data.length > 0) {
+                    $('#notification-count').text(data.length).show();
+                    $('#no-notifications').hide();
                 data.forEach(function(notification) {
                     var item = $('<div class="dropdown-item">')
                         .html(`<div class="notification-icon">
@@ -477,6 +479,10 @@
                     item.append(deleteButton);
                     $('#notification-dropdown').append(item);
                 });
+            } else {
+                $('#notification-dropdown').html('<span class="dropdown-item-text" id="no-notifications">No notifications</span>');
+                $('#notification-count').hide();
+            }
             });
         }
 

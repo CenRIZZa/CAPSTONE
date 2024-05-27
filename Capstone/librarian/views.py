@@ -14,7 +14,35 @@ from .models import ApprovedRequest, Books, Category, LANGUAGE_CHOICES, BorrowRe
 from django.db.models.functions import TruncYear
 from librarian.utils import delete_expired_borrow_requests
 
+@login_required
+def edit_book(request, book_id):
+    book = get_object_or_404(Books, id=book_id)
+    
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES, instance=book)
+        if form.is_valid():
+            form.save()
+            return redirect('librarian')
+    else:
+        form = BookForm(instance=book)
+    
+    return render(request, 'edit_book.html', {'form': form, 'book': book})
 
+@login_required
+def get_book_details(request):
+    book_id = request.GET.get('id')
+    book = get_object_or_404(Books, id=book_id)
+    book_data = {
+        'BookTitle': book.BookTitle,
+        'Author': book.Author,
+        'Description': book.Description,
+        'Date': book.Date.strftime('%Y-%m-%d'),
+        'Category': ', '.join([cat.name for cat in book.Category.all()]),
+        'SubCategory': ', '.join([sub.name for sub in book.SubCategory.all()]),
+        'Language': book.Language,
+        'Stock': book.stock
+    }
+    return JsonResponse(book_data)
 
 @login_required
 def main(request):
