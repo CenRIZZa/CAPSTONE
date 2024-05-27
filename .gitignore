@@ -1,2 +1,4 @@
 
 myenv/
+scapdb/
+capstone/db.sqlite3
