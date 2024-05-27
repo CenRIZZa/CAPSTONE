@@ -31,6 +31,8 @@
     .book-image {
         min-width: 300px;
         max-width: 300px;
+        min-height: 375px;
+        max-height: 375px;
         margin: 0 25px;
     }
     .book-info {
@@ -186,6 +188,38 @@
         width: 10px;
         height: 10px;
     }
+    .modal-book-author{
+        text-transform: capitalize;
+    }
+    .card-title{
+        text-transform: capitalize;
+    }
+    .card{
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-control{
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+    .filter-container{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        animation: filterAnimation 1.2s ease;
+    }
+    .filter-title{
+        font-weight: bold;
+    }
+    .notif-message{
+        padding-right: 10px;
+        border-right: 1px solid rgba(0,0,0,0.3);
+    }
+    .no-notif{
+        font-size: 1rem;
+        padding: 10px 25px;
+    }
+        
 </style>
 
 {% endblock %}
@@ -230,26 +264,29 @@
 
 
 <!-- Filter Form -->
-<form method="get" id="filterForm" class="form-inline mb-4">
-    <select name="year" class="form-control" id="yearFilter">
-        <option value="">All Year</option>
-        {% for year in years %}
-        <option value="{{ year.year }}" {% if filter_params.year == year.year|stringformat:"s" %}selected{% endif %}>{{ year.year }}</option>
-        {% endfor %}
-    </select>
-    <select name="category" class="form-control" id="categoryFilter">
-        <option value="">All Category</option>
-        {% for category in categories %}
-        <option value="{{ category.id }}" {% if filter_params.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
-        {% endfor %}
-    </select>
-    <select name="language" id="languageFilter" class="form-control">
-        <option value="">All Language</option>
-        {% for code, name in language_choices %}
-        <option value="{{ code }}" {% if filter_params.language == code %}selected{% endif %}>{{ name }}</option>
-        {% endfor %}
-    </select>
-</form>
+<div class="filter-container">
+    <h3 class="filter-title"> Filter By: </h3>
+    <form method="get" id="filterForm" class="form-inline mb-4">
+        <select name="year" class="form-control" id="yearFilter">
+            <option value="" >All Year</option>
+            {% for year in years %}
+            <option value="{{ year.year }}" {% if filter_params.year == year.year|stringformat:"s" %}selected{% endif %}>{{ year.year }}</option>
+            {% endfor %}
+        </select>
+        <select name="category" class="form-control" id="categoryFilter">
+            <option value="">All Category</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}" {% if filter_params.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="language" id="languageFilter" class="form-control">
+            <option value="">All Language</option>
+            {% for code, name in language_choices %}
+            <option value="{{ code }}" {% if filter_params.language == code %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
 
 <!-- Top Viewed Books Section -->
 <div class="container-xl">
@@ -439,12 +476,32 @@
                 <a href="#" id="modal-borrow-link" class="btn-mdl" data-approved="{{ approved_requested }}">Borrow</a>
                 <a href="#" id="modal-preview-link" class="btn-mdl">Preview</a>
                 <a href="#" id="modal-bookmark-link" class="btn-mdl" data-book-id="">Bookmark</a>
+                <button type="button" id="generate-citation" class="btn-mdl">Generate APA Citation</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Borrow Message Toast -->
+<!-- APA Citation Modal -->
+<div class="modal fade" id="citationModal" tabindex="-1" aria-labelledby="citationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="citationModalLabel">Generated APA Citation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="apaCitationOutput" class="form-control" rows="3" readonly></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="copyCitation()">Copy to Clipboard</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Borrow Notifs  -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     {% if messages %}
     <div id="borrowMessageToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -461,7 +518,6 @@
     {% endif %}
 </div>
 
-<!-- Borrow Message Toast -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
     {% if messages %}
     <div id="borrowMessageToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -491,8 +547,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var bookDetailModal = document.getElementById('bookDetailModal');
-        var bookmarkButton = document.getElementById('modal-bookmark-link');
-
+    
         bookDetailModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var title = button.getAttribute('data-title');
@@ -508,7 +563,7 @@
             var previewLink = button.getAttribute('data-preview-link');
             var isEbook = button.getAttribute('data-is-ebook') === 'true';
             var isResearchPaper = button.getAttribute('data-is-research-paper') === 'true';
-
+    
             var modalImage = bookDetailModal.querySelector('#modal-book-image');
             var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
             var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
@@ -520,7 +575,7 @@
             var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
             var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
             var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
-
+    
             modalImage.src = image;
             modalBookTitle.textContent = title;
             modalBookAuthor.textContent = author;
@@ -532,7 +587,7 @@
             modalPreviewLink.href = previewLink;
             modalBookmarkLink.setAttribute('data-book-id', bookId);
             modalBorrowLink.href = borrowLink;
-
+    
             // Update borrow button text based on book type
             if (isEbook) {
                 modalBorrowLink.textContent = 'Borrow Hard Copy';
@@ -541,7 +596,7 @@
             } else {
                 modalBorrowLink.textContent = 'Borrow';
             }
-
+    
             // Check bookmark status
             $.ajax({
                 type: 'GET',
@@ -555,6 +610,7 @@
                 }
             });
         });
+    
 
         // Handle bookmark toggle
         $('#modal-bookmark-link').on('click', function(event) {
@@ -583,7 +639,27 @@
                 }
             });
         });
+    document.getElementById('generate-citation').addEventListener('click', function () {
+        var title = document.getElementById('modal-book-title').textContent;
+        var author = document.getElementById('modal-book-author').textContent;
+        var date = document.getElementById('modal-book-date').textContent;
+        var publisher = document.getElementById('modal-book-category').textContent; // Assuming category as publisher for this example
+
+        var citation = `${author} (${date}). ${title}. ${publisher}.`;
+        document.getElementById('apaCitationOutput').value = citation;
+
+        var citationModal = new bootstrap.Modal(document.getElementById('citationModal'));
+        citationModal.show();
     });
+});
+function copyCitation() {
+    var citationText = document.getElementById('apaCitationOutput').value;
+    navigator.clipboard.writeText(citationText).then(function () {
+        alert('Citation copied to clipboard!');
+    }, function (err) {
+        console.error('Could not copy text: ', err);
+    });
+}
     document.addEventListener('DOMContentLoaded', function() {
         const borrowButton = document.getElementById('modal-borrow-link');
 
@@ -669,6 +745,9 @@
             document.getElementById('modal-preview-link').href = book.previewLink;
             document.getElementById('modal-bookmark-link').dataset.bookId = book.id;
 
+            document.getElementById('modal-book-title').style.setProperty('text-transform', 'capitalize', 'important');
+            document.getElementById('modal-book-author').style.setProperty('text-transform', 'capitalize', 'important');
+
             // Update borrow button text based on book type
             const borrowButton = document.getElementById('modal-borrow-link');
             if (book.isEbook) {
@@ -719,7 +798,7 @@
                     data.forEach(function(notification) {
                         var item = $('<div class="dropdown-item">')
                             .html(`
-                                <div class="notification-icon">
+                                <div class="notification-icon-2">
                                     <span class="material-symbols-outlined">notification_important</span>
                                 </div>
                                 <div class="notif-message">
@@ -745,7 +824,7 @@
                         $('#notification-dropdown').append(item);
                     });
                 } else {
-                    $('#notification-dropdown').html('<span class="dropdown-item-text" id="no-notifications">No notifications</span>');
+                    $('#notification-dropdown').html('<span class="dropdown-item-text no-notif" id="no-notifications">No notifications</span>');
                     $('#notification-count').hide();
                 }
             });
@@ -798,6 +877,8 @@
         languageFilter.addEventListener('change', function() {
             filterForm.submit();
         });
+
+        categoryFilter.style.textTransform = 'capitalize';
     });
 </script>
 {% endblock %}

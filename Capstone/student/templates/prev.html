@@ -165,13 +165,13 @@
                     // Add watermark
                     ctx.save();
                     ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any transformations
-                    ctx.font = `${40}px Arial`; // Base font size
+                    ctx.font = `${30}px Arial`; // Base font size
                     ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
                     ctx.textAlign = "center";
                     ctx.translate(canvas.width / 2, canvas.height / 2);
                     ctx.rotate(-Math.PI / 4);
                     ctx.scale(scale, scale); // Scale the watermark based on the zoom level
-                    ctx.fillText("Property of Lawang Bato National Highschool", 0, 0);
+                    ctx.fillText("PROPERTY OF LAWANG BATO NATIONAL HIGH SCHOOL", 0, 0);
                     ctx.restore();
         
                     if (!pdfContainer.contains(canvas)) {

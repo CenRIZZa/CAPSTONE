@@ -20,8 +20,7 @@ urlpatterns = [
     path('toggle_book_status/<int:request_id>/', views.toggle_book_status, name='toggle_book_status'),
     path('book_status/', views.book_status_view, name='book_status_view'),
     path('toggle_out_status/<int:out_id>/', views.toggle_out_status, name='toggle_out_status'),
-    path('librarian/edit_book/<int:book_id>/', views.edit_book, name='edit_book'),
-    path('librarian/get_book_details/', views.get_book_details, name='get_book_details'),
+    path('edit_book/<int:book_id>/', views.edit_book, name='edit_book'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     
