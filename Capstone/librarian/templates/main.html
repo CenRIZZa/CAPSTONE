@@ -469,7 +469,7 @@
                         <a href="{% url 'librarian' %}"> <img src="{% static 'playground/school_Logo.png' %}" alt="Logo" height="80px" id="logo"></a>
                     </div>
                     <ul class="nav">
-                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('home')">   
+                        <a class="nav-link" href="javascript:void(0);" onclick="showContent('home')">
                             <li class="nav-item"><span class="material-symbols-outlined navbar-icon" alt="home">home</span>Home</li>
                         </a>
                         <a class="nav-link" href="javascript:void(0);" onclick="showContent('upload')">
@@ -515,7 +515,7 @@
             <div id="upload" class="content" style="display: none;">
                 <h1 class="mt-4">Upload</h1>
                 <hr>
-                <form method="post" enctype="multipart/form-data" action="{% url 'upload_view' %}">
+                <form method="post" enctype="multipart/form-data" action="{% url 'librarian' %}">
                     {% csrf_token %}
                     <div class="row">
                         <div class="form-group col">
@@ -1210,17 +1210,14 @@
         for (var i = 0; i < contents.length; i++) {
             contents[i].style.display = 'none';
         }
-        var activeElement = document.getElementById(contentId);
-        if (activeElement) {
-            activeElement.style.display = 'block';
-            localStorage.setItem('activeContent', contentId);
-        }
+        document.getElementById(contentId).style.display = 'block';
+        localStorage.setItem('activeContent', contentId);
     }
-
     window.onload = function() {
         var activeContent = localStorage.getItem('activeContent') || 'home';
         showContent(activeContent);
     };
+
 
     function setDeleteUrl(bookId) {
         var bookRow = document.getElementById('bookRow-' + bookId);

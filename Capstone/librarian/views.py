@@ -81,11 +81,19 @@ def main(request):
             })
         return JsonResponse({'books': books_data})
 
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('librarian')
+    else:
+        form = BookForm()
     subcategories = SubCategory.objects.all()
     categories = Category.objects.all()
 
     context = {
         'books': books,
+        'form': form,
         'recently_deleted_books': recently_deleted_books,
         'language_choices': language_choices,
         'categories': categories,
@@ -101,19 +109,19 @@ def main(request):
     }
 
     return render(request, 'main.html', context)
-@login_required
-def upload_view(request):
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('librarian')
-    else:
-        form = BookForm()
-    subcategories = SubCategory.objects.all()
-    categories = Category.objects.all()
+# @login_required
+# def upload_view(request):
+#     if request.method == 'POST':
+#         form = BookForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('librarian')
+#     else:
+#         form = BookForm()
+#     subcategories = SubCategory.objects.all()
+#     categories = Category.objects.all()
     
-    return render(request, 'main.html', {'form': form, 'categories': categories, 'subcategories':subcategories,})
+#     return render(request, 'main.html', {'form': form, 'categories': categories, 'subcategories':subcategories,})
 
 
 @login_required
