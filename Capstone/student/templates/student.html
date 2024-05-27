@@ -501,6 +501,7 @@
                 $('#suggestions').hide();
             }
         });
+    });
 
         $(document).ready(function() {
             function fetchNotifications() {
@@ -542,6 +543,7 @@
                     }
                 });
             }
+        });
         
             function markAsRead(notificationId) {
                 $.post("{% url 'mark_notification_read' 0 %}".replace('0', notificationId), {
