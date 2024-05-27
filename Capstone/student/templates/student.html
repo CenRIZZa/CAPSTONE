@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <!--Remove Bookmark-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!--Close-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 <style>
     .notification-time {
@@ -68,7 +70,6 @@
     }
     
     .form-control {
-        width: auto;
         margin: 5px;
     }
     .main-container.with-sidebar {
@@ -397,7 +398,7 @@
             </span>
             <div class="logo">
                 <a href="{% url 'view' %}">
-                    <img src="{% static 'playground/school_Logo.png' %}" alt="Logo" height="80px" id="logo">
+                    <img src="{% static 'playground/Logo.png' %}" alt="Logo" height="80px" id="logo">
                 </a>
             </div>
             <div class="search-container">
@@ -463,6 +464,8 @@
     </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -557,84 +560,85 @@
                 }
             });
         });
-        document.addEventListener('DOMContentLoaded', function () {
-            var bookDetailModal = document.getElementById('bookDetailModal');
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        var bookDetailModal = document.getElementById('bookDetailModal');
 
-            bookDetailModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var title = button.getAttribute('data-title');
-                var author = button.getAttribute('data-author');
-                var description = button.getAttribute('data-description');
-                var date = button.getAttribute('data-date');
-                var category = button.getAttribute('data-category');
-                var language = button.getAttribute('data-language');
-                var image = button.getAttribute('data-image');
-                var views = button.getAttribute('data-views');
-                var bookId = button.getAttribute('data-id');
-                var available = button.getAttribute('data-available') === 'true';
+        bookDetailModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var title = button.getAttribute('data-title');
+            var author = button.getAttribute('data-author');
+            var description = button.getAttribute('data-description');
+            var date = button.getAttribute('data-date');
+            var category = button.getAttribute('data-category');
+            var language = button.getAttribute('data-language');
+            var image = button.getAttribute('data-image');
+            var views = button.getAttribute('data-views');
+            var bookId = button.getAttribute('data-id');
+            var available = button.getAttribute('data-available') === 'true';
 
-                var modalImage = bookDetailModal.querySelector('#modal-book-image');
-                var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
-                var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
-                var modalBookDescription = bookDetailModal.querySelector('#modal-book-description');
-                var modalBookDate = bookDetailModal.querySelector('#modal-book-date');
-                var modalBookCategory = bookDetailModal.querySelector('#modal-book-category');
-                var modalBookLanguage = bookDetailModal.querySelector('#modal-book-language');
-                var modalBookViews = bookDetailModal.querySelector('#modal-book-views');
-                var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
-                var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
-                var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
+            var modalImage = bookDetailModal.querySelector('#modal-book-image');
+            var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
+            var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
+            var modalBookDescription = bookDetailModal.querySelector('#modal-book-description');
+            var modalBookDate = bookDetailModal.querySelector('#modal-book-date');
+            var modalBookCategory = bookDetailModal.querySelector('#modal-book-category');
+            var modalBookLanguage = bookDetailModal.querySelector('#modal-book-language');
+            var modalBookViews = bookDetailModal.querySelector('#modal-book-views');
+            var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
+            var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
+            var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
 
-                modalImage.src = image;
-                modalBookTitle.textContent = title;
-                modalBookAuthor.textContent = author;
-                modalBookDescription.textContent = description;
-                modalBookDate.textContent = date;
-                modalBookCategory.textContent = category;
-                modalBookLanguage.textContent = language;
-                modalBookViews.textContent = views;
-                modalPreviewLink.href = `/student/preview/${bookId}/`;
-                modalBookmarkLink.setAttribute('data-book-id', bookId);
-                modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
-                modalBorrowLink.classList.toggle('disabled', !available);
+            modalImage.src = image;
+            modalBookTitle.textContent = title;
+            modalBookAuthor.textContent = author;
+            modalBookDescription.textContent = description;
+            modalBookDate.textContent = date;
+            modalBookCategory.textContent = category;
+            modalBookLanguage.textContent = language;
+            modalBookViews.textContent = views;
+            modalPreviewLink.href = `/student/preview/${bookId}/`;
+            modalBookmarkLink.setAttribute('data-book-id', bookId);
+            modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
+            modalBorrowLink.classList.toggle('disabled', !available);
 
-                // Check bookmark status
-                $.ajax({
-                    type: 'GET',
-                    url: `{% url 'bookmark_status' 0 %}`.replace('0', bookId),
-                    success: function(response) {
-                        if (response.bookmarked) {
-                            modalBookmarkLink.textContent = 'Unbookmark';
-                        } else {
-                            modalBookmarkLink.textContent = 'Bookmark';
-                        }
+            // Check bookmark status
+            $.ajax({
+                type: 'GET',
+                url: `{% url 'bookmark_status' 0 %}`.replace('0', bookId),
+                success: function(response) {
+                    if (response.bookmarked) {
+                        modalBookmarkLink.textContent = 'Unbookmark';
+                    } else {
+                        modalBookmarkLink.textContent = 'Bookmark';
                     }
-                });
-            });
-
-            // Handle bookmark toggle
-            $('#modal-bookmark-link').on('click', function (event) {
-                event.preventDefault();
-                const bookId = $(this).data('book-id');
-
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'bookmark_toggle' %}",
-                    data: {
-                        'book_id': bookId,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
-                    success: function(response) {
-                        if (response.bookmarked) {
-                            $('#modal-bookmark-link').text('Unbookmark');
-                        } else {
-                            $('#modal-bookmark-link').text('Bookmark');
-                        }
-                    }
-                });
+                }
             });
         });
-    </script>
+
+        // Handle bookmark toggle
+        $('#modal-bookmark-link').on('click', function (event) {
+            event.preventDefault();
+            const bookId = $(this).data('book-id');
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'bookmark_toggle' %}",
+                data: {
+                    'book_id': bookId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.bookmarked) {
+                        $('#modal-bookmark-link').text('Unbookmark');
+                    } else {
+                        $('#modal-bookmark-link').text('Bookmark');
+                    }
+                }
+            });
+        });
+    });
+</script>
 
     {% block script %}{% endblock %}
 </body>

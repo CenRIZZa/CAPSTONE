@@ -22,7 +22,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('playground/', include('playground.urls')),  # Assuming 'playground' is an app containing your views
     path('student/',include('student.urls') ),
     path('librarian/',include('librarian.urls')),
     path("__debug__/", include("debug_toolbar.urls")),

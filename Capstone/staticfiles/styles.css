@@ -29,7 +29,7 @@ body{
     width: 100%; /* Set the width to 100% to fill the container */
 }
 .header {
-    background-color: yellow;
+    background-color: rgb(74, 128, 210);
     padding: 10px;
     color: #fff;
     display: flex;
@@ -155,59 +155,4 @@ cursor: pointer; /* Show pointer cursor on hover */
 
 .owl-nav button:hover {
     background-color: #0056b3; /* Change color on hover */
-}
-
-
-.carousel-container {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-}
-
-.carousel {
-    display: flex;
-    transition: transform 0.5s ease;
-}
-
-.carousel-item {
-    min-width: 100%;
-    flex: 0 0 auto;
-}
-
-.owl-carousel {
-    width: 100%;
-    height: 400px; /* Set the desired fixed height */
-    display: flex;
-    overflow: hidden;
-}
-
-.owl-carousel .item {
-    width: 100%;
-    height: 100%;
-    min-width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.owl-carousel img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; /* Maintain aspect ratio without stretching */
-}
-
-.owl-carousel .owl-stage {
-    display: flex;
-    align-items: stretch; /* Make all items stretch to the same height */
-    transition: transform 0.5s ease;
-}
-
-.owl-carousel .owl-item:last-child {
-    margin-right: 0; /* Remove margin from the last item */
-}
-
-@media (max-width: 767px) {
-    .owl-carousel .owl-item {
-        flex: 0 0 100%; /* Full width for each item on smaller screens */
-    }
 }

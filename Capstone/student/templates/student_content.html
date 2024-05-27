@@ -46,7 +46,8 @@
     .book-details {
         display: flex;
         align-items: end;
-        height: 300px;
+        min-height: 125px;
+        max-height: 125px;
     }
     .text1 {
         margin-top: 50px;
@@ -123,7 +124,7 @@
         right: 0;
         background-color: white;
         color: black;
-        min-width: 300px;
+        min-width: 400px;
         box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         border-radius: 5px;
         overflow: hidden;
@@ -133,7 +134,7 @@
      .dropdown-item {
         display: flex;
         align-items: center;
-        padding: 10px;
+        padding: 20px;
         border-bottom: 1px solid #ddd;
     }
     
@@ -163,9 +164,6 @@
         margin-right: 75px;
         border-radius: 50%;
         background-color: #e9ecef;
-    }
-    .notif-message{
-        margin: 0 10px;
     }
     .notification-icon .badge {
         position: absolute;
@@ -214,12 +212,58 @@
     .notif-message{
         padding-right: 10px;
         border-right: 1px solid rgba(0,0,0,0.3);
+        text-wrap: wrap;
+        margin: 0 10px;
+        width:100%;
     }
     .no-notif{
         font-size: 1rem;
         padding: 10px 25px;
     }
-        
+    .owl-nav span{
+        font-size: 1.5rem;
+        padding: 0 30px;
+    }   
+    .book-desc{
+        display: flex;
+        margin-top: 20px;
+        max-width: 500px;
+    }
+    .book-desc-text{
+        text-align: justify;
+    }
+    .book-img{
+        display:flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .citaion-main-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 100px;
+    }
+    .citation-container{
+        max-width: 300px;
+    }
+    .citation-title{
+        font-size: 1.2rem;
+    }
+    .citation-body{
+        max-width: 300px;
+        max-height: 100px;
+    }
+    .citation-footer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .preview-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
 </style>
 
 {% endblock %}
@@ -437,7 +481,7 @@
     </div>
 {% endfor %}
 
-<!-- Modal Structure -->
+<!-- Book Info Modal -->
 <div class="modal fade" id="bookDetailModal" tabindex="-1" aria-labelledby="bookDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -454,7 +498,7 @@
                         <div class="modal-book-text">
                             <h4 id="modal-book-title" class="book-text text1"></h4>
                             <h5 class="book-text text2"><strong>Author: </strong><a href="#" id="modal-book-author"></a></h5>
-                            <h6 class="book-text"><strong>Description: </strong><span id="modal-book-description"></span></h6>
+                            <h6 class="book-text"><strong>Description: </strong><div class="book-desc"><span id="modal-book-description" class="book-desc-text"></span></div></h6>
                         </div>
                         <div class="book-details">
                             <div class="wrap row">
@@ -483,19 +527,18 @@
 </div>
 
 <!-- APA Citation Modal -->
-<div class="modal fade" id="citationModal" tabindex="-1" aria-labelledby="citationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+<div class="modal fade" id="citationModal" tabindex="-1" aria-labelledby="citationModalLabel" aria-hidden="true" draggable="true">
+    <div class="modal-dialog modal-lg citaion-main-container draggable">
+        <div class="modal-content citation-container">
             <div class="modal-header">
-                <h5 class="modal-title" id="citationModalLabel">Generated APA Citation</h5>
+                <p class="modal-title citation-title" id="citationModalLabel">Generated APA Citation</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body citation-body">
                 <textarea id="apaCitationOutput" class="form-control" rows="3" readonly></textarea>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer citation-footer">
                 <button type="button" class="btn btn-primary" onclick="copyCitation()">Copy to Clipboard</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -680,6 +723,8 @@ function copyCitation() {
 {% endblock %}
 
 {% block script %}
+
+
 <script>
     $(document).ready(function() {
         $('.owl-carousel').each(function() {
@@ -880,5 +925,14 @@ function copyCitation() {
 
         categoryFilter.style.textTransform = 'capitalize';
     });
+
+    
+    $(document).ready(function() {
+        $(".draggable").draggable({
+            handle: ".modal-header" // Specify the header as the handle for dragging
+        });
+    });
+    
+        
 </script>
 {% endblock %}
