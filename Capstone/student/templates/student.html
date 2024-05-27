@@ -390,14 +390,14 @@
         <header class="header">
             <span id="sidebar-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
                 <svg width="35px" height="35px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 18L20 18" stroke="#ffff" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M4 12L20 12" stroke="#ffff" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M4 6L20 6" stroke="#ffff" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M4 18L20 18" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M4 12L20 12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M4 6L20 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
                 </svg>
             </span>
             <div class="logo">
-                <a href="{% url 'view' %}"> 
-                    <img src="{% static 'playground/school_Logo.png'%}" alt="Logo" height="80px" id="logo">
+                <a href="{% url 'view' %}">
+                    <img src="{% static 'playground/school_Logo.png' %}" alt="Logo" height="80px" id="logo">
                 </a>
             </div>
             <div class="search-container">
@@ -409,281 +409,183 @@
         <div class="offcanvas offcanvas-start show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
             <div class="offcanvas-body side-bar show">
                 <ul class="sidebar-nav">
-                    {% block nav %} {% endblock%}
+                    {% block nav %}{% endblock %}
                 </ul>
                 <div class="logout">
-                    <a href="{% url 'logout_user' %}" class="navbar-text"><span class="material-symbols-outlined navbar-icon" alt="home">logout</span>LOG OUT</a>
+                    <a href="{% url 'logout_user' %}" class="navbar-text"><span class="material-symbols-outlined navbar-icon">logout</span>LOG OUT</a>
                 </div>
             </div>
         </div>
         <div class="content">
-            {% block body %}
-
-            {% endblock %}
+            {% block body %}{% endblock %}
         </div>
     </div>
-   <!-- Modal Structure -->
-   <div class="modal fade" id="bookDetailModal" tabindex="-1" aria-labelledby="bookDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header modalHeader">
-                <h5 class="modal-title">Book Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="book-info">
-                    <div class="book-img">
-                        <img src="" alt="" id="modal-book-image" class="img-fluid book-image">
-                    </div>
-                    <div class="book-data">
-                        <div class="modal-book-text">
-                            <h4 id="modal-book-title" class="book-text text1"></h4>
-                            <h5 class="book-text text2"><strong>Author: </strong><a href="#" id="modal-book-author"></a></h5>
-                            <h6 class="book-text"><strong>Description: </strong><span id="modal-book-description"></span></h6>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="bookDetailModal" tabindex="-1" aria-labelledby="bookDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header modalHeader">
+                    <h5 class="modal-title">Book Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="book-info">
+                        <div class="book-img">
+                            <img src="" alt="" id="modal-book-image" class="img-fluid book-image">
                         </div>
-                        <div class="book-details">
-                            <div class="wrap row">
-                                <p class="col-8"><strong>Date:</strong> <span id="modal-book-date"></span></p>
-                                <p class="col-8"><strong>Category:</strong> <span id="modal-book-category"></span></p>
+                        <div class="book-data">
+                            <div class="modal-book-text">
+                                <h4 id="modal-book-title" class="book-text text1"></h4>
+                                <h5 class="book-text text2"><strong>Author: </strong><a href="#" id="modal-book-author"></a></h5>
+                                <h6 class="book-text"><strong>Description: </strong><span id="modal-book-description"></span></h6>
                             </div>
-                            <div class="wrap row">
-                                <p class="col-8"><strong>Language:</strong> <span id="modal-book-language"></span></p>
-                                <p class="col-8"><strong>Views:</strong> <span id="modal-book-views"></span></p>
+                            <div class="book-details">
+                                <div class="wrap row">
+                                    <p class="col-8"><strong>Date:</strong> <span id="modal-book-date"></span></p>
+                                    <p class="col-8"><strong>Category:</strong> <span id="modal-book-category"></span></p>
+                                </div>
+                                <div class="wrap row">
+                                    <p class="col-8"><strong>Language:</strong> <span id="modal-book-language"></span></p>
+                                    <p class="col-8"><strong>Views:</strong> <span id="modal-book-views"></span></p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer modalButtons">
-                <a href="#" id="modal-borrow-link" class="btn-mdl">Borrow</a>
-                <a href="#" id="modal-preview-link" class="btn-mdl">Preview</a>
-                <a href="#" id="modal-bookmark-link" class="btn-mdl" data-book-id="">Bookmark</a>
+                <div class="modal-footer modalButtons">
+                    <a href="#" id="modal-borrow-link" class="btn-mdl">Borrow</a>
+                    <a href="#" id="modal-preview-link" class="btn-mdl">Preview</a>
+                    <a href="#" id="modal-bookmark-link" class="btn-mdl" data-book-id="">Bookmark</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Owl Carousel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    $(document).ready(function() {
-        $('#search-input').on('input', function() {
-            var query = $(this).val();
-            if (query.length >= 3) {
-                $.get("{% url 'search_suggestions' %}", { q: query }, function(data) {
-                    $('#suggestions').empty();
-                    data.forEach(function(book) {
-                        var suggestion = $('<div class="suggestion-item" data-bs-toggle="modal" data-bs-target="#bookDetailModal">')
-                            .attr('data-title', book.title)
-                            .attr('data-author', book.author)
-                            .attr('data-description', book.description)
-                            .attr('data-date', book.date)
-                            .attr('data-category', book.category)
-                            .attr('data-language', book.language)
-                            .attr('data-image', book.image_url)
-                            .attr('data-views', book.views)
-                            .attr('data-id', book.id)
-                            .attr('data-available', book.available)
-                            .append($('<img>').attr('src', book.image_url))
-                            .append($('<span>').text(book.title + ' by ' + book.author));
-                        $('#suggestions').append(suggestion);
-                    });
-                    $('#suggestions').show();
-                });
-            } else {
-                $('#suggestions').hide();
-            }
-        });
-        $(document).click(function(event) {
-            if (!$(event.target).closest('#search-input').length) {
-                $('#suggestions').hide();
-            }
-        });
-    });
-
+    <script>
         $(document).ready(function() {
-            function fetchNotifications() {
-                $.get("{% url 'fetch_notifications' %}", function(data) {
-                    $('#notification-dropdown').empty();
-                    if (data.length > 0) {
-                        $('#notification-count').text(data.length).show();
-                        $('#no-notifications').hide();
-                        data.forEach(function(notification) {
-                            var item = $('<div class="dropdown-item">')
-                                .html(`
-                                    <div class="notification-icon">
-                                        <span class="material-symbols-outlined">notification_important</span>
-                                    </div>
-                                    <div class="notif-message">
-                                        ${notification.message}
-                                        <div class="notification-time">${new Date(notification.created_at).toLocaleString()}</div>
-                                    </div>
-                                `)
-                                .attr('data-id', notification.id)
-                                .toggleClass('read', notification.read)
-                                .click(function() {
-                                    markAsRead(notification.id);
-                                });
-        
-                            var deleteButton = $('<button class="btn btn-danger btn-sm ms-auto">')
-                                .text('Delete')
-                                .click(function(event) {
-                                    event.stopPropagation();
-                                    deleteNotification(notification.id);
-                                });
-        
-                            item.append(deleteButton);
-                            $('#notification-dropdown').append(item);
+            // Search functionality
+            $('#search-input').on('input', function() {
+                var query = $(this).val();
+                if (query.length >= 3) {
+                    $.get("{% url 'search_suggestions' %}", { q: query }, function(data) {
+                        $('#suggestions').empty();
+                        data.forEach(function(book) {
+                            var suggestion = $('<div class="suggestion-item" data-bs-toggle="modal" data-bs-target="#bookDetailModal">')
+                                .attr('data-title', book.title)
+                                .attr('data-author', book.author)
+                                .attr('data-description', book.description)
+                                .attr('data-date', book.date)
+                                .attr('data-category', book.category)
+                                .attr('data-language', book.language)
+                                .attr('data-image', book.image_url)
+                                .attr('data-views', book.views)
+                                .attr('data-id', book.id)
+                                .attr('data-available', book.available)
+                                .append($('<img>').attr('src', book.image_url))
+                                .append($('<span>').text(book.title + ' by ' + book.author));
+                            $('#suggestions').append(suggestion);
                         });
-                    } else {
-                        $('#notification-dropdown').html('<span class="dropdown-item-text" id="no-notifications">No notifications</span>');
-                        $('#notification-count').hide();
-                    }
-                });
-            }
-        });
-        
-            function markAsRead(notificationId) {
-                $.post("{% url 'mark_notification_read' 0 %}".replace('0', notificationId), {
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                }, function() {
-                    fetchNotifications();
-                });
-            }
-        
-            function deleteNotification(notificationId) {
-                $.post("{% url 'delete_notification' 0 %}".replace('0', notificationId), {
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                }, function() {
-                    fetchNotifications();
-                });
-            }
-        
-            $('#notification-bell').on('click', function() {
-                $('#notification-dropdown').toggle();
+                        $('#suggestions').show();
+                    });
+                } else {
+                    $('#suggestions').hide();
+                }
             });
-        
-            setInterval(fetchNotifications, 60000); // Fetch every 60 seconds
-            fetchNotifications();
-        
+
             $(document).click(function(event) {
-                if (!$(event.target).closest('#notification-bell').length) {
-                    $('#notification-dropdown').hide();
+                if (!$(event.target).closest('#search-input').length) {
+                    $('#suggestions').hide();
                 }
             });
         });
-        
+        document.addEventListener('DOMContentLoaded', function () {
+            var bookDetailModal = document.getElementById('bookDetailModal');
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var bookDetailModal = document.getElementById('bookDetailModal');
+            bookDetailModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var title = button.getAttribute('data-title');
+                var author = button.getAttribute('data-author');
+                var description = button.getAttribute('data-description');
+                var date = button.getAttribute('data-date');
+                var category = button.getAttribute('data-category');
+                var language = button.getAttribute('data-language');
+                var image = button.getAttribute('data-image');
+                var views = button.getAttribute('data-views');
+                var bookId = button.getAttribute('data-id');
+                var available = button.getAttribute('data-available') === 'true';
 
-        bookDetailModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var title = button.getAttribute('data-title');
-            var author = button.getAttribute('data-author');
-            var description = button.getAttribute('data-description');
-            var date = button.getAttribute('data-date');
-            var category = button.getAttribute('data-category');
-            var language = button.getAttribute('data-language');
-            var image = button.getAttribute('data-image');
-            var views = button.getAttribute('data-views');
-            var bookId = button.getAttribute('data-id');
-            var available = button.getAttribute('data-available') === 'true';
+                var modalImage = bookDetailModal.querySelector('#modal-book-image');
+                var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
+                var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
+                var modalBookDescription = bookDetailModal.querySelector('#modal-book-description');
+                var modalBookDate = bookDetailModal.querySelector('#modal-book-date');
+                var modalBookCategory = bookDetailModal.querySelector('#modal-book-category');
+                var modalBookLanguage = bookDetailModal.querySelector('#modal-book-language');
+                var modalBookViews = bookDetailModal.querySelector('#modal-book-views');
+                var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
+                var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
+                var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
 
-            var modalImage = bookDetailModal.querySelector('#modal-book-image');
-            var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
-            var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
-            var modalBookDescription = bookDetailModal.querySelector('#modal-book-description');
-            var modalBookDate = bookDetailModal.querySelector('#modal-book-date');
-            var modalBookCategory = bookDetailModal.querySelector('#modal-book-category');
-            var modalBookLanguage = bookDetailModal.querySelector('#modal-book-language');
-            var modalBookViews = bookDetailModal.querySelector('#modal-book-views');
-            var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
-            var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
-            var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
+                modalImage.src = image;
+                modalBookTitle.textContent = title;
+                modalBookAuthor.textContent = author;
+                modalBookDescription.textContent = description;
+                modalBookDate.textContent = date;
+                modalBookCategory.textContent = category;
+                modalBookLanguage.textContent = language;
+                modalBookViews.textContent = views;
+                modalPreviewLink.href = `/student/preview/${bookId}/`;
+                modalBookmarkLink.setAttribute('data-book-id', bookId);
+                modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
+                modalBorrowLink.classList.toggle('disabled', !available);
 
-            modalImage.src = image;
-            modalBookTitle.textContent = title;
-            modalBookAuthor.textContent = author;
-            modalBookDescription.textContent = description;
-            modalBookDate.textContent = date;
-            modalBookCategory.textContent = category;
-            modalBookLanguage.textContent = language;
-            modalBookViews.textContent = views;
-            modalPreviewLink.href = `/student/preview/${bookId}/`;
-            modalBookmarkLink.setAttribute('data-book-id', bookId);
-            modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
-            modalBorrowLink.classList.toggle('disabled', !available);
-
-            // Check bookmark status
-            $.ajax({
-                type: 'GET',
-                url: `{% url 'bookmark_status' 0 %}`.replace('0', bookId),
-                success: function(response) {
-                    if (response.bookmarked) {
-                        modalBookmarkLink.textContent = 'Unbookmark';
-                    } else {
-                        modalBookmarkLink.textContent = 'Bookmark';
+                // Check bookmark status
+                $.ajax({
+                    type: 'GET',
+                    url: `{% url 'bookmark_status' 0 %}`.replace('0', bookId),
+                    success: function(response) {
+                        if (response.bookmarked) {
+                            modalBookmarkLink.textContent = 'Unbookmark';
+                        } else {
+                            modalBookmarkLink.textContent = 'Bookmark';
+                        }
                     }
-                }
+                });
             });
-        });
 
-        // Handle bookmark toggle
-        $('#modal-bookmark-link').on('click', function (event) {
-            event.preventDefault();
-            const bookId = $(this).data('book-id');
+            // Handle bookmark toggle
+            $('#modal-bookmark-link').on('click', function (event) {
+                event.preventDefault();
+                const bookId = $(this).data('book-id');
 
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'bookmark_toggle' %}",
-                data: {
-                    'book_id': bookId,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    if (response.bookmarked) {
-                        $('#modal-bookmark-link').text('Unbookmark');
-                    } else {
-                        $('#modal-bookmark-link').text('Bookmark');
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'bookmark_toggle' %}",
+                    data: {
+                        'book_id': bookId,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.bookmarked) {
+                            $('#modal-bookmark-link').text('Unbookmark');
+                        } else {
+                            $('#modal-bookmark-link').text('Bookmark');
+                        }
                     }
-                }
+                });
             });
         });
-    });
-</script>
-{% block script %}
-{% endblock %}
-</body>
-</html>
-{%else%}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centered Alert</title>
-<style>
-    .alert {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: #721c24;
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-        padding: 15px;
-        border: 1px solid transparent;
-        border-radius: .25rem;
-    }
-</style>
-</head>
-<body>
-<div class="alert alert-danger" role="alert">
-    You are not authorized to access this page!
-</div>
+    </script>
+
+    {% block script %}{% endblock %}
 </body>
 </html>
 {%endif%}
