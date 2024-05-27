@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Book</title>
+</head>
+<body>
+    <h1>Edit Book</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div>
+            <input type="checkbox" id="ebook" name="ebook" {% if book.ebook %}checked{% endif %} onchange="toggleCheckboxes('ebook', 'research_paper')"> eBook
+            <input type="checkbox" id="research_paper" name="research_paper" {% if book.research_paper %}checked{% endif %} onchange="toggleCheckboxes('research_paper', 'ebook')"> Research Paper
+        </div>
+        <button type="submit">Save changes</button>
+    </form>
+    <a href="{% url 'go_back' %}">Cancel</a>  <!-- Replace 'some_view' with the appropriate view name -->
+
+    <script>
+        function toggleCheckboxes(id1, id2) {
+            var checkbox1 = document.getElementById(id1);
+            var checkbox2 = document.getElementById(id2);
+            if (checkbox1.checked) {
+                checkbox2.checked = false;
+            }
+        }
+    </script>
+</body>
+</html>

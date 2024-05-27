@@ -714,6 +714,9 @@
                                             {% csrf_token %}
                                             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModalBook" data-bookid="{{ book.id }}">Delete Book</button>
                                         </form>
+                                        <form id="editFormBook-{{ book.id }}" method="get" action="{% url 'edit_book' book.id %}" style="display: inline;">
+                                            <button type="button" class="btn btn-primary" onclick="window.location.href='{% url 'edit_book' book.id %}'">Edit Book</button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
