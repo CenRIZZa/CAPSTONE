@@ -30,7 +30,7 @@ class Category(models.Model):
     code = models.CharField(max_length=100, default="")
     
     def __str__(self):
-        return  self.code + '-' + self.name
+        return self.name
 
 class SubCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
