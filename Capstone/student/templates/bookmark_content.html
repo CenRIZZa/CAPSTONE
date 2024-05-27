@@ -3,19 +3,22 @@
 {% block title %} Bookmark {% endblock %}
 
 {% block notification %}
-
 <div class="notification-icon">
     <span class="material-symbols-outlined" id="notification-bell">notifications</span>
     <span class="notification-badge" id="notification-count">0</span>
     <div class="dropdown" id="notification-dropdown">
-        <!-- Notification items will be appended here -->
+        <span class="dropdown-item-text" id="no-notifications">No notifications</span>
     </div>
 </div>
-
 {% endblock %}
 
 {% block style %}
 <style>
+    .notification-time {
+        font-size: 0.8rem;
+        color: grey;
+        margin-left: auto;
+    }
     .content {
         padding: 0 50px;
         margin-top: 150px;
@@ -269,24 +272,25 @@
 <div class="bookmark-content row">
     {% for book in all_books %}
     <div class="col-sm-3 mb-4" id="book-card-{{ book.id }}">
-        <span class="special" data-bs-toggle="modal" data-bs-target="#bookDetailModal"
-              data-title="{{ book.BookTitle }}"
-              data-author="{{ book.Author }}"
-              data-description="{{ book.Description }}"
-              data-date="{{ book.Date }}"
-              data-category="{{ book.Category.all|join:', ' }}"
-              data-language="{{ book.Language }}"
-              data-image="{{ book.BookImage.url }}"
-              data-views="{{ book.PageViews }}"
-              data-id="{{ book.id }}"
-              data-available="{{ book.available|yesno:"true,false" }}">
-            <div class="card">
+        <div class="card">
+            <span class="special" data-bs-toggle="modal" data-bs-target="#bookDetailModal"
+                  data-title="{{ book.BookTitle }}"
+                  data-author="{{ book.Author }}"
+                  data-description="{{ book.Description }}"
+                  data-date="{{ book.Date }}"
+                  data-category="{{ book.Category.all|join:', ' }}"
+                  data-language="{{ book.Language }}"
+                  data-image="{{ book.BookImage.url }}"
+                  data-views="{{ book.PageViews }}"
+                  data-id="{{ book.id }}"
+                  data-available="{{ book.available|yesno:"true,false" }}">
                 <img src="{{ book.BookImage.url }}" class="card-img-top" alt="{{ book.BookTitle }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ book.BookTitle }}</h5>
-                </div>
+            </span>
+            <div class="card-body">
+                <h5 class="card-title">{{ book.BookTitle }}</h5>
+                <a href="#" class="btn-mdl bookmark-link" data-book-id="{{ book.id }}">Unbookmark</a>
             </div>
-        </span>
+        </div>
     </div>
     {% endfor %}
 </div>
@@ -326,7 +330,6 @@
             <div class="modal-footer modalButtons">
                 <a href="#" id="modal-borrow-link" class="btn-mdl">Borrow</a>
                 <a href="#" id="modal-preview-link" class="btn-mdl">Preview</a>
-                <a href="#" id="modal-bookmark-link" class="btn-mdl" data-book-id="">Bookmark</a>
             </div>
         </div>
     </div>
@@ -365,7 +368,6 @@
             var modalBookViews = bookDetailModal.querySelector('#modal-book-views');
             var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
             var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
-            var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
 
             modalImage.src = image;
             modalBookTitle.textContent = title;
@@ -376,27 +378,14 @@
             modalBookLanguage.textContent = language;
             modalBookViews.textContent = views;
             modalPreviewLink.href = `/student/preview/${bookId}/`;
-            modalBookmarkLink.setAttribute('data-book-id', bookId);
             modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
             modalBorrowLink.classList.toggle('disabled', !available);
-
-            // Check bookmark status
-            $.ajax({
-                type: 'GET',
-                url: `{% url 'bookmark_status' 0 %}`.replace('0', bookId),
-                success: function(response) {
-                    if (response.bookmarked) {
-                        modalBookmarkLink.textContent = 'Unbookmark';
-                    } else {
-                        modalBookmarkLink.textContent = 'Bookmark';
-                    }
-                }
-            });
         });
 
         // Handle bookmark toggle
-        $('#modal-bookmark-link').on('click', function(event) {
+        $('.bookmark-link').on('click', function(event) {
             event.preventDefault();
+            event.stopPropagation();
             const bookId = $(this).data('book-id');
 
             // Show loading spinner
@@ -414,12 +403,10 @@
                     loadingSpinner.style.display = 'none';
 
                     if (response.bookmarked) {
-                        $('#modal-bookmark-link').text('Unbookmark');
+                        $(`#book-card-${bookId} .bookmark-link`).text('Unbookmark');
                     } else {
-                        $('#modal-bookmark-link').text('Bookmark');
-                        // Remove the card from the DOM
-                        document.getElementById(`book-card-${bookId}`).remove();
-                        $('#bookDetailModal').modal('hide'); // Hide the modal
+                        $(`#book-card-${bookId}`).remove();
+                        alert('Book has been unbookmarked.');
                     }
                 },
                 error: function() {
@@ -455,9 +442,9 @@
                 });
             }
         });
-        
+
     });
-    
+
     {% comment %} notif js {% endcomment %}
     document.addEventListener('DOMContentLoaded', function() {
         function fetchNotifications() {
@@ -466,7 +453,14 @@
                 $('#notification-count').text(data.length);
                 data.forEach(function(notification) {
                     var item = $('<div class="dropdown-item">')
-                        .html(`<div class="notification-icon-2"><span class="material-symbols-outlined">notification_important</span></div><p class="notif-message">${notification.message}</p>`)
+                        .html(`<div class="notification-icon">
+                            <span class="material-symbols-outlined">notification_important</span>
+                        </div>
+                        <div class="notif-message">
+                            ${notification.message}
+                            <div class="notification-time">${new Date(notification.created_at).toLocaleString()}</div>
+                        </div>
+                        `)
                         .attr('data-id', notification.id)
                         .toggleClass('read', notification.read)
                         .click(function() {
@@ -493,7 +487,6 @@
                 fetchNotifications();
             });
         }
-
 
         function deleteNotification(notificationId) {
             $.post("{% url 'delete_notification' 0 %}".replace('0', notificationId), {

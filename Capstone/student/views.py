@@ -172,22 +172,19 @@ def bookmark(request):
     bookmarked_books = Books.objects.filter(bookmarked_by=request.user)
     return render(request, 'bookmark_content.html', {'all_books': bookmarked_books})
 
-
 @login_required
 def fetch_notifications(request):
-    # Check for expired borrow requests
     expired_requests = BorrowRequest.objects.filter(expires_at__lt=timezone.now(), status='Pending', requested_by=request.user)
-    for request in expired_requests:
-        request.status = 'Expired'
-        request.save()
+    for req in expired_requests:
+        req.status = 'Expired'
+        req.save()
         Notification.objects.create(
-            user=request.requested_by,
-            message=f"Your borrow request for {request.book.BookTitle} has expired."
+            user=req.requested_by,
+            message=f"Your borrow request for {req.book.BookTitle} has expired."
         )
     
-    # Fetch notifications for the user
     notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
-    data = [{'id': n.id, 'message': n.message, 'read': n.read} for n in notifications]
+    data = [{'id': n.id, 'message': n.message, 'read': n.read, 'created_at': n.created_at} for n in notifications]
     return JsonResponse(data, safe=False)
 
 @login_required
