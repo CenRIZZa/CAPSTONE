@@ -162,6 +162,18 @@
                     viewport: viewport
                 };
                 page.render(renderContext).promise.then(() => {
+                    // Add watermark
+                    ctx.save();
+                    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any transformations
+                    ctx.font = `${30}px Arial`; // Base font size
+                    ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+                    ctx.textAlign = "center";
+                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    ctx.rotate(-Math.PI / 4);
+                    ctx.scale(scale, scale); // Scale the watermark based on the zoom level
+                    ctx.fillText("PROPERTY OF LAWANG BATO NATIONAL HIGH SCHOOL", 0, 0);
+                    ctx.restore();
+        
                     if (!pdfContainer.contains(canvas)) {
                         pdfContainer.appendChild(canvas);
                     }
@@ -183,6 +195,7 @@
             pageCounter.textContent = `${pageNum} / ${pdfDoc.numPages}`;
             pageInput.value = pageNum;
         }
+        
     
         function readPage() {
             const text = canvas.getAttribute('data-text');

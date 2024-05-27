@@ -81,11 +81,19 @@ def main(request):
             })
         return JsonResponse({'books': books_data})
 
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('librarian')
+    else:
+        form = BookForm()
     subcategories = SubCategory.objects.all()
     categories = Category.objects.all()
 
     context = {
         'books': books,
+        'form': form,
         'recently_deleted_books': recently_deleted_books,
         'language_choices': language_choices,
         'categories': categories,
@@ -101,19 +109,31 @@ def main(request):
     }
 
     return render(request, 'main.html', context)
-@login_required
-def upload_view(request):
+
+def edit_book(request, book_id):
+    book = get_object_or_404(Books, id=book_id)
     if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
+        form = BookForm(request.POST, instance=book)
         if form.is_valid():
             form.save()
-            return redirect('librarian')
+            return redirect('librarian')  # Replace 'some_view' with the name of the view you want to redirect to after saving
     else:
-        form = BookForm()
-    subcategories = SubCategory.objects.all()
-    categories = Category.objects.all()
+        form = BookForm(instance=book)
     
-    return render(request, 'main.html', {'form': form, 'categories': categories, 'subcategories':subcategories,})
+    return render(request, 'editbooks.html', {'form': form, 'book': book})
+# @login_required
+# def upload_view(request):
+#     if request.method == 'POST':
+#         form = BookForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('librarian')
+#     else:
+#         form = BookForm()
+#     subcategories = SubCategory.objects.all()
+#     categories = Category.objects.all()
+    
+#     return render(request, 'main.html', {'form': form, 'categories': categories, 'subcategories':subcategories,})
 
 
 @login_required
