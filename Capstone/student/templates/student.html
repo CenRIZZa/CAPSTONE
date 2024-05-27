@@ -462,47 +462,98 @@
         </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- Owl Carousel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-    <!-- Bootstrap Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            // Search functionality
-            $('#search-input').on('input', function() {
-                var query = $(this).val();
-                if (query.length >= 3) {
-                    $.get("{% url 'search_suggestions' %}", { q: query }, function(data) {
-                        $('#suggestions').empty();
-                        data.forEach(function(book) {
-                            var suggestion = $('<div class="suggestion-item" data-bs-toggle="modal" data-bs-target="#bookDetailModal">')
-                                .attr('data-title', book.title)
-                                .attr('data-author', book.author)
-                                .attr('data-description', book.description)
-                                .attr('data-date', book.date)
-                                .attr('data-category', book.category)
-                                .attr('data-language', book.language)
-                                .attr('data-image', book.image_url)
-                                .attr('data-views', book.views)
-                                .attr('data-id', book.id)
-                                .attr('data-available', book.available)
-                                .append($('<img>').attr('src', book.image_url))
-                                .append($('<span>').text(book.title + ' by ' + book.author));
-                            $('#suggestions').append(suggestion);
-                        });
-                        $('#suggestions').show();
+<script>
+    $(document).ready(function() {
+        // Search functionality
+        $('#search-input').on('input', function() {
+            var query = $(this).val();
+            if (query.length >= 3) {
+                $.get("{% url 'search_suggestions' %}", { q: query }, function(data) {
+                    $('#suggestions').empty();
+                    data.forEach(function(book) {
+                        var suggestion = $('<div class="suggestion-item" data-bs-toggle="modal" data-bs-target="#bookDetailModal">')
+                            .attr('data-title', book.title)
+                            .attr('data-author', book.author)
+                            .attr('data-description', book.description)
+                            .attr('data-date', book.date)
+                            .attr('data-category', book.category)
+                            .attr('data-language', book.language)
+                            .attr('data-image', book.image_url)
+                            .attr('data-views', book.views)
+                            .attr('data-id', book.id)
+                            .attr('data-available', book.available)
+                            .append($('<img>').attr('src', book.image_url))
+                            .append($('<span>').text(book.title + ' by ' + book.author));
+                        $('#suggestions').append(suggestion);
                     });
-                } else {
-                    $('#suggestions').hide();
-                }
-            });
+                    $('#suggestions').show();
+                });
+            } else {
+                $('#suggestions').hide();
+            }
+        });
 
-            $(document).click(function(event) {
-                if (!$(event.target).closest('#search-input').length) {
-                    $('#suggestions').hide();
+        $(document).click(function(event) {
+            if (!$(event.target).closest('#search-input').length) {
+                $('#suggestions').hide();
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        var bookDetailModal = document.getElementById('bookDetailModal');
+
+        bookDetailModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var title = button.getAttribute('data-title');
+            var author = button.getAttribute('data-author');
+            var description = button.getAttribute('data-description');
+            var date = button.getAttribute('data-date');
+            var category = button.getAttribute('data-category');
+            var language = button.getAttribute('data-language');
+            var image = button.getAttribute('data-image');
+            var views = button.getAttribute('data-views');
+            var bookId = button.getAttribute('data-id');
+            var available = button.getAttribute('data-available') === 'true';
+
+            var modalImage = bookDetailModal.querySelector('#modal-book-image');
+            var modalBookTitle = bookDetailModal.querySelector('#modal-book-title');
+            var modalBookAuthor = bookDetailModal.querySelector('#modal-book-author');
+            var modalBookDescription = bookDetailModal.querySelector('#modal-book-description');
+            var modalBookDate = bookDetailModal.querySelector('#modal-book-date');
+            var modalBookCategory = bookDetailModal.querySelector('#modal-book-category');
+            var modalBookLanguage = bookDetailModal.querySelector('#modal-book-language');
+            var modalBookViews = bookDetailModal.querySelector('#modal-book-views');
+            var modalBorrowLink = bookDetailModal.querySelector('#modal-borrow-link');
+            var modalPreviewLink = bookDetailModal.querySelector('#modal-preview-link');
+            var modalBookmarkLink = bookDetailModal.querySelector('#modal-bookmark-link');
+
+            modalImage.src = image;
+            modalBookTitle.textContent = title;
+            modalBookAuthor.textContent = author;
+            modalBookDescription.textContent = description;
+            modalBookDate.textContent = date;
+            modalBookCategory.textContent = category;
+            modalBookLanguage.textContent = language;
+            modalBookViews.textContent = views;
+            modalPreviewLink.href = `/student/preview/${bookId}/`;
+            modalBookmarkLink.setAttribute('data-book-id', bookId);
+            modalBorrowLink.href = available ? `{% url 'borrow_request' book_id=0 %}`.replace('0', bookId) : '#';
+            modalBorrowLink.classList.toggle('disabled', !available);
+
+            // Check bookmark status
+            $.ajax({
+                type: 'GET',
+                url: `{% url 'bookmark_status' 0 %}`.replace('0', bookId),
+                success: function(response) {
+                    if (response.bookmarked) {
+                        modalBookmarkLink.textContent = 'Unbookmark';
+                    } else {
+                        modalBookmarkLink.textContent = 'Bookmark';
+                    }
                 }
             });
         });
