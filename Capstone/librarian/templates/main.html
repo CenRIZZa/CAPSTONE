@@ -786,118 +786,125 @@
 </div>
 
 
-            <!-- Book Status Section -->
-            <div id="book-status" class="content" style="display: none;">
-                <h2 class="table">Book to be borrowed</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Image</th>
-                            <th>Author</th>
-                            <th>File Type</th>
-                            <th>Expires at</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for request in book_status_approved_requests %}
-                        <tr>
-                            <td>{{ request.book.BookTitle }}</td>
-                            <td><img src="{{ request.book.BookImage.url }}" alt="{{ request.book.BookTitle }}" class="lib-img"></td>
-                            <td>{{ request.book.Author }}</td>
-                            <td>
-                                {% if request.book.eBook %}
-                                    eBook
-                                {% elif request.book.research_paper %}
-                                    Research Paper
-                                {% else %}
-                                    Unknown
-                                {% endif %}
-                            </td>
-                            <td>{{ request.expireTime }}</td>
-                            <td>
-                                <form id="toggleForm-{{ request.id }}" method="post" action="{% url 'toggle_book_status' request.id %}" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="button" data-id="{{ request.id }}" data-status="{{ request.inOut }}" data-type="request" class="availabilityBtn btn {% if request.inOut %}btn-success{% else %}btn-danger{% endif %}">
-                                        {% if request.inOut %}In{% else %}Out{% endif %}
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <hr>
-                <h2 class="table margin-top">Books to be Returned</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Image</th>
-                            <th>Author</th>
-                            <th>Return Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for out in book_status_books_to_be_returned %}
-                        <tr>
-                            <td>{{ out.book.BookTitle }}</td>
-                            <td><img src="{{ out.book.BookImage.url }}" alt="{{ out.book.BookTitle }}" class="lib-img"></td>
-                            <td>{{ out.book.Author }}</td>
-                            <td>{{ out.returnTime }}</td>
-                            <td>
-                                <form id="toggleForm-{{ out.id }}" method="post" action="{% url 'toggle_out_status' out.id %}" style="display: inline;">
-                                    {% csrf_token %}
-                                    <button type="button" data-id="{{ out.id }}" data-status="{{ out.out }}" data-type="out" class="availabilityBtn btn {% if out.out %}btn-danger{% else %}btn-success{% endif %}">
-                                        {% if out.out %}Out{% else %}In{% endif %}
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <hr>
-                <div class="return-logs">
-                    {% if return_logs %}
-                    <h2 class="table margin-top">Return Logs</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Image</th>
-                                <th>Date Returned</th>
-                                <th>Log Expiry</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            {% for log in return_logs %}
-                                <tr>
-                                    <td>{{ log.book.BookTitle }}</td>
-                                    <td><img src="{{ log.book.BookImage.url }}" alt="{{ log.book.BookTitle }}" class="mr-3 lib-img"></td>
-                                    <td>{{ log.returnLogTime }}</td>
-                                    <td>{{ log.expiryLogTime }}</td>    
-                                </tr>                    
-                            {% endfor %}
-                    </table>
+<!-- Book Status Section -->
+<div id="book-status" class="content" style="display: none;">
+    <h2 class="table">Book to be borrowed</h2>
+    <form method="get" action="{% url 'librarian' %}">
+        <div class="form-group">
+            <input type="text" name="status_search" placeholder="Search books..." value="{{ request.GET.status_search }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{% url 'reset_filters' %}" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Author</th>
+                <th>File Type</th>
+                <th>Expires at</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in book_status_approved_requests %}
+            <tr>
+                <td>{{ request.book.BookTitle }}</td>
+                <td><img src="{{ request.book.BookImage.url }}" alt="{{ request.book.BookTitle }}" class="lib-img"></td>
+                <td>{{ request.book.Author }}</td>
+                <td>
+                    {% if request.book.eBook %}
+                        eBook
+                    {% elif request.book.research_paper %}
+                        Research Paper
                     {% else %}
-                    <p>No Recent Logs</p>
+                        Unknown
                     {% endif %}
-                </div>
-            </div>
-            <!-- Modal Structure -->
-            <div id="statusModal" class="modal modal-bg" style="display: none;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Change Status</h5>
-                        <span class="close" onclick="closeModal()">&times;</span>
-                    </div>
-                    <div id="modalBody"></div>
-                </div>
-            </div> 
+                </td>
+                <td>{{ request.expireTime }}</td>
+                <td>
+                    <form id="toggleForm-{{ request.id }}" method="post" action="{% url 'toggle_book_status' request.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="button" data-id="{{ request.id }}" data-status="{{ request.inOut }}" data-type="request" class="availabilityBtn btn {% if request.inOut %}btn-success{% else %}btn-danger{% endif %}">
+                            {% if request.inOut %}In{% else %}Out{% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <h2 class="table margin-top">Books to be Returned</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Author</th>
+                <th>Return Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for out in book_status_books_to_be_returned %}
+            <tr>
+                <td>{{ out.book.BookTitle }}</td>
+                <td><img src="{{ out.book.BookImage.url }}" alt="{{ out.book.BookTitle }}" class="lib-img"></td>
+                <td>{{ out.book.Author }}</td>
+                <td>{{ out.returnTime }}</td>
+                <td>
+                    <form id="toggleForm-{{ out.id }}" method="post" action="{% url 'toggle_out_status' out.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="button" data-id="{{ out.id }}" data-status="{{ out.out }}" data-type="out" class="availabilityBtn btn {% if out.out %}btn-danger{% else %}btn-success{% endif %}">
+                            {% if out.out %}Out{% else %}In{% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <div class="return-logs">
+        {% if return_logs %}
+        <h2 class="table margin-top">Return Logs</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Date Returned</th>
+                    <th>Log Expiry</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in return_logs %}
+                <tr>
+                    <td>{{ log.book.BookTitle }}</td>
+                    <td><img src="{{ log.book.BookImage.url }}" alt="{{ log.book.BookTitle }}" class="mr-3 lib-img"></td>
+                    <td>{{ log.returnLogTime }}</td>
+                    <td>{{ log.expiryLogTime }}</td>
+                </tr>
+                {% endfor %}
+        </table>
+        {% else %}
+        <p>No Recent Logs</p>
+        {% endif %}
+    </div>
+</div>
+<!-- Modal Structure -->
+<div id="statusModal" class="modal modal-bg" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Change Status</h5>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
             <!-- Recently Deleted -->
             <div id="recent-delete" class="content" style="display: none;">
                 <div class="header-lib">
