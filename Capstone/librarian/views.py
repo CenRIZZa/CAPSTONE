@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.db.models import Q
 from .forms import BookForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -44,6 +45,7 @@ def main(request):
     language_filter = request.GET.get('language')
     file_type_filter = request.GET.get('file_type')
     category_filter = request.GET.get('category')
+    search_query = request.GET.get('search')
 
     if year_filter:
         try:
@@ -61,6 +63,12 @@ def main(request):
             books = books.filter(research_paper=True)
     if category_filter:
         books = books.filter(Category__name=category_filter)
+    if search_query:
+        books = books.filter(
+            Q(BookTitle__icontains=search_query) |
+            Q(Author__icontains=search_query) |
+            Q(Description__icontains=search_query)
+        )
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         books_data = []
@@ -110,13 +118,16 @@ def main(request):
 
     return render(request, 'main.html', context)
 
+def reset_filters(request):
+    return redirect('librarian')
+    
 def edit_book(request, book_id):
     book = get_object_or_404(Books, id=book_id)
     if request.method == 'POST':
         form = BookForm(request.POST, instance=book)
         if form.is_valid():
             form.save()
-            return redirect('librarian')  # Replace 'some_view' with the name of the view you want to redirect to after saving
+            return redirect('librarian')
     else:
         form = BookForm(instance=book)
     
@@ -146,7 +157,6 @@ def approve_request(request, request_id):
     )
     borrow_request.delete()
     return redirect('librarian')
-
 
 @login_required
 def decline_request(request, request_id):
@@ -196,7 +206,7 @@ def restore_book(request, book_id):
     book = Books.objects.get(pk=book_id)
     book.deleted_at = None
     book.save()
-    return redirect('librarian')
+    return redirect('librarian')    
 
 @login_required
 def delete_all_recently_deleted_books(request):
